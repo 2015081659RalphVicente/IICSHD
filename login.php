@@ -1,5 +1,5 @@
-<?php 
-    require './include/controller.php';
+<?php
+require './include/controller.php';
 ?>
 
 <html>
@@ -28,10 +28,13 @@
                 <a href="#" class="forgot-password">
                     New User?
                 </a> 
-                
+
             </div><!-- /card-container -->
         </div><!-- /container -->
+    <center><a href="user/admin/home.php">Admin Preview</a> |
+        <a href="user/faculty/home.php">Faculty Preview</a> |
+        <a href="user/student/home.php">Student Preview</a></center>
         <!-- form end -->
-        
+
     </body>
 </html>
