@@ -30,7 +30,7 @@
 
         <div class="container-fluid">
             <div class="row">
-                <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+                 <nav class="col-md-2 d-none d-md-block bg-light sidebar">
                     <div class="sidebar-sticky">
                         <ul class="nav flex-column">
                             <li class="nav-item">
@@ -47,9 +47,25 @@
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="queue.php">
-                                    <span data-feather="calendar"></span>
+                                    <span data-feather="users"></span>
                                     Queue
                                 </a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                                     <span data-feather="calendar"></span>
+                                     Schedule
+                                </a>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="fschedule.php">
+                                        <span data-feather="book-open"></span>
+                                        Faculty Schedule
+                                    </a>
+                                    <a class="dropdown-item" href="cschedule.php">
+                                        <span data-feather="book-open"></span>
+                                        Class Schedule
+                                    </a>
+                                </div>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link active" href="stats.php">
@@ -72,7 +88,7 @@
                         </ul>
                     </div>
                 </nav>
-
+                
                 <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
                     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                         <h1 class="h2">Statistics</h1>

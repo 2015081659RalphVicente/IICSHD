@@ -35,7 +35,7 @@
                     <div class="sidebar-sticky">
                         <ul class="nav flex-column">
                             <li class="nav-item">
-                                <a class="nav-link active" href="home.php">
+                                <a class="nav-link" href="home.php">
                                     <span data-feather="home"></span>
                                     Home <span class="sr-only">(current)</span>
                                 </a>
@@ -53,16 +53,16 @@
                                 </a>
                             </li>
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-                                     <span data-feather="calendar"></span>
-                                     Schedule
+                                <a class="nav-link dropdown-toggle active" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                                    <span data-feather="calendar"></span>
+                                    Schedule
                                 </a>
                                 <div class="dropdown-menu">
                                     <a class="dropdown-item" href="fschedule.php">
                                         <span data-feather="book-open"></span>
                                         Faculty Schedule
                                     </a>
-                                    <a class="dropdown-item" href="cschedule.php">
+                                    <a class="dropdown-item active" href="cschedule.php">
                                         <span data-feather="book-open"></span>
                                         Class Schedule
                                     </a>
@@ -92,7 +92,7 @@
 
                 <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
                     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                        <h1 class="h2">Home</h1>
+                        <h1 class="h2">Class Schedule</h1>
                         <div class="btn-toolbar mb-2 mb-md-0">
                             <div class="btn-group mr-2">
                                 <button class="btn btn-sm btn-outline-secondary">Share</button>

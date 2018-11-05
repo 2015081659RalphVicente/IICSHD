@@ -7,7 +7,7 @@
         <meta name="author" content="">
         <link rel="icon" href="../../../../favicon.ico">
 
-        <title>IICS Help Desk - Admin</title>
+        <title>IICS Help Desk</title>
 
         <!-- Bootstrap core CSS -->
         <link href="../../css/bootstrap.min.css" rel="stylesheet">
@@ -30,7 +30,6 @@
 
         <div class="container-fluid">
             <div class="row">
-                
                 <nav class="col-md-2 d-none d-md-block bg-light sidebar">
                     <div class="sidebar-sticky">
                         <ul class="nav flex-column">
@@ -52,10 +51,16 @@
                                     Queue
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="consultations.php">
+                                    <span data-feather="info"></span>
+                                    Consultation
+                                </a>
+                            </li> 
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-                                     <span data-feather="calendar"></span>
-                                     Schedule
+                                    <span data-feather="calendar"></span>
+                                    Schedule
                                 </a>
                                 <div class="dropdown-menu">
                                     <a class="dropdown-item" href="fschedule.php">
@@ -67,18 +72,6 @@
                                         Class Schedule
                                     </a>
                                 </div>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="stats.php">
-                                    <span data-feather="bar-chart-2"></span>
-                                    Statistics
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="reports.php">
-                                    <span data-feather="layers"></span>
-                                    Reports
-                                </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="account.php">

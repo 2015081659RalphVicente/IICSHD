@@ -47,9 +47,25 @@
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link active" href="queue.php">
-                                    <span data-feather="calendar"></span>
+                                    <span data-feather="users"></span>
                                     Queue
                                 </a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                                     <span data-feather="calendar"></span>
+                                     Schedule
+                                </a>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="fschedule.php">
+                                        <span data-feather="book-open"></span>
+                                        Faculty Schedule
+                                    </a>
+                                    <a class="dropdown-item" href="cschedule.php">
+                                        <span data-feather="book-open"></span>
+                                        Class Schedule
+                                    </a>
+                                </div>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="stats.php">
