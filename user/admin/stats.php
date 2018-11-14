@@ -5,20 +5,23 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <meta name="description" content="">
         <meta name="author" content="">
-        <link rel="icon" href="../../../../favicon.ico">
+        <link rel="icon" href="../../img/favicon.png">
 
         <title>IICS Help Desk - Admin</title>
 
         <!-- Bootstrap core CSS -->
         <link href="../../css/bootstrap.min.css" rel="stylesheet">
-
-        <!-- Custom styles for this template -->
         <link href="../../css/dashboard.css" rel="stylesheet">
+
+        <!-- Font Awesome JS -->
+        <script defer src="../../fa-5.5.0/js/solid.js"></script>
+        <script defer src="../../fa-5.5.0/js/fontawesome.js"></script>
     </head>
 
     <body>
+
         <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-            <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">IICS Help Desk</a>
+            <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#"><img src="../../img/logosolo.png"> IICS Help Desk</a>
             <ul class="navbar-nav px-3">
                 <li class="nav-item text-nowrap">
                     <a class="nav-link" href="../../logout.php">
