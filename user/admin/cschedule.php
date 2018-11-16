@@ -33,7 +33,7 @@
 
         <div class="container-fluid">
             <div class="row">
-                
+
                 <nav class="col-md-2 d-none d-md-block bg-light sidebar">
                     <div class="sidebar-sticky">
                         <ul class="nav flex-column">
@@ -69,6 +69,10 @@
                                         <span data-feather="book-open"></span>
                                         Class Schedule
                                     </a>
+                                    <a class="dropdown-item" href="rschedule.php">
+                                        <span data-feather="book-open"></span>
+                                        Room Schedule
+                                    </a>
                                 </div>
                             </li>
                             <li class="nav-item">
@@ -98,9 +102,9 @@
                         <h1 class="h2">Class Schedule</h1>
                     </div>
 
-                     
+
                     <iframe style="border:none;" height="200%" width="100%" src="https://docs.google.com/spreadsheets/d/e/2PACX-1vTR9ObBsFBvigvJc06TKheef4gMPC652di_l-aEykmO7FkvrAGEc4FPPAneqkWEEN-KIycBK39Xr1UL/pubhtml?widget=true&amp;headers=false"></iframe>
-                    
+
                 </main>
             </div>
         </div>

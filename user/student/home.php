@@ -74,6 +74,10 @@
                                         <span data-feather="book-open"></span>
                                         Class Schedule
                                     </a>
+                                    <a class="dropdown-item" href="rschedule.php">
+                                        <span data-feather="book-open"></span>
+                                        Room Schedule
+                                    </a>
                                 </div>
                             </li>
                             <li class="nav-item">
@@ -113,7 +117,7 @@
                             </ul>
                         </div>
                     </div>
-                    
+
                     <hr>
 
                 </main>

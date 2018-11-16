@@ -33,7 +33,7 @@
 
         <div class="container-fluid">
             <div class="row">
-                
+
                 <nav class="col-md-2 d-none d-md-block bg-light sidebar">
                     <div class="sidebar-sticky">
                         <ul class="nav flex-column">
@@ -57,8 +57,8 @@
                             </li>
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-                                     <span data-feather="calendar"></span>
-                                     Schedule
+                                    <span data-feather="calendar"></span>
+                                    Schedule
                                 </a>
                                 <div class="dropdown-menu">
                                     <a class="dropdown-item" href="fschedule.php">
@@ -68,6 +68,10 @@
                                     <a class="dropdown-item" href="cschedule.php">
                                         <span data-feather="book-open"></span>
                                         Class Schedule
+                                    </a>
+                                    <a class="dropdown-item" href="rschedule.php">
+                                        <span data-feather="book-open"></span>
+                                        Room Schedule
                                     </a>
                                 </div>
                             </li>

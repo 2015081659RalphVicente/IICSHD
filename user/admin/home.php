@@ -72,6 +72,10 @@
                                         <span data-feather="book-open"></span>
                                         Class Schedule
                                     </a>
+                                    <a class="dropdown-item" href="rschedule.php">
+                                        <span data-feather="book-open"></span>
+                                        Room Schedule
+                                    </a>
                                 </div>
                             </li>
                             <li class="nav-item">
@@ -107,7 +111,7 @@
                             <div class="card-header" id="headingOne">
                                 <h5 class="mb-0">
                                     <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-                                        <span class="fas fa-plus-circle"></span> Post
+                                        <span class="fas fa-plus-circle"></span> Post Announcement
                                     </button>
                                 </h5>
                             </div>
@@ -115,14 +119,6 @@
                             <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
                                 <div class="card-body">
                                     <form action="" method="POST">
-                                        <div class="form-group">
-                                            <label for="title">Type of Post <span class="require">*</span></label>
-                                            <select class="form-control">
-                                                <option class="hidden"  selected disabled>Select:</option>
-                                                <option>Update</option>
-                                                <option>Announcement</option>
-                                            </select>
-                                        </div>
 
                                         <div class="form-group">
                                             <label for="title">Title <span class="require">*</span></label>
@@ -166,17 +162,6 @@
                             <h5 class="card-title">IICS INSTITUTIONAL MASS</h5>
                             <p class="card-text" style="font-size: 11px;">Monday, November 12, 2018 8:07:20 PM PHT by Noel Estrella</p>
                             <p class="card-text"><a href="https://docs.google.com/document/d/14uFqLXI_9dbHElkApPe215VusAJjANCYOLMgf1wcE9E/edit">IICS INSTITUTIONAL MASS</a> for the month of November 2018</p>
-                        </div>
-                    </div>
-
-                    <br>
-
-                    <div class="card">
-                        <div class="card-header bg-danger text-white"><h6>Update</h6></div>
-                        <div class="card-body">
-                            <h5 class="card-title">Documents Updated</h5>
-                            <p class="card-text" style="font-size: 11px;">Wednesday, November 14, 2018 8:07:20 PM PHT by Admin</p>
-                            <p class="card-text">Some documents have been updated. <a href="documents.php">Click here.</a></p>
                         </div>
                     </div>
 

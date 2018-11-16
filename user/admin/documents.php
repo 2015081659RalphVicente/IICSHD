@@ -1,3 +1,7 @@
+<?php
+include '../../include/controller.php';
+?>
+
 <!doctype html>
 <html lang="en">
     <head>
@@ -11,11 +15,18 @@
 
         <!-- Bootstrap core CSS -->
         <link href="../../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../../css/bootstrap.css" rel="stylesheet">
         <link href="../../css/dashboard.css" rel="stylesheet">
 
         <!-- Font Awesome JS -->
         <script defer src="../../fa-5.5.0/js/solid.js"></script>
         <script defer src="../../fa-5.5.0/js/fontawesome.js"></script>
+
+        <!-- DataTable-->
+        <link rel="stylesheet" href="../../DataTables/DataTables-1.10.16/css/dataTables.bootstrap4.min.css">
+        <link rel="stylesheet" href="../../DataTables/Responsive-2.2.1/css/responsive.bootstrap4.min.css">
+        <link rel="stylesheet" href="../../DataTables/Buttons-1.5.1/css/buttons.dataTables.min.css">
+
     </head>
 
     <body>
@@ -56,8 +67,8 @@
                             </li>
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-                                     <span data-feather="calendar"></span>
-                                     Schedule
+                                    <span data-feather="calendar"></span>
+                                    Schedule
                                 </a>
                                 <div class="dropdown-menu">
                                     <a class="dropdown-item" href="fschedule.php">
@@ -67,6 +78,10 @@
                                     <a class="dropdown-item" href="cschedule.php">
                                         <span data-feather="book-open"></span>
                                         Class Schedule
+                                    </a>
+                                    <a class="dropdown-item" href="rschedule.php">
+                                        <span data-feather="book-open"></span>
+                                        Room Schedule
                                     </a>
                                 </div>
                             </li>
@@ -95,147 +110,83 @@
                 <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
                     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                         <h1 class="h2">Documents</h1>
-                        <div class="btn-toolbar mb-2 mb-md-0">
-                            <div class="btn-group mr-2">
-                                <button class="btn btn-sm btn-outline-secondary">Share</button>
-                                <button class="btn btn-sm btn-outline-secondary">Export</button>
-                            </div>
-                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle">
-                                <span data-feather="calendar"></span>
-                                This week
-                            </button>
-                        </div>
                     </div>
 
-                    <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas>
+                    <div class="accordion" id="accordionExample">
 
-                    <h2>Table Examples</h2>
-                    <div class="table-responsive">
-                        <table class="table table-striped table-sm">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Header</th>
-                                    <th>Header</th>
-                                    <th>Header</th>
-                                    <th>Header</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>1,001</td>
-                                    <td>Lorem</td>
-                                    <td>ipsum</td>
-                                    <td>dolor</td>
-                                    <td>sit</td>
-                                </tr>
-                                <tr>
-                                    <td>1,002</td>
-                                    <td>amet</td>
-                                    <td>consectetur</td>
-                                    <td>adipiscing</td>
-                                    <td>elit</td>
-                                </tr>
-                                <tr>
-                                    <td>1,003</td>
-                                    <td>Integer</td>
-                                    <td>nec</td>
-                                    <td>odio</td>
-                                    <td>Praesent</td>
-                                </tr>
-                                <tr>
-                                    <td>1,003</td>
-                                    <td>libero</td>
-                                    <td>Sed</td>
-                                    <td>cursus</td>
-                                    <td>ante</td>
-                                </tr>
-                                <tr>
-                                    <td>1,004</td>
-                                    <td>dapibus</td>
-                                    <td>diam</td>
-                                    <td>Sed</td>
-                                    <td>nisi</td>
-                                </tr>
-                                <tr>
-                                    <td>1,005</td>
-                                    <td>Nulla</td>
-                                    <td>quis</td>
-                                    <td>sem</td>
-                                    <td>at</td>
-                                </tr>
-                                <tr>
-                                    <td>1,006</td>
-                                    <td>nibh</td>
-                                    <td>elementum</td>
-                                    <td>imperdiet</td>
-                                    <td>Duis</td>
-                                </tr>
-                                <tr>
-                                    <td>1,007</td>
-                                    <td>sagittis</td>
-                                    <td>ipsum</td>
-                                    <td>Praesent</td>
-                                    <td>mauris</td>
-                                </tr>
-                                <tr>
-                                    <td>1,008</td>
-                                    <td>Fusce</td>
-                                    <td>nec</td>
-                                    <td>tellus</td>
-                                    <td>sed</td>
-                                </tr>
-                                <tr>
-                                    <td>1,009</td>
-                                    <td>augue</td>
-                                    <td>semper</td>
-                                    <td>porta</td>
-                                    <td>Mauris</td>
-                                </tr>
-                                <tr>
-                                    <td>1,010</td>
-                                    <td>massa</td>
-                                    <td>Vestibulum</td>
-                                    <td>lacinia</td>
-                                    <td>arcu</td>
-                                </tr>
-                                <tr>
-                                    <td>1,011</td>
-                                    <td>eget</td>
-                                    <td>nulla</td>
-                                    <td>Class</td>
-                                    <td>aptent</td>
-                                </tr>
-                                <tr>
-                                    <td>1,012</td>
-                                    <td>taciti</td>
-                                    <td>sociosqu</td>
-                                    <td>ad</td>
-                                    <td>litora</td>
-                                </tr>
-                                <tr>
-                                    <td>1,013</td>
-                                    <td>torquent</td>
-                                    <td>per</td>
-                                    <td>conubia</td>
-                                    <td>nostra</td>
-                                </tr>
-                                <tr>
-                                    <td>1,014</td>
-                                    <td>per</td>
-                                    <td>inceptos</td>
-                                    <td>himenaeos</td>
-                                    <td>Curabitur</td>
-                                </tr>
-                                <tr>
-                                    <td>1,015</td>
-                                    <td>sodales</td>
-                                    <td>ligula</td>
-                                    <td>in</td>
-                                    <td>libero</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <div class="card">
+                            <div class="card-header bg-dark" id="headingOne">
+                                <h5 class="mb-0">
+                                    <button class="btn btn-success" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                        <span class="fas fa-plus-circle"></span> New Submissions
+                                    </button>
+                                </h5>
+                            </div>
+
+                            <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+                                <br>
+                                <div class="table-responsive">
+
+                                    <table id="data_table" class="table table-striped table-responsive-lg">
+
+                                        <thead>
+                                            <tr>
+                                                <th>Document #</th>
+                                                <th>Date Submitted</th>
+                                                <th>Submitted By</th>
+                                                <th>Title</th>
+                                                <th>Description</th>
+                                                <th>Status</th>
+                                                <th>Edit Status</th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+
+                                            <?php
+                                            $newsubquery = mysqli_query($conn, "SELECT LPAD(documents.docid,4,0), documents.docdatesubmit, users.fname, users.mname, users.lname, documents.doctitle,"
+                                                    . "documents.docdesc, documents.docstatus FROM documents INNER JOIN users WHERE documents.userid = users.userid AND documents.docstatus = 'Submitted'");
+
+                                            if ($newsubquery->num_rows > 0) {
+                                                while ($row = $newsubquery->fetch_assoc()) {
+                                                    $docid = $row['LPAD(documents.docid,4,0)'];
+                                                    $docdatesubmit = $row['docdatesubmit'];
+                                                    $userid = ($row['fname'] . ' ' . $row['mname'] . ' ' . $row['lname']);
+                                                    $doctitle = $row['doctitle'];
+                                                    $docdesc = $row['docdesc'];
+                                                    $docstatus = $row['docstatus'];
+
+                                                    echo '<tr>'
+                                                    . '<td>' . $docid . '</td>'
+                                                    . '<td>' . $docdatesubmit . '</td>'
+                                                    . '<td>' . $userid . '</td>'
+                                                    . '<td>' . $doctitle . '</td>'
+                                                    . '<td>' . $docdesc . '</td>'
+                                                    . '<td>' . $docstatus . '</td>'
+                                                    . '<td>' . 'Edit Button' . '</td>';
+                                                }
+                                            }
+                                            ?>
+
+                                        </tbody>
+
+                                        <tfoot>
+                                            <tr>
+                                                <th>Document #</th>
+                                                <th>Date Submitted</th>
+                                                <th>Submitted By</th>
+                                                <th>Title</th>
+                                                <th>Description</th>
+                                                <th>Status</th>
+                                                <th>Edit Status</th>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+
+                        </div>
+
                     </div>
                 </main>
             </div>
@@ -244,8 +195,8 @@
         <!-- Bootstrap core JavaScript
         ================================================== -->
         <!-- Placed at the end of the document so the pages load faster -->
-        <script src="../../js/jquery-3.3.1.js" ></script>
-        <script>window.jQuery || document.write('<script src="../../js/jquery-3.3.1.js"><\/script>')</script>
+        <script src="../../js/jquery-3.3.1.js"></script>
+        <script>window.jQuery || document.write('<script src = "../../js/jquery-3.3.1.js"><\/script>')</script>
         <script src="../../js/popper.js"></script>
         <script src="../../js/bootstrap.min.js"></script>
 
@@ -255,35 +206,25 @@
             feather.replace()
         </script>
 
-        <!-- Graphs -->
-        <script src="../../js/Chart.min.js"></script>
+
+        <!-- DataTable js -->
+        <script src="../../DataTables/DataTables-1.10.16/js/jquery.dataTables.min.js"></script>
+        <script src="../../DataTables/DataTables-1.10.16/js/dataTables.bootstrap4.min.js"></script>
+        <script src="../../DataTables/Responsive-2.2.1/js/responsive.bootstrap4.min.js"></script>
+
+        <!-- DatatableButtons -->
+        <script src="../../DataTables/Buttons-1.5.1/js/dataTables.buttons.min.js"></script>
+        <script src="../../DataTables/Buttons-1.5.1/js/buttons.bootstrap4.min.js"></script>
+        <script src="../../DataTables/Buttons-1.5.1/js/buttons.flash.min.js"></script>
+        <script src="../../DataTables/JSZip-2.5.0/jszip.min.js"></script>
+        <script src="../../DataTables/pdfmake-0.1.32/pdfmake.min.js"></script>
+        <script src="../../DataTables/pdfmake-0.1.32/vfs_fonts.js"></script>
+        <script src="../../DataTables/Buttons-1.5.1/js/buttons.html5.min.js"></script>
+        <script src="../../DataTables/Buttons-1.5.1/js/buttons.print.min.js"></script>
+
         <script>
-            var ctx = document.getElementById("myChart");
-            var myChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-                    datasets: [{
-                            data: [15339, 21345, 18483, 24003, 23489, 24092, 12034],
-                            lineTension: 0,
-                            backgroundColor: 'transparent',
-                            borderColor: '#007bff',
-                            borderWidth: 4,
-                            pointBackgroundColor: '#007bff'
-                        }]
-                },
-                options: {
-                    scales: {
-                        yAxes: [{
-                                ticks: {
-                                    beginAtZero: false
-                                }
-                            }]
-                    },
-                    legend: {
-                        display: false,
-                    }
-                }
+            $(document).ready(function () {
+                $('#data_table').DataTable();
             });
         </script>
     </body>
