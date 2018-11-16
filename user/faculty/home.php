@@ -1,3 +1,26 @@
+<?php
+include '../../include/controller.php';
+
+if (isset($_SESSION['user_name']) && $_SESSION['role'] == "admin") {
+    header("location:/iicshd/user/admin/home.php");
+}
+if (isset($_SESSION['user_name']) && $_SESSION['role'] == "student") {
+    header("location:/iicshd/user/student/home.php");
+}
+if (isset($_SESSION['user_name'])) {
+
+    if ((time() - $_SESSION['last_time']) > 1200) {
+        header("Location:../../logout.php");
+    } else {
+        $_SESSION['last_time'] = time();
+    }
+}
+
+if (!isset($_SESSION['user_name'])) {
+    header("location:/iicshd/login.php");
+}
+?>
+
 <!doctype html>
 <html lang="en">
     <head>
@@ -12,6 +35,7 @@
         <!-- Bootstrap core CSS -->
         <link href="../../css/bootstrap.min.css" rel="stylesheet">
         <link href="../../css/dashboard.css" rel="stylesheet">
+        <link href="../../fa-5.5.0/css/fontawesome.css" rel="stylesheet">
 
         <!-- Font Awesome JS -->
         <script defer src="../../fa-5.5.0/js/solid.js"></script>
@@ -24,28 +48,29 @@
             <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#"><img src="../../img/logosolo.png"> IICS Help Desk</a>
             <ul class="navbar-nav px-3">
                 <li class="nav-item text-nowrap">
-                    <a class="nav-link" href="../../logout.php">
+                    <a style="font-size: 13px;" class="btn btn-danger" href="../../logout.php">
                         <span data-feather="log-out"></span>  Log Out
                     </a>
                 </li>
             </ul>
         </nav>
 
+
         <div class="container-fluid">
+
             <div class="row">
+
                 <nav class="col-md-2 d-none d-md-block bg-light sidebar">
-                    <div class="sidebar-sticky">
+                    <div class="sidebar sidebar-sticky">
                         <ul class="nav flex-column">
+                            <br>
+                            <center><span class="fas fa-6x fa-user-circle"></span><br><br>
+                                <h6 class="nav-item">Welcome, <?php echo $_SESSION['userid']; ?></h6>
+                            </center> 
                             <li class="nav-item">
                                 <a class="nav-link active" href="home.php">
                                     <span data-feather="home"></span>
                                     Home <span class="sr-only">(current)</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="documents.php">
-                                    <span data-feather="file-text"></span>
-                                    Documents
                                 </a>
                             </li>
                             <li class="nav-item">

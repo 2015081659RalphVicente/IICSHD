@@ -1,3 +1,27 @@
+
+<?php
+include '../../include/controller.php';
+
+if (isset($_SESSION['user_name']) && $_SESSION['role'] == "faculty") {
+    header("location:/iicshd/user/faculty/home.php");
+}
+if (isset($_SESSION['user_name']) && $_SESSION['role'] == "student") {
+    header("location:/iicshd/user/student/home.php");
+}
+if (isset($_SESSION['user_name'])) {
+
+    if ((time() - $_SESSION['last_time']) > 1200) {
+        header("Location:../../logout.php");
+    } else {
+        $_SESSION['last_time'] = time();
+    }
+}
+
+if (!isset($_SESSION['user_name'])) {
+    header("location:/iicshd/login.php");
+}
+?>
+
 <!doctype html>
 <html lang="en">
     <head>
@@ -12,6 +36,7 @@
         <!-- Bootstrap core CSS -->
         <link href="../../css/bootstrap.min.css" rel="stylesheet">
         <link href="../../css/dashboard.css" rel="stylesheet">
+        <link href="../../fa-5.5.0/css/fontawesome.css" rel="stylesheet">
 
         <!-- Font Awesome JS -->
         <script defer src="../../fa-5.5.0/js/solid.js"></script>
@@ -24,18 +49,25 @@
             <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#"><img src="../../img/logosolo.png"> IICS Help Desk</a>
             <ul class="navbar-nav px-3">
                 <li class="nav-item text-nowrap">
-                    <a class="nav-link" href="../../logout.php">
+                    <a style="font-size: 13px;" class="btn btn-danger" href="../../logout.php">
                         <span data-feather="log-out"></span>  Log Out
                     </a>
                 </li>
             </ul>
         </nav>
 
+
         <div class="container-fluid">
+
             <div class="row">
+
                 <nav class="col-md-2 d-none d-md-block bg-light sidebar">
-                    <div class="sidebar-sticky">
+                    <div class="sidebar sidebar-sticky">
                         <ul class="nav flex-column">
+                            <br>
+                            <center><span class="fas fa-6x fa-user-circle"></span><br><br>
+                                <h6 class="nav-item">Welcome, <?php echo $_SESSION['userid']; ?></h6>
+                            </center>
                             <li class="nav-item">
                                 <a class="nav-link" href="home.php">
                                     <span data-feather="home"></span>
@@ -99,148 +131,118 @@
                 <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
                     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                         <h1 class="h2">Queue</h1>
-                        <div class="btn-toolbar mb-2 mb-md-0">
-                            <div class="btn-group mr-2">
-                                <button class="btn btn-sm btn-outline-secondary">Share</button>
-                                <button class="btn btn-sm btn-outline-secondary">Export</button>
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-6 col-lg-6">
+                            <div class="card">
+                                <div class="card-header  bg-info text-white">
+                                    <center><h5>Now Serving</h5></center>
+                                </div>
+                                <div class="card-body">
+                                    <div style="align: center;">
+                                        <center><h1>0001</h1></center>
+                                        <hr>
+                                        <p><b>Student Number:</b> 2015081659</p>
+                                        <p><b>Student Name:</b> Ralph Angelo C. Vicente</p>
+                                        <p><b>Transaction Type:</b> Document Inquiry</p>
+                                    </div>
+                                    <hr>
+                                    <div class="row">
+
+                                        <div class="col-sm-4">
+                                            <form action="" post="method">
+                                                <div class="card">
+                                                    <button>
+                                                        <div class="card-header">
+                                                            <center><span class="fas fa-3x fa-volume-up"></span></center>
+                                                        </div>
+                                                        <div class="card-title">
+                                                            Call Again
+                                                        </div>
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+
+                                        <div class="col-sm-4">
+                                            <form action="" post="method">
+                                                <div class="card">
+                                                    <button>
+                                                        <div class="card-header">
+                                                            <center><span class="fas fa-3x fa-times"></span></center>
+                                                        </div>
+                                                        <div class="card-title">
+                                                            No-Show
+                                                        </div>
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+
+                                        <div class="col-sm-4">
+                                            <form action="" post="method">
+                                                <div class="card">
+                                                    <button>
+                                                        <div class="card-header">
+                                                            <center><span class="fas fa-3x fa-arrow-right"></span></center>
+                                                        </div>
+                                                        <div class="card-title">
+                                                            Next
+                                                        </div>
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle">
-                                <span data-feather="calendar"></span>
-                                This week
-                            </button>
                         </div>
+
+                        <div class="col-2 col-sm-2">
+                            <div class="card">
+                                <div class="card-header  bg-dark text-white">
+                                    <center><h5>Waiting</h5></center>
+                                </div>
+                                <div class="card-body">
+                                    <center><h2>0001</h2></center>
+                                    <hr>
+                                    <center><h2>0002</h2></center>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="col-2 col-sm-2">
+                            <div class="card">
+                                <div class="card-header  bg-danger text-white">
+                                    <center><h5>No-Show</h5></center>
+                                </div>
+                                <div class="card-body">
+                                    <center><h2>0001</h2></center>
+                                    <hr>
+                                    <center><h2>0002</h2></center>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="col-2 col-sm-2">
+                            <div class="card">
+                                <div class="card-header  bg-success text-white">
+                                    <center><h5>Done</h5></center>
+                                </div>
+                                <div class="card-body">
+                                    <center><h2>0001</h2></center>
+                                    <hr>
+                                    <center><h2>0002</h2></center>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
 
-                    <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas>
-
-                    <h2>Table Examples</h2>
-                    <div class="table-responsive">
-                        <table class="table table-striped table-sm">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Header</th>
-                                    <th>Header</th>
-                                    <th>Header</th>
-                                    <th>Header</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>1,001</td>
-                                    <td>Lorem</td>
-                                    <td>ipsum</td>
-                                    <td>dolor</td>
-                                    <td>sit</td>
-                                </tr>
-                                <tr>
-                                    <td>1,002</td>
-                                    <td>amet</td>
-                                    <td>consectetur</td>
-                                    <td>adipiscing</td>
-                                    <td>elit</td>
-                                </tr>
-                                <tr>
-                                    <td>1,003</td>
-                                    <td>Integer</td>
-                                    <td>nec</td>
-                                    <td>odio</td>
-                                    <td>Praesent</td>
-                                </tr>
-                                <tr>
-                                    <td>1,003</td>
-                                    <td>libero</td>
-                                    <td>Sed</td>
-                                    <td>cursus</td>
-                                    <td>ante</td>
-                                </tr>
-                                <tr>
-                                    <td>1,004</td>
-                                    <td>dapibus</td>
-                                    <td>diam</td>
-                                    <td>Sed</td>
-                                    <td>nisi</td>
-                                </tr>
-                                <tr>
-                                    <td>1,005</td>
-                                    <td>Nulla</td>
-                                    <td>quis</td>
-                                    <td>sem</td>
-                                    <td>at</td>
-                                </tr>
-                                <tr>
-                                    <td>1,006</td>
-                                    <td>nibh</td>
-                                    <td>elementum</td>
-                                    <td>imperdiet</td>
-                                    <td>Duis</td>
-                                </tr>
-                                <tr>
-                                    <td>1,007</td>
-                                    <td>sagittis</td>
-                                    <td>ipsum</td>
-                                    <td>Praesent</td>
-                                    <td>mauris</td>
-                                </tr>
-                                <tr>
-                                    <td>1,008</td>
-                                    <td>Fusce</td>
-                                    <td>nec</td>
-                                    <td>tellus</td>
-                                    <td>sed</td>
-                                </tr>
-                                <tr>
-                                    <td>1,009</td>
-                                    <td>augue</td>
-                                    <td>semper</td>
-                                    <td>porta</td>
-                                    <td>Mauris</td>
-                                </tr>
-                                <tr>
-                                    <td>1,010</td>
-                                    <td>massa</td>
-                                    <td>Vestibulum</td>
-                                    <td>lacinia</td>
-                                    <td>arcu</td>
-                                </tr>
-                                <tr>
-                                    <td>1,011</td>
-                                    <td>eget</td>
-                                    <td>nulla</td>
-                                    <td>Class</td>
-                                    <td>aptent</td>
-                                </tr>
-                                <tr>
-                                    <td>1,012</td>
-                                    <td>taciti</td>
-                                    <td>sociosqu</td>
-                                    <td>ad</td>
-                                    <td>litora</td>
-                                </tr>
-                                <tr>
-                                    <td>1,013</td>
-                                    <td>torquent</td>
-                                    <td>per</td>
-                                    <td>conubia</td>
-                                    <td>nostra</td>
-                                </tr>
-                                <tr>
-                                    <td>1,014</td>
-                                    <td>per</td>
-                                    <td>inceptos</td>
-                                    <td>himenaeos</td>
-                                    <td>Curabitur</td>
-                                </tr>
-                                <tr>
-                                    <td>1,015</td>
-                                    <td>sodales</td>
-                                    <td>ligula</td>
-                                    <td>in</td>
-                                    <td>libero</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
                 </main>
             </div>
         </div>

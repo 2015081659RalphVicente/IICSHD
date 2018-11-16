@@ -1,5 +1,18 @@
 <?php
 require './include/controller.php';
+
+if (isset($_SESSION['resetpass']) && $_SESSION['resetpass'] == 0) {
+    if (isset($_SESSION['user_name']) && ($_SESSION['role'] == "admin")) {
+        header("location:/iicshd/user/admin/home.php");
+    } elseif (isset($_SESSION['user_name']) && $_SESSION['role'] == "student") {
+        header("location:/iicshd/user/student/home.php");
+    } elseif (isset($_SESSION['user_name']) && $_SESSION['role'] == "faculty") {
+        header("location:/iicshd/user/faculty/home.php");
+    } 
+} elseif (isset($_SESSION['resetpass']) && $_SESSION['resetpass'] == 1) {
+    session_unset();
+    session_destroy();
+}
 ?>
 
 <html>
@@ -27,10 +40,11 @@ require './include/controller.php';
 
             <center><img src="img/logo2.png"></center>
             <div align="center" class="container-fluid card card-container">
+                <?php echo $registerSuccess; ?>
                 <form class="form-signin" action="" method="POST">
                     <span id="reauth-email" class="reauth-email"></span>
-                    <p><input type="text" id="inputEmail" class="form-control" placeholder="Username" name="userid" autofocus></p>
-                    <p><input type="password" id="inputPassword" class="form-control" placeholder="Password" name = "password"></p>
+                    <p><input type="text" id="inputEmail" class="form-control" placeholder="User ID" name="userid" autofocus></p>
+                    <p><input type="password" id="inputPassword" class="form-control" placeholder="Password" name = "password"><?php echo $passwordErr; ?></p>
                     <button class="btn btn-lg btn-success btn-block btn-signin" type="submit" name="login">Log-In</button>
                 </form><!-- /form -->
                 <a href="#" class="forgot-password">
@@ -43,11 +57,7 @@ require './include/controller.php';
 
         </div><!-- /container -->
         <br>
-    <center><a href="user/admin/home.php">Admin Preview</a> |
-        <a href="user/faculty/home.php">Faculty Preview</a> |
-        <a href="user/student/home.php">Student Preview</a></center>
     <!-- form end -->
-    <br>
 
     <div class="container-fluid headerline">
         &nbsp;
