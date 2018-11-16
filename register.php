@@ -159,8 +159,8 @@ require './include/controller.php';
                                     <input type="text" class="form-control" placeholder="Answer *" value="" />
                                 </div>
                                 <div class="custom-control custom-checkbox form-group">
-                                    <input type="checkbox" class="custom-control-input" id="customCheck1">
-                                    <label class="custom-control-label" for="customCheck1">
+                                    <input type="checkbox" class="custom-control-input" id="customCheck2">
+                                    <label class="custom-control-label" for="customCheck2">
                                         I agree to the <a href="https://www.privacy.gov.ph/data-privacy-act/">R.A. 10173 (Data Privacy Act of 2012)</a> and I hereby confirm that the information given in this form is true, complete and accurate.
                                     </label>
                                 </div>

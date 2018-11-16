@@ -115,9 +115,9 @@ include '../../include/controller.php';
                     <div class="accordion" id="accordionExample">
 
                         <div class="card">
-                            <div class="card-header bg-dark" id="headingOne">
+                            <div class="card-header" id="headingOne">
                                 <h5 class="mb-0">
-                                    <button class="btn btn-success" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
                                         <span class="fas fa-plus-circle"></span> New Submissions
                                     </button>
                                 </h5>
@@ -225,6 +225,14 @@ include '../../include/controller.php';
         <script>
             $(document).ready(function () {
                 $('#data_table').DataTable();
+            });
+        </script>
+
+        <script>
+            $('.collapse').on('shown.bs.collapse', function () {
+                $(this).parent().find(".fa-plus-circle").removeClass("fa-plus-circle").addClass("fa-minus-circle");
+            }).on('hidden.bs.collapse', function () {
+                $(this).parent().find(".fa-minus-circle").removeClass("fa-minus-circle").addClass("fa-plus-circle");
             });
         </script>
     </body>
