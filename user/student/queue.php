@@ -48,7 +48,9 @@ if (!isset($_SESSION['user_name'])) {
             <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#"><img src="../../img/logosolo.png"> IICS Help Desk</a>
             <ul class="navbar-nav px-3">
                 <li class="nav-item text-nowrap">
-                    <a style="font-size: 13px;" class="btn btn-danger" href="../../logout.php">
+                    <a style="font-size: 13px;" class="btn btn-danger" href="../../logout.php" onclick="if (!confirm('Are you sure you want to log out?')) {
+                                return false;
+                            }">
                         <span data-feather="log-out"></span>  Log Out
                     </a>
                 </li>
@@ -65,7 +67,7 @@ if (!isset($_SESSION['user_name'])) {
                         <ul class="nav flex-column">
                             <br>
                             <center><span class="fas fa-6x fa-user-circle"></span><br><br>
-                                <h6 class="nav-item">Welcome, <?php echo $_SESSION['userid']; ?></h6>
+                                <h6 class="nav-item">Welcome, <?php echo $_SESSION['user_name']; ?></h6>
                             </center> 
                             <li class="nav-item">
                                 <a class="nav-link" href="home.php">
@@ -192,21 +194,11 @@ if (!isset($_SESSION['user_name'])) {
 
                     <div class="row text-center">
 
-                        <div class="col-6 col-lg-3">
+                        <div class="col-6 col-lg-6">
                             <div class="card flex-fill">
-                                <div class="card-header bg-primary text-light rounded">Currently Serving</div>
+                                <div class="card-header bg-primary text-light rounded">Now Serving</div>
                                 <div class="card-footer">
                                     <h2 class="timer count-title count-number" data-to="100" data-speed="1500">N001</h2>
-                                </div>
-                            </div>
-                            <br>
-                        </div>
-
-                        <div class="col-6 col-lg-3">
-                            <div class="card flex-fill">
-                                <div class="card-header bg-danger text-light rounded">Up Next</div>
-                                <div class="card-footer">
-                                    <h2 class="timer count-title count-number" data-to="100" data-speed="1500">N002</h2>
                                 </div>
                             </div>
                             <br>

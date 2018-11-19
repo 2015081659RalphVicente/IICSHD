@@ -48,7 +48,9 @@ if (!isset($_SESSION['user_name'])) {
             <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#"><img src="../../img/logosolo.png"> IICS Help Desk</a>
             <ul class="navbar-nav px-3">
                 <li class="nav-item text-nowrap">
-                    <a style="font-size: 13px;" class="btn btn-danger" href="../../logout.php">
+                    <a style="font-size: 13px;" class="btn btn-danger" href="../../logout.php" onclick="if (!confirm('Are you sure you want to log out?')) {
+                                return false;
+                            }">
                         <span data-feather="log-out"></span>  Log Out
                     </a>
                 </li>
@@ -65,7 +67,7 @@ if (!isset($_SESSION['user_name'])) {
                         <ul class="nav flex-column">
                             <br>
                             <center><span class="fas fa-6x fa-user-circle"></span><br><br>
-                                <h6 class="nav-item">Welcome, <?php echo $_SESSION['userid']; ?></h6>
+                                <h6 class="nav-item">Welcome, <?php echo $_SESSION['user_name']; ?></h6>
                             </center> 
                             <li class="nav-item">
                                 <a class="nav-link" href="home.php">
@@ -126,8 +128,14 @@ if (!isset($_SESSION['user_name'])) {
                         <h1 class="h2">Room Schedule</h1>
                     </div>
 
+                    <div id="spinner">
+                        <div>
+                            <center><img src="../../img/loading.gif" /></center>
+                        </div>
+                    </div>
 
-                    <iframe style="border:none;" height="200%" width="100%" src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSab2wVyRg4pyarRUwsNmnXM-T92SOfpM_m5TCWGLzwOIQJxHrEs9gYpHhJtxbsj1-pnl_FToAsPZ6j/pubhtml?widget=true&amp;headers=false"></iframe>
+                    <iframe style="border:none;" 
+                            onload="document.getElementById('spinner').style.display = 'none';" height="200%" width="100%" src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSab2wVyRg4pyarRUwsNmnXM-T92SOfpM_m5TCWGLzwOIQJxHrEs9gYpHhJtxbsj1-pnl_FToAsPZ6j/pubhtml?widget=true&amp;headers=false"></iframe>
 
                 </main>
             </div>
@@ -144,39 +152,39 @@ if (!isset($_SESSION['user_name'])) {
         <!-- Icons -->
         <script src="../../js/feather.min.js"></script>
         <script>
-            feather.replace()
+                                feather.replace()
         </script>
 
         <!-- Graphs -->
         <script src="../../js/Chart.min.js"></script>
         <script>
-            var ctx = document.getElementById("myChart");
-            var myChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-                    datasets: [{
-                            data: [15339, 21345, 18483, 24003, 23489, 24092, 12034],
-                            lineTension: 0,
-                            backgroundColor: 'transparent',
-                            borderColor: '#007bff',
-                            borderWidth: 4,
-                            pointBackgroundColor: '#007bff'
-                        }]
-                },
-                options: {
-                    scales: {
-                        yAxes: [{
-                                ticks: {
-                                    beginAtZero: false
-                                }
-                            }]
-                    },
-                    legend: {
-                        display: false,
-                    }
-                }
-            });
+                                var ctx = document.getElementById("myChart");
+                                var myChart = new Chart(ctx, {
+                                    type: 'line',
+                                    data: {
+                                        labels: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+                                        datasets: [{
+                                                data: [15339, 21345, 18483, 24003, 23489, 24092, 12034],
+                                                lineTension: 0,
+                                                backgroundColor: 'transparent',
+                                                borderColor: '#007bff',
+                                                borderWidth: 4,
+                                                pointBackgroundColor: '#007bff'
+                                            }]
+                                    },
+                                    options: {
+                                        scales: {
+                                            yAxes: [{
+                                                    ticks: {
+                                                        beginAtZero: false
+                                                    }
+                                                }]
+                                        },
+                                        legend: {
+                                            display: false,
+                                        }
+                                    }
+                                });
         </script>
     </body>
 </html>

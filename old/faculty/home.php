@@ -282,90 +282,75 @@ if (isset($_POST['deletepost'])) {
                                 </h5>
                             </div>
 
-
                             <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
-                                
-                                <div class="alert alert-warning alert-dismissible" role="alert">
-                                    <p style="font-size: 15px;"><strong>Note: </strong>You can manage each post by clicking the <span class="fas fa-edit"></span> button. 
-                                </div>
-                                
                                 <div class="card-body">
-                                    <div class="row">
-                                        <?php
-                                        $announceSelect = "SELECT announcements.annno, announcements.anntitle, announcements.anndesc, announcements.anndate, announcements.userno, users.fname, users.mname, users.lname FROM announcements LEFT JOIN users ON users.userno = announcements.userno WHERE announcements.hidden = '0' AND announcements.userno = '" . $_SESSION['userno'] . "' ORDER BY announcements.annno DESC";
-                                        $result = $conn->query($announceSelect);
+                                    <?php
+                                    $announceSelect = "SELECT announcements.annno, announcements.anntitle, announcements.anndesc, announcements.anndate, announcements.userno, users.fname, users.mname, users.lname FROM announcements LEFT JOIN users ON users.userno = announcements.userno WHERE announcements.hidden = '0' AND announcements.userno = '" . $_SESSION['userno'] . "' ORDER BY announcements.annno DESC";
+                                    $result = $conn->query($announceSelect);
 
-                                        if ($result->num_rows > 0) {
-                                            while ($row = $result->fetch_assoc()) {
-                                                $annno = $row['annno'];
-                                                $anntitle = $row['anntitle'];
-                                                $anndesc = $row['anndesc'];
-                                                $anndate = $row['anndate'];
-                                                $usercreated = ($row['fname'] . ' ' . $row['mname'] . ' ' . $row['lname']);
+                                    if ($result->num_rows > 0) {
+                                        while ($row = $result->fetch_assoc()) {
+                                            $annno = $row['annno'];
+                                            $anntitle = $row['anntitle'];
+                                            $anndesc = $row['anndesc'];
+                                            $anndate = $row['anndate'];
+                                            $usercreated = ($row['fname'] . ' ' . $row['mname'] . ' ' . $row['lname']);
 
-                                                echo '                           
-                                                        <div class="col-md-4">
-                                                            <div class="card">
-                                                                <div class="card-header bg-dark text-white">
-                                                                    <h6>Announcement
-                                                                    <div style="float: right;" class="btn-group" role="group">
-                                                                        <a href="#edit' . $annno . '" data-toggle="modal" title="Edit Post"><button type="button" class="btn btn-info btn-sm"><span class="fas fa-edit" aria-hidden="true"></span></button></a>
-                                                                    </div>
-                                                                    </h6>
-                                                                </div>
-                                                                <div class="card-body">
-                                                                    <h5 class="card-title">' . $anntitle . '</h5>
-                                                                    <p class="card-text" style="font-size: 12px;">' . $anndate . ' by ' . $usercreated . '</p>
-                                                                    <p class="card-text" style="font-size: 15px;">' . $anndesc . '</p>
-                                                                </div>
-                                                            </div>
+                                            echo '<div class="card">
+                                        <div class="card-header bg-dark text-white">
+                                            <h5>Announcement
+                                            <div style="float: right;" class="btn-group" role="group">
+                                                <a href="#edit' . $annno . '" data-toggle="modal" title="Edit Post"><button type="button" class="btn btn-outline-info btn-sm"><span class="fas fa-edit" aria-hidden="true"></span></button></a>
+                                            </div>
+                                            </h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <h5 class="card-title">' . $anntitle . '</h5>
+                                            <p class="card-text" style="font-size: 12px;">' . $anndate . ' by ' . $usercreated . '</p>
+                                            <p class="card-text" style="font-size: 15px;">' . $anndesc . '</p>
+                                        </div>
+                                  </div><br>';
+
+                                            echo '<div id="edit' . $annno . '" class="modal fade" role="dialog">
+                                    <form method="post">
+                                        <div class="modal-dialog modal-lg">
+                                            <!-- Modal content-->
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+
+                                                    <h4 class="modal-title">Edit Post</h4>
+                                                </div>
+
+                                                <div class="modal-body">
+                                                    <div class="row">
+                                                        <div class="col-sm-12">
+                                                            <strong><h5>Title: </h5></strong>
+                                                                <span><input type="text" class="form-control" name="edit_ann_title" value="' . $anntitle . '"></span>
                                                             <br>
+                                                            <strong><h5>Description: </h5></strong>
+                                                                <span><textarea rows="2" class="form-control" name="edit_ann_desc" required>' . $anndesc . '</textarea>
+                                                            <input type="hidden" name="edit_ann_no" value="' . $annno . '">
+                                                            <input type="hidden" name="delete_ann_no" value="' . $annno . '">
                                                         </div>
-                                                        <br>';
-
-                                                echo '<div id="edit' . $annno . '" class="modal fade" role="dialog">
-                                                        <form method="post">
-                                                            <div class="modal-dialog modal-lg">
-                                                                <!-- Modal content-->
-                                                                <div class="modal-content">
-                                                                    <div class="modal-header">
-
-                                                                        <h4 class="modal-title">Edit Post</h4>
-                                                                    </div>
-
-                                                                    <div class="modal-body">
-                                                                        <div class="alert alert-danger alert-dismissible" role="alert">
-                                                                            <p style="font-size: 15px;"><strong>Note: </strong>Deleting a post will send it to your <a href="account.php">archives</a> for tracking purposes. 
-                                                                        </div>
-                                                                        <div class="row">
-                                                                            <div class="col-sm-12">
-                                                                                <strong><h5>Title: </h5></strong>
-                                                                                    <span><input type="text" class="form-control" name="edit_ann_title" value="' . $anntitle . '"></span>
-                                                                                <br>
-                                                                                <strong><h5>Description: </h5></strong>
-                                                                                    <span><textarea rows="2" class="form-control" name="edit_ann_desc" required>' . $anndesc . '</textarea>
-                                                                                <input type="hidden" name="edit_ann_no" value="' . $annno . '">
-                                                                                <input type="hidden" name="delete_ann_no" value="' . $annno . '">
-                                                                            </div>
-                                                                        </div>
-                                                                        <br>
-                                                                        <div class="modal-footer">
-                                                                            <button style="float: left;" type="submit" name="deletepost" class="btn btn-danger btn-m"><span class="fas fa-trash"></span> Delete Post</button>
-                                                                            <button style="float: right;" type="submit" name="editpost" class="btn btn-info btn-m"><span class="fas fa-check" ></span> Save Changes</button>
-                                                                            <button style="float: right;" type="button" class="btn btn-secondary btn-m" data-dismiss="modal"><span class="fas fa-times"></span> Cancel</button>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </form>
-                                                    </div>';
-                                            }
+                                                    </div>
+                                                    <br>
+                                                    <div class="modal-footer">
+                                                        <button style="float: left;" type="submit" name="deletepost" class="btn btn-danger btn-m"><span class="fas fa-trash"></span> Delete Post</button>
+                                                        <button style="float: right;" type="submit" name="editpost" class="btn btn-info btn-m"><span class="fas fa-check" ></span> Save Changes</button>
+                                                        <button style="float: right;" type="button" class="btn btn-secondary btn-m" data-dismiss="modal"><span class="fas fa-times"></span> Cancel</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>';
                                         }
-                                        ?>
-                                    </div>
+                                    }
+                                    ?>
                                 </div>
                             </div>
                         </div>
+
                     </div>
 
                     <br>
@@ -384,8 +369,8 @@ if (isset($_POST['deletepost'])) {
 
                             echo '<div class="card">
                                         <div class="card-header bg-dark text-white">
-                                            <h6>Announcement
-                                            </h6>
+                                            <h5>Announcement
+                                            </h5>
                                         </div>
                                         <div class="card-body">
                                             <h5 class="card-title">' . $anntitle . '</h5>

@@ -1,6 +1,24 @@
 <?php
 require './include/controller.php';
 
+if (isset($_SESSION['user_name']) && $_SESSION['role'] == "admin") {
+    header("location:/iicshd/user/admin/home.php");
+}
+if (isset($_SESSION['user_name']) && $_SESSION['role'] == "faculty") {
+    header("location:/iicshd/user/faculty/home.php");
+}
+if (isset($_SESSION['user_name']) && $_SESSION['role'] == "student") {
+    header("location:/iicshd/user/student/home.php");
+}
+if (isset($_SESSION['user_name'])) {
+
+    if ((time() - $_SESSION['last_time']) > 1200) {
+        header("Location:../../logout.php");
+    } else {
+        $_SESSION['last_time'] = time();
+    }
+}
+
 $studnum = $studfname = $studmname = $studlname = $studsection = $studemail = $studpass = $studconfpass = $studsecq = $studsecans = $studrole = $forgot = $hidden = "";
 $empnum = $empfname = $empmname = $emplname = $empsection = $empemail = $emppass = $empconfpass = $empsecq = $empsecans = $emprole = $forgot = $hidden = "";
 $tab1 = $tab2 = $studnumErr = $empnumErr = $numErr = $numErr2 = $firstErr = $firstErr2 = $midErr = $midErr2 = $lastErr = $lastErr2 = $emailErr = $emailErr2 = $confirmErr = $confirmErr2 = $passwordErr = $passwordErr2 = "";
@@ -92,7 +110,7 @@ if (isset($_POST['studRegister'])) {
         $sqladd->execute();
         $sqladd->close();
 
-//        //PANG LOGS
+//        LOGS
 //        $perval = 'Personnel ID: ' . $newpid . ', ' . $newpfname . ' ' . $newpmname . ' ' . $newplname . ' (' . $newrole . '), ' . $newperteam . ' Team';
 //
 //        $peraction = "Add Personnel (For Activation)";
@@ -102,7 +120,8 @@ if (isset($_POST['studRegister'])) {
 //        $logper->execute();
 //        $logper->close();
 
-        header("Location: register.php");
+        $_SESSION['param'] = "registerSuccess";
+        header("Location: success.php");
         exit;
     } else {
         $_SESSION['tab'] = '1';
@@ -195,7 +214,7 @@ if (isset($_POST['empRegister'])) {
         $sqladd->execute();
         $sqladd->close();
 
-//        //PANG LOGS
+//        LOGS
 //        $perval = 'Personnel ID: ' . $newpid . ', ' . $newpfname . ' ' . $newpmname . ' ' . $newplname . ' (' . $newrole . '), ' . $newperteam . ' Team';
 //
 //        $peraction = "Add Personnel (For Activation)";
@@ -205,7 +224,7 @@ if (isset($_POST['empRegister'])) {
 //        $logper->execute();
 //        $logper->close();
 
-        header("Location: register.php");
+        header("Location: success.php");
         exit;
     } else {
         $_SESSION['tab'] = '2';

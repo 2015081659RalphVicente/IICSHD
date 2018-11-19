@@ -49,7 +49,9 @@ if (!isset($_SESSION['user_name'])) {
             <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#"><img src="../../img/logosolo.png"> IICS Help Desk</a>
             <ul class="navbar-nav px-3">
                 <li class="nav-item text-nowrap">
-                    <a style="font-size: 13px;" class="btn btn-danger" href="../../logout.php">
+                    <a style="font-size: 13px;" class="btn btn-danger" href="../../logout.php" onclick="if (!confirm('Are you sure you want to log out?')) {
+                                return false;
+                            }">
                         <span data-feather="log-out"></span>  Log Out
                     </a>
                 </li>
@@ -66,7 +68,7 @@ if (!isset($_SESSION['user_name'])) {
                         <ul class="nav flex-column">
                             <br>
                             <center><span class="fas fa-6x fa-user-circle"></span><br><br>
-                                <h6 class="nav-item">Welcome, <?php echo $_SESSION['userid']; ?></h6>
+                                <h6 class="nav-item">Welcome, <?php echo $_SESSION['user_name']; ?></h6>
                             </center>
                             <li class="nav-item">
                                 <a class="nav-link" href="home.php">

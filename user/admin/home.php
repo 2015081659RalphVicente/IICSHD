@@ -20,6 +20,129 @@ if (isset($_SESSION['user_name'])) {
 if (!isset($_SESSION['user_name'])) {
     header("location:/iicshd/index.php");
 }
+
+$postFailed = "";
+
+//create announcement
+if (isset($_POST['postAnnouncement'])) {
+    $pTitle = clean($_POST["pTitle"]);
+    $pDesc = clean($_POST["pDesc"]);
+
+    $announceSql = $conn->prepare("INSERT INTO announcements VALUES ('', ?, ?, NOW(), ?, '0')");
+    $announceSql->bind_param("ssi", $pTitle, $pDesc, $_SESSION['userno']);
+
+    if ($announceSql == TRUE) {
+
+        $announceSql->execute();
+        $announceSql->close();
+
+        header("Location: home.php");
+        exit;
+    } else {
+        $postFailed = '<div class="alert alert-danger">
+                        Post Failed!
+                        </div>';
+    }
+}
+
+//edit announcement
+if (isset($_POST['editpost'])) {
+    $edit_ann_title = clean($_POST['edit_ann_title']);
+    $edit_ann_no = $_POST['edit_ann_no'];
+    $edit_ann_desc = $_POST['edit_ann_desc'];
+
+
+//    $oldcatval=$conn->prepare("SELECT * FROM propcategory WHERE PROPCATNO=?");
+//    $oldcatval->bind_param("i",$edit_id);
+//    $oldcatval->execute();
+//    $oldcatvalresult=$oldcatval->get_result();
+//
+//    $row = $oldcatvalresult->fetch_assoc();
+//
+//    $oldpropcatno=$row['PROPCATNO'];
+//    $oldpropcat=$row['PROPCAT'];
+//
+//    $oldcatvalfinal= implode("**",array($oldpropcatno,$oldpropcat));
+    //   $query="UPDATE propcategory SET PROPCAT='$edit_category_name' WHERE PROPCATNO='$edit_id'";
+    $editquery = $conn->prepare("UPDATE announcements SET anntitle=?, anndesc=?, anndate=NOW(), userno=? WHERE annno=?");
+    $editquery->bind_param("ssii", $edit_ann_title, $edit_ann_desc, $_SESSION['userno'], $edit_ann_no);
+    $editquery->execute();
+    $editquery->close();
+//
+//
+//    $newcatval=$conn->prepare("SELECT * FROM propcategory WHERE PROPCATNO=?");
+//    $newcatval->bind_param("i",$edit_id);
+//    $newcatval->execute();
+//    $newcatvalresult=$newcatval->get_result();
+//    $rownew = $newcatvalresult->fetch_array(MYSQLI_ASSOC);
+//
+//    $newcatvalfinal= implode("**",$row);
+//
+//    $actiondesc="Updated Category  ";
+//
+//    $elogadd=$conn->prepare("INSERT INTO editlogs VALUES('',NOW(),?,?,?,?)");
+//    $elogadd->bind_param("ssss",$_SESSION['user_name'],$oldcatvalfinal,$newcatvalfinal,$actiondesc);
+//    $elogadd->execute();
+//    $elogadd->close();
+
+    if ($editquery == TRUE) {
+
+        header("location: home.php");
+        exit;
+    } else {
+        echo "Update failed.";
+    }
+}
+
+//delete announcement
+if (isset($_POST['deletepost'])) {
+    $delete_id = $_POST['delete_ann_no'];
+
+    $check = $conn->prepare("SELECT * FROM announcements WHERE annno=?");
+    $check->bind_param("i", $delete_id);
+    $check->execute();
+    $checkprop = $check->get_result();
+    $check->close();
+
+    $deletequery = $conn->prepare("UPDATE announcements SET userno=?, hidden = '1' WHERE annno=?");
+    $deletequery->bind_param("ii", $_SESSION['userno'], $delete_id);
+
+
+    if ($deletequery == TRUE) {
+
+//            $oldcatquery = $conn->prepare("SELECT * FROM propcategory WHERE PROPCATNO=?");
+//            $oldcatquery->bind_param("i", $delete_id);
+//            $oldcatquery->execute();
+//            $oldcatqueryresult = $oldcatquery->get_result();
+//
+//
+//            $row = $oldcatqueryresult->fetch_assoc(MYSQLI_ASSOC);
+//
+//
+//            $oldcatvalfinal = implode("**", $row);
+//
+//
+//
+//
+//            $actiondesc = "Deleted Category";
+//
+//            $elogadd = $conn->prepare("INSERT INTO editlogs VALUES('',NOW(),?,?,'-',?)");
+//            $elogadd->bind_param("sss", $_SESSION['user_name'], $oldcatvalfinal, $actiondesc);
+//            $elogadd->execute();
+//            $elogadd->close();
+//
+
+        $deletequery->execute();
+
+        header("location: home.php");
+        exit;
+    } else {
+//            $_SESSION['tabedit'] = '5';
+        echo "Delete failed.";
+        //ERROR HANDLING
+        //header("location: adminAddSuccess.php"); 
+    }
+}
 ?>
 
 <!doctype html>
@@ -42,6 +165,11 @@ if (!isset($_SESSION['user_name'])) {
         <!-- Font Awesome JS -->
         <script defer src="../../fa-5.5.0/js/solid.js"></script>
         <script defer src="../../fa-5.5.0/js/fontawesome.js"></script>
+
+        <!-- DataTable-->
+        <link rel="stylesheet" href="../../DataTables/DataTables-1.10.16/css/dataTables.bootstrap4.min.css">
+        <link rel="stylesheet" href="../../DataTables/Responsive-2.2.1/css/responsive.bootstrap4.min.css">
+        <link rel="stylesheet" href="../../DataTables/Buttons-1.5.1/css/buttons.dataTables.min.css">
     </head>
 
     <body>
@@ -50,7 +178,9 @@ if (!isset($_SESSION['user_name'])) {
             <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#"><img src="../../img/logosolo.png"> IICS Help Desk</a>
             <ul class="navbar-nav px-3">
                 <li class="nav-item text-nowrap">
-                    <a style="font-size: 13px;" class="btn btn-danger" href="../../logout.php">
+                    <a style="font-size: 13px;" class="btn btn-danger" href="../../logout.php" onclick="if (!confirm('Are you sure you want to log out?')) {
+                                return false;
+                            }">
                         <span data-feather="log-out"></span>  Log Out
                     </a>
                 </li>
@@ -67,7 +197,7 @@ if (!isset($_SESSION['user_name'])) {
                         <ul class="nav flex-column">
                             <br>
                             <center><span class="fas fa-6x fa-user-circle"></span><br><br>
-                                <h6 class="nav-item">Welcome, <?php echo $_SESSION['userid']; ?></h6>
+                                <h6 class="nav-item">Welcome, <?php echo $_SESSION['user_name']; ?></h6>
                             </center>                   
                             <li class="nav-item">
                                 <a class="nav-link active" href="home.php">
@@ -134,6 +264,8 @@ if (!isset($_SESSION['user_name'])) {
                         <h1 class="h2">Home</h1>
                     </div>
 
+                    <?php echo $postFailed; ?>
+
                     <div class="accordion" id="accordionExample">
 
                         <div class="card">
@@ -151,16 +283,16 @@ if (!isset($_SESSION['user_name'])) {
 
                                         <div class="form-group">
                                             <label for="title">Title <span class="require">*</span></label>
-                                            <input type="text" class="form-control" name="title" />
+                                            <input type="text" class="form-control" name="pTitle" required />
                                         </div>
 
                                         <div class="form-group">
                                             <label for="description">Description</label>
-                                            <textarea rows="2" class="form-control" name="description" ></textarea>
+                                            <textarea rows="2" class="form-control" name="pDesc" required ></textarea>
                                         </div>
 
                                         <div class="form-group">
-                                            <button style="float:right;" type="submit" class="btn btn-primary">
+                                            <button style="float:right;" type="submit" name="postAnnouncement" class="btn btn-primary">
                                                 Post
                                             </button>
                                         </div>
@@ -170,88 +302,207 @@ if (!isset($_SESSION['user_name'])) {
                             </div>
                         </div>
 
-                    </div>
+                            <div class="card">
+                                <div class="card-header" id="headingTwo">
+                                    <h5 class="mb-0">
+                                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                            <span class="fas fa-plus-circle"></span> My Announcements
+                                        </button>
+                                    </h5>
+                                </div>
 
-                    <br>
 
-                    <div class="card">
-                        <div class="card-header bg-dark text-white"><h6>Announcement</h6></div>
-                        <div class="card-body">
-                            <h5 class="card-title">Tiger Day</h5>
-                            <p class="card-text" style="font-size: 11px;">Tuesday, November 13, 2018 8:00:24 PM PHT by Noel Estrella</p>
-                            <p class="card-text">Yellow day on November 16-17, 2018.</p>
+                                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+
+                                    <div class="alert alert-warning alert-dismissible" role="alert">
+                                        <p style="font-size: 15px;"><strong>Note: </strong>You can manage each post by clicking the <span class="fas fa-edit"></span> button. 
+                                    </div>
+
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <?php
+                                            $announceSelect = "SELECT announcements.annno, announcements.anntitle, announcements.anndesc, announcements.anndate, announcements.userno, users.fname, users.mname, users.lname FROM announcements LEFT JOIN users ON users.userno = announcements.userno WHERE announcements.hidden = '0' AND announcements.userno = '" . $_SESSION['userno'] . "' ORDER BY announcements.annno DESC";
+                                            $result = $conn->query($announceSelect);
+
+                                            if ($result->num_rows > 0) {
+                                                while ($row = $result->fetch_assoc()) {
+                                                    $annno = $row['annno'];
+                                                    $anntitle = $row['anntitle'];
+                                                    $anndesc = $row['anndesc'];
+                                                    $anndate = $row['anndate'];
+                                                    $usercreated = ($row['fname'] . ' ' . $row['mname'] . ' ' . $row['lname']);
+
+                                                    echo '                           
+                                                        <div class="col-md-4">
+                                                            <div class="card">
+                                                                <div class="card-header bg-dark text-white">
+                                                                    <h6>Announcement
+                                                                    <div style="float: right;" class="btn-group" role="group">
+                                                                        <a href="#edit' . $annno . '" data-toggle="modal" title="Edit Post"><button type="button" class="btn btn-info btn-sm"><span class="fas fa-edit" aria-hidden="true"></span></button></a>
+                                                                    </div>
+                                                                    </h6>
+                                                                </div>
+                                                                <div class="card-body">
+                                                                    <h5 class="card-title">' . $anntitle . '</h5>
+                                                                    <p class="card-text" style="font-size: 12px;">' . $anndate . ' by ' . $usercreated . '</p>
+                                                                    <p class="card-text" style="font-size: 15px;">' . $anndesc . '</p>
+                                                                </div>
+                                                            </div>
+                                                            <br>
+                                                        </div>
+                                                        <br>';
+
+                                                    echo '<div id="edit' . $annno . '" class="modal fade" role="dialog">
+                                                        <form method="post">
+                                                            <div class="modal-dialog modal-lg">
+                                                                <!-- Modal content-->
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header">
+
+                                                                        <h4 class="modal-title">Edit Post</h4>
+                                                                    </div>
+
+                                                                    <div class="modal-body">
+                                                                        <div class="alert alert-danger alert-dismissible" role="alert">
+                                                                            <p style="font-size: 15px;"><strong>Note: </strong>Deleting a post will send it to your <a href="account.php">archives</a> for tracking purposes. 
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-sm-12">
+                                                                                <strong><h5>Title: </h5></strong>
+                                                                                    <span><input type="text" class="form-control" name="edit_ann_title" value="' . $anntitle . '"></span>
+                                                                                <br>
+                                                                                <strong><h5>Description: </h5></strong>
+                                                                                    <span><textarea rows="2" class="form-control" name="edit_ann_desc" required>' . $anndesc . '</textarea>
+                                                                                <input type="hidden" name="edit_ann_no" value="' . $annno . '">
+                                                                                <input type="hidden" name="delete_ann_no" value="' . $annno . '">
+                                                                            </div>
+                                                                        </div>
+                                                                        <br>
+                                                                        <div class="modal-footer">
+                                                                            <button style="float: left;" type="submit" name="deletepost" class="btn btn-danger btn-m"><span class="fas fa-trash"></span> Delete Post</button>
+                                                                            <button style="float: right;" type="submit" name="editpost" class="btn btn-info btn-m"><span class="fas fa-check" ></span> Save Changes</button>
+                                                                            <button style="float: right;" type="button" class="btn btn-secondary btn-m" data-dismiss="modal"><span class="fas fa-times"></span> Cancel</button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    </div>';
+                                                }
+                                            }
+                                            ?>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
+
+                        <br>
+
+                        <?php
+                        $announceSelect = "SELECT announcements.annno, announcements.anntitle, announcements.anndesc, announcements.anndate, announcements.userno, users.fname, users.mname, users.lname FROM announcements LEFT JOIN users ON users.userno = announcements.userno WHERE announcements.hidden = '0' ORDER BY announcements.annno DESC";
+                        $result = $conn->query($announceSelect);
+
+                        if ($result->num_rows > 0) {
+                            while ($row = $result->fetch_assoc()) {
+                                $annno = $row['annno'];
+                                $anntitle = $row['anntitle'];
+                                $anndesc = $row['anndesc'];
+                                $anndate = $row['anndate'];
+                                $usercreated = ($row['fname'] . ' ' . $row['mname'] . ' ' . $row['lname']);
+
+                                echo '<div class="card">
+                                        <div class="card-header bg-dark text-white">
+                                            <h6>Announcement</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <h5 class="card-title">' . $anntitle . '</h5>
+                                            <p class="card-text" style="font-size: 12px;">' . $anndate . ' by ' . $usercreated . '</p>
+                                            <p class="card-text" style="font-size: 15px;">' . $anndesc . '</p>
+                                        </div>
+                                  </div><br>';
+                            }
+                        }
+                        ?>
+
+
+                        <br>
+
+                        </main>
                     </div>
-
-                    <br>
-
-                    <div class="card">
-                        <div class="card-header bg-dark text-white"><h6>Announcement</h6></div>
-                        <div class="card-body">
-                            <h5 class="card-title">IICS INSTITUTIONAL MASS</h5>
-                            <p class="card-text" style="font-size: 11px;">Monday, November 12, 2018 8:07:20 PM PHT by Noel Estrella</p>
-                            <p class="card-text"><a href="https://docs.google.com/document/d/14uFqLXI_9dbHElkApPe215VusAJjANCYOLMgf1wcE9E/edit">IICS INSTITUTIONAL MASS</a> for the month of November 2018</p>
-                        </div>
-                    </div>
-
-                    <br>
-
-                </main>
             </div>
-        </div>
 
-        <!-- Bootstrap core JavaScript
-        ================================================== -->
-        <!-- Placed at the end of the document so the pages load faster -->
-        <script src="../../js/jquery-3.3.1.js" ></script>
-        <script>window.jQuery || document.write('<script src="../../js/jquery-3.3.1.js"><\/script>')</script>
-        <script src="../../js/popper.js"></script>
-        <script src="../../js/bootstrap.min.js"></script>
+            <!-- Bootstrap core JavaScript
+            ================================================== -->
+            <!-- Placed at the end of the document so the pages load faster -->
+            <script src="../../js/jquery-3.3.1.js" ></script>
+            <script>window.jQuery || document.write('<script src="../../js/jquery-3.3.1.js"><\/script>')</script>
+            <script src="../../js/popper.js"></script>
+            <script src="../../js/bootstrap.min.js"></script>
 
-        <!-- Icons -->
-        <script src="../../js/feather.min.js"></script>
-        <script>
-            feather.replace()
-        </script>
+            <!-- DataTable js -->
+            <script src="../../DataTables/DataTables-1.10.16/js/jquery.dataTables.min.js"></script>
+            <script src="../../DataTables/DataTables-1.10.16/js/dataTables.bootstrap4.min.js"></script>
+            <script src="../../DataTables/Responsive-2.2.1/js/responsive.bootstrap4.min.js"></script>
 
-        <!-- Graphs -->
-        <script src="../../js/Chart.min.js"></script>
-        <script>
-            var ctx = document.getElementById("myChart");
-            var myChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-                    datasets: [{
-                            data: [15339, 21345, 18483, 24003, 23489, 24092, 12034],
-                            lineTension: 0,
-                            backgroundColor: 'transparent',
-                            borderColor: '#007bff',
-                            borderWidth: 4,
-                            pointBackgroundColor: '#007bff'
-                        }]
-                },
-                options: {
-                    scales: {
-                        yAxes: [{
-                                ticks: {
-                                    beginAtZero: false
-                                }
-                            }]
-                    },
-                    legend: {
-                        display: false,
-                    }
-                }
-            });
-        </script>
+            <!-- DatatableButtons -->
+            <script src="../../DataTables/Buttons-1.5.1/js/dataTables.buttons.min.js"></script>
+            <script src="../../DataTables/Buttons-1.5.1/js/buttons.bootstrap4.min.js"></script>
+            <script src="../../DataTables/Buttons-1.5.1/js/buttons.flash.min.js"></script>
+            <script src="../../DataTables/JSZip-2.5.0/jszip.min.js"></script>
+            <script src="../../DataTables/pdfmake-0.1.32/pdfmake.min.js"></script>
+            <script src="../../DataTables/pdfmake-0.1.32/vfs_fonts.js"></script>
+            <script src="../../DataTables/Buttons-1.5.1/js/buttons.html5.min.js"></script>
+            <script src="../../DataTables/Buttons-1.5.1/js/buttons.print.min.js"></script>
+            <!-- Icons -->
+            <script src="../../js/feather.min.js"></script>
+            <script>
+                        feather.replace()
+            </script>
 
-        <script>
-            $('.collapse').on('shown.bs.collapse', function () {
-                $(this).parent().find(".fa-plus-circle").removeClass("fa-plus-circle").addClass("fa-minus-circle");
-            }).on('hidden.bs.collapse', function () {
-                $(this).parent().find(".fa-minus-circle").removeClass("fa-minus-circle").addClass("fa-plus-circle");
-            });
-        </script>
+            <script>
+                $(document).ready(function () {
+<?php
+$thisDate = date("m/d/Y");
+?>
+
+                    $('#myannouncements').DataTable({
+                        "bLengthChange": false,
+                        pageLength: 5,
+                        initComplete: function () {
+                            this.api().columns().every(function () {
+                                var column = this;
+                                var select = $('<select><option value="">Show all</option></select>')
+                                        .appendTo($(column.footer()).empty())
+                                        .on('change', function () {
+                                            var val = $.fn.dataTable.util.escapeRegex(
+                                                    $(this).val()
+                                                    );
+
+                                            column
+                                                    .search(val ? '^' + val + '$' : '', true, false)
+                                                    .draw();
+                                        });
+
+                                column.data().unique().sort().each(function (d, j) {
+                                    select.append('<option value="' + d + '">' + d + '</option>')
+                                });
+                            });
+                        }
+
+
+
+                    });
+                });
+
+            </script>
+
+            <script>
+                $('.collapse').on('shown.bs.collapse', function () {
+                    $(this).parent().find(".fa-plus-circle").removeClass("fa-plus-circle").addClass("fa-minus-circle");
+                }).on('hidden.bs.collapse', function () {
+                    $(this).parent().find(".fa-minus-circle").removeClass("fa-minus-circle").addClass("fa-plus-circle");
+                });
+            </script>
     </body>
 </html>

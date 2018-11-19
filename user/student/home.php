@@ -50,7 +50,9 @@ if (!isset($_SESSION['user_name'])) {
             <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#"><img src="../../img/logosolo.png"> IICS Help Desk</a>
             <ul class="navbar-nav px-3">
                 <li class="nav-item text-nowrap">
-                    <a style="font-size: 13px;" class="btn btn-danger" href="../../logout.php">
+                    <a style="font-size: 13px;" class="btn btn-danger" href="../../logout.php" onclick="if (!confirm('Are you sure you want to log out?')) {
+                                return false;
+                            }">
                         <span data-feather="log-out"></span>  Log Out
                     </a>
                 </li>
@@ -67,7 +69,7 @@ if (!isset($_SESSION['user_name'])) {
                         <ul class="nav flex-column">
                             <br>
                             <center><span class="fas fa-6x fa-user-circle"></span><br><br>
-                                <h6 class="nav-item">Welcome, <?php echo $_SESSION['userid']; ?></h6>
+                                <h6 class="nav-item">Welcome, <?php echo $_SESSION['user_name']; ?></h6>
                             </center> 
                             <li class="nav-item">
                                 <a class="nav-link active" href="home.php">
@@ -128,30 +130,32 @@ if (!isset($_SESSION['user_name'])) {
                         <h1 class="h2">Home</h1>
                     </div>
 
-                    <div class="row">
-                        <div class="col-md-12">
-                            <h4>Latest Updates</h4>
-                            <ul class="timeline">
-                                <li>
-                                    <a target="_blank" href="https://www.totoprayogo.com/#">New Web Design</a>
-                                    <a href="#" class="float-right">21 March, 2014</a>
-                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque scelerisque diam non nisi semper, et elementum lorem ornare. Maecenas placerat facilisis mollis. Duis sagittis ligula in sodales vehicula....</p>
-                                </li>
-                                <li>
-                                    <a href="#">21 000 Job Seekers</a>
-                                    <a href="#" class="float-right">4 March, 2014</a>
-                                    <p>Curabitur purus sem, malesuada eu luctus eget, suscipit sed turpis. Nam pellentesque felis vitae justo accumsan, sed semper nisi sollicitudin...</p>
-                                </li>
-                                <li>
-                                    <a href="#">Awesome Employers</a>
-                                    <a href="#" class="float-right">1 April, 2014</a>
-                                    <p>Fusce ullamcorper ligula sit amet quam accumsan aliquet. Sed nulla odio, tincidunt vitae nunc vitae, mollis pharetra velit. Sed nec tempor nibh...</p>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
+                    <?php
+                    $announceSelect = "SELECT announcements.annno, announcements.anntitle, announcements.anndesc, announcements.anndate, announcements.userno, users.fname, users.mname, users.lname FROM announcements LEFT JOIN users ON users.userno = announcements.userno WHERE announcements.hidden = '0' ORDER BY announcements.annno DESC";
+                    $result = $conn->query($announceSelect);
 
-                    <hr>
+                    if ($result->num_rows > 0) {
+                        while ($row = $result->fetch_assoc()) {
+                            $annno = $row['annno'];
+                            $anntitle = $row['anntitle'];
+                            $anndesc = $row['anndesc'];
+                            $anndate = $row['anndate'];
+                            $usercreated = ($row['fname'] . ' ' . $row['mname'] . ' ' . $row['lname']);
+
+                            echo '<div class="card">
+                                        <div class="card-header bg-dark text-white">
+                                            <h6>Announcement
+                                            </h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <h5 class="card-title">' . $anntitle . '</h5>
+                                            <p class="card-text" style="font-size: 12px;">' . $anndate . ' by ' . $usercreated . '</p>
+                                            <p class="card-text" style="font-size: 15px;">' . $anndesc . '</p>
+                                        </div>
+                                  </div><br>';
+                        }
+                    }
+                    ?>
 
                 </main>
             </div>
