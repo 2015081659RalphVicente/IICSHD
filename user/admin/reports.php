@@ -145,8 +145,6 @@ if (!isset($_SESSION['user_name'])) {
                         </div>
                     </div>
 
-                    <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas>
-
                     <h2>Table Examples</h2>
                     <div class="table-responsive">
                         <table class="table table-striped table-sm">

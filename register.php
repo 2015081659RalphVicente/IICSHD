@@ -21,7 +21,7 @@ if (isset($_SESSION['user_name'])) {
 
 $studnum = $studfname = $studmname = $studlname = $studsection = $studemail = $studpass = $studconfpass = $studsecq = $studsecans = $studrole = $forgot = $hidden = "";
 $empnum = $empfname = $empmname = $emplname = $empsection = $empemail = $emppass = $empconfpass = $empsecq = $empsecans = $emprole = $forgot = $hidden = "";
-$tab1 = $tab2 = $studnumErr = $empnumErr = $numErr = $numErr2 = $firstErr = $firstErr2 = $midErr = $midErr2 = $lastErr = $lastErr2 = $emailErr = $emailErr2 = $confirmErr = $confirmErr2 = $passwordErr = $passwordErr2 = "";
+$tab1 = $tab2 = $studnumErr = $empnumErr2 = $numErr = $numErr2 = $firstErr = $firstErr2 = $midErr = $midErr2 = $lastErr = $lastErr2 = $emailErr = $emailErr2 = $confirmErr = $confirmErr2 = $passwordErr = $passwordErr2 = "";
 
 
 //register student
@@ -51,31 +51,31 @@ if (isset($_POST['studRegister'])) {
     //validators
     if (!preg_match("/^[0-9]{10,10}$/", $studnum)) {
         $numErr = '<div class="alert alert-warning">
-                        Input must only be numbers and should have 10 digits.
+                        Input must contain numbers only and should have 10 digits.
     </div>';
         $updateBool = FALSE;
     }
     if (!preg_match("/^[a-zA-Z\ ]*$/", $studfname)) {
         $firstErr = '<div class="alert alert-warning">
-                        <strong>Wrong</strong> input! Input must only be characters.
+                        Input must contain letters only.
     </div>';
         $updateBool = FALSE;
     }
     if (!preg_match("/^[a-zA-Z\. ]*$/", $studmname)) {
         $midErr = '<div class="alert alert-warning">
-                       <strong>Wrong</strong> input! Input must only be characters.
+                       Input must contain a letter and a period (.)
     </div>';
         $updateBool = FALSE;
     }
     if (!preg_match("/^[a-zA-Z\ ]*$/", $studlname)) {
         $lastErr = '<div class="alert alert-warning">
-                        <strong>Wrong</strong> input! Input must only be characters.
+                        Input must contain letters only.
                         </div>';
         $updateBool = FALSE;
     }
     if (!preg_match("/^[a-zA-Z0-9_.+-]+@(?:(?:[a-zA-Z0-9-]+\.)?[a-zA-Z]+\.)?(ust)\.edu\.ph*$/", $studemail)) {
         $emailErr = '<div class="alert alert-warning">
-                        <strong>Wrong</strong> input! Use ust.edu.ph email instead.
+                        Please use your <em>ust.edu.ph</em> email address.
                         </div>';
         $updateBool = FALSE;
     }
@@ -87,13 +87,13 @@ if (isset($_POST['studRegister'])) {
     }
     if (!preg_match("/(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/", $studpass)) {
         $passwordErr = '<div class="alert alert-warning">
-                        <strong>Wrong</strong> input! Password must be atleast 8 characters long and must be a combination of uppercase letters, lowercase letters and numbers.
+                        Your password must be atleast 8 characters long and must be a combination of uppercase letters, lowercase letters and numbers.
                         </div>';
         $updateBool = FALSE;
     }
     if ($studpass != $studconfpass) {
         $confirmErr = '<div class="alert alert-warning">
-                        <strong>Password</strong> mismatch.
+                        Password does not match the confirm password.
                         </div>';
         $updateBool = FALSE;
     }
@@ -144,60 +144,60 @@ if (isset($_POST['empRegister'])) {
     $forgot = $hidden = "0";
 
     //checker
-    $pcheck = $conn->prepare("SELECT userid from users where userid=?");
-    $pcheck->bind_param("s", $empnum);
-    $pcheck->execute();
-    $resultpcheck = $pcheck->get_result();
-    $pcheck->close();
+    $echeck = $conn->prepare("SELECT userid from users where userid=?");
+    $echeck->bind_param("s", $empnum);
+    $echeck->execute();
+    $resultecheck = $echeck->get_result();
+    $echeck->close();
 
     $updateBool = TRUE;
 
     //validators
     if (!preg_match("/^[0-9]{10,10}$/", $empnum)) {
         $numErr2 = '<div class="alert alert-warning">
-                        Input must only be numbers and should have 10 digits.
+                        Input must contain numbers only and should have 10 digits.
     </div>';
         $updateBool = FALSE;
     }
     if (!preg_match("/^[a-zA-Z\ ]*$/", $empfname)) {
         $firstErr2 = '<div class="alert alert-warning">
-                        <strong>Wrong</strong> input! Input must only be characters.
+                        Input must contain letters only.
     </div>';
         $updateBool = FALSE;
     }
     if (!preg_match("/^[a-zA-Z\. ]*$/", $empmname)) {
         $midErr2 = '<div class="alert alert-warning">
-                       <strong>Wrong</strong> input! Input must only be characters.
+                       Input must contain a letter and a period (.)
     </div>';
         $updateBool = FALSE;
     }
     if (!preg_match("/^[a-zA-Z\ ]*$/", $emplname)) {
         $lastErr2 = '<div class="alert alert-warning">
-                        <strong>Wrong</strong> input! Input must only be characters.
+                        Input must contain letters only.
                         </div>';
         $updateBool = FALSE;
     }
     if (!preg_match("/^[a-zA-Z0-9_.+-]+@(?:(?:[a-zA-Z0-9-]+\.)?[a-zA-Z]+\.)?(ust)\.edu\.ph*$/", $empemail)) {
         $emailErr2 = '<div class="alert alert-warning">
-                        <strong>Wrong</strong> input! Use ust.edu.ph email instead.
+                        Please use your <em>ust.edu.ph</em> email address.
                         </div>';
         $updateBool = FALSE;
     }
-    if ($resultpcheck->num_rows > 0) {
-        $empnumErr2 = '<div class="alert alert-warning">
-                        <strong>Student Number</strong> already has an account.
+    if ($resultecheck->num_rows > 0) {
+        $empnumErr2 = '<div class="alert alert-danger">
+                        This user already has an account.
                         </div>';
         $updateBool = FALSE;
     }
     if (!preg_match("/(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/", $emppass)) {
         $passwordErr2 = '<div class="alert alert-warning">
-                        <strong>Wrong</strong> input! Password must be atleast 8 characters long and must be a combination of uppercase letters, lowercase letters and numbers.
+                        Password must be atleast 8 characters long and must be a combination of uppercase letters, lowercase letters and numbers.
                         </div>';
         $updateBool = FALSE;
     }
     if ($emppass != $empconfpass) {
         $confirmErr2 = '<div class="alert alert-warning">
-                        <strong>Password</strong> mismatch.
+                        Password does not match the confirm password.
                         </div>';
         $updateBool = FALSE;
     }
@@ -223,7 +223,8 @@ if (isset($_POST['empRegister'])) {
 //        $logper->bind_param("sss", $peraction, $_SESSION['user_name'], $perval);
 //        $logper->execute();
 //        $logper->close();
-
+        
+        $_SESSION['param'] = "registerSuccess";
         header("Location: success.php");
         exit;
     } else {
@@ -251,6 +252,12 @@ if (isset($_SESSION['tab'])) {
         <link rel="shortcut icon" href="img/favicon.png">
         <link rel="stylesheet" href="css/bootstrap.min.css">
         <link rel="stylesheet" href="css/style.css">
+
+        <style>
+            .form-text {
+                color: red;
+            }
+        </style>
 
     </head>
 
@@ -282,7 +289,8 @@ if (isset($_SESSION['tab'])) {
                     <div class="tabcontent" id="Student">
                         <p style="padding-top: 1px;"></p>
                         <h3>Register as Student</h3><hr>
-                        <form action="" method="POST">
+
+                        <form id="student-register" action="" method="POST">
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
@@ -340,7 +348,7 @@ if (isset($_SESSION['tab'])) {
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <input type="password" class="form-control" placeholder="Password *" value="" name="studpass" required/>
+                                        <input type="password" class="form-control" id = "studpass" placeholder="Password *" value="" name="studpass" required/>
                                         <?php echo $passwordErr; ?>
                                     </div>
                                     <div class="form-group">
@@ -376,13 +384,14 @@ if (isset($_SESSION['tab'])) {
                     <div class="tabcontent" id="Faculty">
                         <p style="padding-top: 1px;"></p>
                         <h3>Register as Faculty</h3><hr>
-                        <form action="" method="POST">
+
+                        <form id="faculty-register" action="" method="POST">
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <input type="text" class="form-control" placeholder="Employee Number *" value="<?php echo $empnum; ?>" name="empnum" required/>
                                         <?php
-                                        echo $empnumErr;
+                                        echo $empnumErr2;
                                         echo $numErr2;
                                         ?>
                                     </div>
@@ -413,7 +422,7 @@ if (isset($_SESSION['tab'])) {
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <input type="password" class="form-control" placeholder="Password *" value="" name="emppass" required/>
+                                        <input type="password" class="form-control" id="emppass" placeholder="Password *" value="" name="emppass" required/>
                                         <?php
                                         echo $passwordErr2;
                                         ?>
@@ -433,7 +442,7 @@ if (isset($_SESSION['tab'])) {
                                         </select>
                                     </div>
                                     <div class="form-group">
-                                        <input type="text" class="form-control" placeholder="Answer *" value="" name="empsecans" required/>
+                                        <input type="password" onfocusout="setAttribute('type', 'password');" onfocus="setAttribute('type', 'text');" class="form-control" placeholder="Answer *" value="" name="empsecans" required />
                                     </div>
                                     <div class="custom-control custom-checkbox form-group">
                                         <input type="checkbox" class="custom-control-input" name="customCheck2" id="customCheck2" required>
@@ -468,27 +477,34 @@ if (isset($_SESSION['tab'])) {
 
 </html>
 
+<!--jQuery Validation-->
+<script src="./js/jquery-3.3.1.js"></script>
+<script src="./js/jquery-validation-1.17.0/dist/jquery.validate.min.js"></script>
+<script src="./js/registervalidate.js"></script>
+
+
+
 <script>
-    function openTab(evt, cityName) {
-        // Declare all variables
-        var i, tabcontent, tablinks;
+                                            function openTab(evt, cityName) {
+                                                // Declare all variables
+                                                var i, tabcontent, tablinks;
 
-        // Get all elements with class="tabcontent" and hide them
-        tabcontent = document.getElementsByClassName("tabcontent");
-        for (i = 0; i < tabcontent.length; i++) {
-            tabcontent[i].style.display = "none";
-        }
+                                                // Get all elements with class="tabcontent" and hide them
+                                                tabcontent = document.getElementsByClassName("tabcontent");
+                                                for (i = 0; i < tabcontent.length; i++) {
+                                                    tabcontent[i].style.display = "none";
+                                                }
 
-        // Get all elements with class="tablinks" and remove the class "active"
-        tablinks = document.getElementsByClassName("tablinks");
-        for (i = 0; i < tablinks.length; i++) {
-            tablinks[i].className = tablinks[i].className.replace(" active", "");
-        }
+                                                // Get all elements with class="tablinks" and remove the class "active"
+                                                tablinks = document.getElementsByClassName("tablinks");
+                                                for (i = 0; i < tablinks.length; i++) {
+                                                    tablinks[i].className = tablinks[i].className.replace(" active", "");
+                                                }
 
-        // Show the current tab, and add an "active" class to the button that opened the tab
-        document.getElementById(cityName).style.display = "block";
-        evt.currentTarget.className += " active";
-    }
+                                                // Show the current tab, and add an "active" class to the button that opened the tab
+                                                document.getElementById(cityName).style.display = "block";
+                                                evt.currentTarget.className += " active";
+                                            }
 </script>
 <script>
     // Get the element with id="defaultOpen" and click on it

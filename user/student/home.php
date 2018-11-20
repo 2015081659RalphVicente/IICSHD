@@ -154,6 +154,8 @@ if (!isset($_SESSION['user_name'])) {
                                         </div>
                                   </div><br>';
                         }
+                    } else{
+                        echo "<h5>There are no announcements yet.</h5>";
                     }
                     ?>
 

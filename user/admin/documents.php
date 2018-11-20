@@ -19,6 +19,44 @@ if (isset($_SESSION['user_name'])) {
 if (!isset($_SESSION['user_name'])) {
     header("location:/iicshd/login.php");
 }
+
+//edit document
+if (isset($_POST['updatedoc'])) {
+    $edit_doc_no = $_POST['edit_doc_no'];
+    $docstatus = $_POST['edit_status'];
+
+    $editquery = $conn->prepare("UPDATE documents SET docstatus=?, docdatechange=NOW() WHERE docno=?");
+    $editquery->bind_param("si", $docstatus, $edit_doc_no);
+    $editquery->execute();
+    $editquery->close();
+
+    if ($editquery == TRUE) {
+
+        header("location: documents.php");
+        exit;
+    } else {
+        echo "Update failed.";
+    }
+}
+
+//edit announcement
+if (isset($_POST['updatedoc2'])) {
+    $edit_doc_no = $_POST['edit_doc_no2'];
+    $docstatus = $_POST['edit_status2'];
+
+    $editquery = $conn->prepare("UPDATE documents SET docstatus=?, docdatechange=NOW() WHERE docno=?");
+    $editquery->bind_param("si", $docstatus, $edit_doc_no);
+    $editquery->execute();
+    $editquery->close();
+
+    if ($editquery == TRUE) {
+
+        header("location: documents.php");
+        exit;
+    } else {
+        echo "Update failed.";
+    }
+}
 ?>
 
 <!doctype html>
@@ -54,8 +92,8 @@ if (!isset($_SESSION['user_name'])) {
             <ul class="navbar-nav px-3">
                 <li class="nav-item text-nowrap">
                     <a style="font-size: 13px;" class="btn btn-danger" href="../../logout.php" onclick="if (!confirm('Are you sure you want to log out?')) {
-                                return false;
-                            }">
+                        return false;
+                        }">
                         <span data-feather="log-out"></span>  Log Out
                     </a>
                 </li>
@@ -158,39 +196,173 @@ if (!isset($_SESSION['user_name'])) {
 
                                         <thead>
                                             <tr>
+                                                <th>Edit</th>
                                                 <th>Document #</th>
                                                 <th>Date Submitted</th>
                                                 <th>Submitted By</th>
                                                 <th>Title</th>
-                                                <th>Description</th>
                                                 <th>Status</th>
-                                                <th>Edit Status</th>
                                             </tr>
                                         </thead>
 
                                         <tbody>
 
                                             <?php
-                                            $newsubquery = mysqli_query($conn, "SELECT LPAD(documents.docid,4,0), documents.docdatesubmit, users.fname, users.mname, users.lname, documents.doctitle,"
-                                                    . "documents.docdesc, documents.docstatus FROM documents INNER JOIN users WHERE documents.userid = users.userid AND documents.docstatus = 'Submitted'");
+                                            $newsubquery = mysqli_query($conn, "SELECT LPAD(documents.docno,4,0), documents.docdatesubmit, users.fname, users.mname, users.lname, documents.doctitle,"
+                                                    . "documents.docdesc, documents.docstatus FROM documents INNER JOIN users WHERE documents.userno = users.userno AND documents.docstatus = 'Submitted' AND documents.hidden = '0'");
 
                                             if ($newsubquery->num_rows > 0) {
                                                 while ($row = $newsubquery->fetch_assoc()) {
-                                                    $docid = $row['LPAD(documents.docid,4,0)'];
+                                                    $docid = $row['LPAD(documents.docno,4,0)'];
                                                     $docdatesubmit = $row['docdatesubmit'];
                                                     $userid = ($row['fname'] . ' ' . $row['mname'] . ' ' . $row['lname']);
                                                     $doctitle = $row['doctitle'];
                                                     $docdesc = $row['docdesc'];
                                                     $docstatus = $row['docstatus'];
 
-                                                    echo '<tr>'
-                                                    . '<td>' . $docid . '</td>'
-                                                    . '<td>' . $docdatesubmit . '</td>'
-                                                    . '<td>' . $userid . '</td>'
-                                                    . '<td>' . $doctitle . '</td>'
-                                                    . '<td>' . $docdesc . '</td>'
-                                                    . '<td>' . $docstatus . '</td>'
-                                                    . '<td>' . 'Edit Button' . '</td>';
+                                                    echo "<tr>"
+                                                    . "<td>" . "<a href='#edit" . $docid . "'data-toggle='modal'><button type='button' class='btn btn-info btn-sm' title='Edit'><span class='fas fa-edit' aria-hidden='true'></span></button></a>" . "</td>"
+                                                    . "<td>" . $docid . "</td>"
+                                                    . "<td>" . $docdatesubmit . "</td>"
+                                                    . "<td>" . $userid . "</td>"
+                                                    . "<td>" . $doctitle . "</td>"
+                                                    . "<td>" . $docstatus . "</td>";
+                                                    ?>
+                                                    <?php
+                                                    echo '<div id="edit' . $docid . '" class="modal fade" role="dialog">
+                                                            <form method="post">
+                                                                <div class="modal-dialog modal-lg">
+                                                                    <!-- Modal content-->
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-header">
+
+                                                                            <h4 class="modal-title">Edit Document #' . $docid . '</h4>
+                                                                        </div>
+
+                                                                        <div class="modal-body">
+                                                                            <div class="row">
+                                                                                <div class="col-sm-12">
+                                                                                    <input type="hidden" name="edit_doc_no" value="' . $docid . '">
+                                                                                    <input type="hidden" name="delete_doc_no" value="' . $docid . '">
+                                                                                    <p><strong>Document Title: </strong>' . $doctitle . '</p>
+                                                                                    <p><strong>Description: </strong>' . $docdesc . '</p>
+                                                                                    <p><strong>Date Submitted: </strong>' . $docdatesubmit . '</p>
+                                                                                    <p><strong>Submitted By: </strong>' . $userid . '</p> 
+                                                                                    <strong>Update Status: </strong><select name="edit_status" id="edit_status">
+                                                                                    <option value="Submitted"';
+                                                    if ($docstatus == 'Submitted') {
+                                                        echo "selected";
+                                                    } echo' disabled >Submitted
+                                                                                    </option>
+                                                                                    <option value="Received"';
+                                                    if ($docstatus == 'Received') {
+                                                        echo "selected";
+                                                    } echo' >Received
+                                                                                    </option>
+                                                                                    <option value="On-Process"';
+                                                    if ($docstatus == 'On-Process') {
+                                                        echo "selected";
+                                                    } echo'>On-Process
+                                                                                    </option>
+                                                                                    <option value="Processed"';
+                                                    if ($docstatus == 'Processed') {
+                                                        echo "selected";
+                                                    } echo'>Processed
+                                                                                    </option>
+                                                                                    <option value="Pending"';
+                                                    if ($docstatus == 'Released') {
+                                                        echo "selected";
+                                                    } echo'>Released
+                                                                                    </option>
+                                                                                    <option value="Not Received"';
+                                                    if ($docstatus == 'Not Received') {
+                                                        echo "selected";
+                                                    } echo'>Not Received
+                                                                                    </option>
+                                                                                    </select>
+                                                                                </div>
+                                                                            </div>
+                                                                            <br>
+                                                                            <div class="modal-footer">
+                                                                                <button style="float: right;" type="submit" name="updatedoc" class="btn btn-info btn-m"><span class="fas fa-clipboard-check" ></span> Save Changes</button>
+                                                                                <button style="float: right;" type="button" class="btn btn-secondary btn-m" data-dismiss="modal"><span class="fas fa-times"></span> Cancel</button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </form>
+                                                        </div>';
+                                                }
+                                            }
+                                            ?>
+
+                                        </tbody>
+
+                                        <tfoot>
+                                            <tr>
+                                                <th>Edit</th>
+                                                <th>Document #</th>
+                                                <th>Date Submitted</th>
+                                                <th>Submitted By</th>
+                                                <th>Title</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                    <br>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header" id="headingTwo">
+                                <h5 class="mb-0">
+                                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                        <span class="fas fa-plus-circle"></span> Archived Documents
+                                    </button>
+                                </h5>
+                            </div>
+
+
+                            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+                                <div class="card-body">
+                                    <table id="archive" class="table table-striped table-responsive">
+
+                                        <thead>
+                                            <tr>
+                                                <th>Document #</th>
+                                                <th>Date Submitted</th>
+                                                <th>Date Modified</th>
+                                                <th>Submitted By</th>
+                                                <th>Title</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+
+                                            <?php
+                                            $newsubquery = mysqli_query($conn, "SELECT LPAD(documents.docno,4,0), documents.docdatechange, documents.docdatesubmit, users.fname, users.mname, users.lname, documents.doctitle,"
+                                                    . "documents.docdesc, documents.docstatus FROM documents INNER JOIN users WHERE documents.userno = users.userno AND documents.docstatus = 'Not Received' OR documents.docstatus = 'Done'");
+
+                                            if ($newsubquery->num_rows > 0) {
+                                                while ($row = $newsubquery->fetch_assoc()) {
+                                                    $docid = $row['LPAD(documents.docno,4,0)'];
+                                                    $docdatesubmit = $row['docdatesubmit'];
+                                                    $userid = ($row['fname'] . ' ' . $row['mname'] . ' ' . $row['lname']);
+                                                    $doctitle = $row['doctitle'];
+                                                    $docdesc = $row['docdesc'];
+                                                    $docstatus = $row['docstatus'];
+                                                    $docdatechange = $row['docdatechange'];
+
+                                                    echo "<tr>"
+                                                    . "<td>" . $docid . "</td>"
+                                                    . "<td>" . $docdatesubmit . "</td>"
+                                                    . "<td>" . $docdatechange . "</td>"
+                                                    . "<td>" . $userid . "</td>"
+                                                    . "<td>" . $doctitle . "</td>"
+                                                    . "<td>" . $docstatus . "</td>";
                                                 }
                                             }
                                             ?>
@@ -201,103 +373,295 @@ if (!isset($_SESSION['user_name'])) {
                                             <tr>
                                                 <th>Document #</th>
                                                 <th>Date Submitted</th>
+                                                <th>Date Modified</th>
                                                 <th>Submitted By</th>
                                                 <th>Title</th>
-                                                <th>Description</th>
                                                 <th>Status</th>
-                                                <th>Edit Status</th>
                                             </tr>
                                         </tfoot>
                                     </table>
                                 </div>
                             </div>
-
                         </div>
 
+
                     </div>
-                </main>
+
+                    <br>
+
+                    <div class="table-responsive">
+
+                        <table id="received" class="table table-striped table-responsive-lg">
+
+                            <thead>
+                                <tr>
+                                    <th>Edit</th>
+                                    <th>Document #</th>
+                                    <th>Date Submitted</th>
+                                    <th>Date Modified</th>
+                                    <th>Submitted By</th>
+                                    <th>Title</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                <?php
+                                $newsubquery = mysqli_query($conn, "SELECT LPAD(documents.docno,4,0), documents.docdatechange, documents.docdatesubmit, users.fname, users.mname, users.lname, documents.doctitle, documents.docdesc, documents.docstatus FROM documents INNER JOIN users "
+                                        . "ON documents.userno = users.userno WHERE documents.hidden = '0'");
+
+                                if ($newsubquery->num_rows > 0) {
+                                    while ($row = $newsubquery->fetch_assoc()) {
+                                        $docid = $row['LPAD(documents.docno,4,0)'];
+                                        $docdatesubmit = $row['docdatesubmit'];
+                                        $userid = ($row['fname'] . ' ' . $row['mname'] . ' ' . $row['lname']);
+                                        $doctitle = $row['doctitle'];
+                                        $docdesc = $row['docdesc'];
+                                        $docstatus = $row['docstatus'];
+                                        $docdatechange = $row['docdatechange'];
+                                        $doceditedby = ($row['fname'] . ' ' . $row['mname'] . ' ' . $row['lname']);
+
+                                        echo "<tr>"
+                                        . "<td>" . "<a href='#edit2" . $docid . "'data-toggle='modal'><button type='button' class='btn btn-info btn-sm' title='Edit'><span class='fas fa-edit' aria-hidden='true'></span></button></a>" . "</td>"
+                                        . "<td>" . $docid . "</td>"
+                                        . "<td>" . $docdatesubmit . "</td>"
+                                        . "<td>" . $docdatechange . "</td>"
+                                        . "<td>" . $userid . "</td>"
+                                        . "<td>" . $doctitle . "</td>"
+                                        . "<td>" . $docstatus . "</td>";
+                                        ?>
+                                        <?php
+                                        echo '<div id="edit2' . $docid . '" class="modal fade" role="dialog">
+                                                            <form method="post">
+                                                                <div class="modal-dialog modal-lg">
+                                                                    <!-- Modal content-->
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-header">
+
+                                                                            <h4 class="modal-title">Edit Document #' . $docid . '</h4>
+                                                                        </div>
+
+                                                                        <div class="modal-body">
+                                                                            <div class="row">
+                                                                                <div class="col-sm-12">
+                                                                                    <input type="hidden" name="edit_doc_no2" value="' . $docid . '">
+                                                                                    <p><strong>Document Title: </strong>' . $doctitle . '</p>
+                                                                                    <p><strong>Description: </strong>' . $docdesc . '</p>
+                                                                                    <p><strong>Date Submitted: </strong>' . $docdatesubmit . '</p>
+                                                                                    <p><strong>Submitted By: </strong>' . $userid . '</p>  
+                                                                                         <strong>Update Status: </strong><select name="edit_status2" id="edit_status2">
+                                                                                    <option value="Received"';
+                                        if ($docstatus == 'Received') {
+                                            echo "selected";
+                                        } echo'>Received
+                                                                                    </option>
+                                                                                    <option value="On-Process"';
+                                        if ($docstatus == 'On-Process') {
+                                            echo "selected";
+                                        } echo'>On-Process
+                                                                                    </option>
+                                                                                    <option value="Processed"';
+                                        if ($docstatus == 'Processed') {
+                                            echo "selected";
+                                        } echo'>Processed
+                                                                                    </option>
+                                                                                    <option value="Released"';
+                                        if ($docstatus == 'Released') {
+                                            echo "selected";
+                                        } echo'>Released
+                                                                                    </option>
+                                                                                    </select>
+                                                                                </div>
+                                                                            </div>
+                                                                            <br>
+                                                                            <div class="modal-footer">
+                                                                                <button style="float: right;" type="submit" name="updatedoc2" class="btn btn-info btn-m"><span class="fas fa-clipboard-check" ></span> Save Changes</button>
+                                                                                <button style="float: right;" type="button" class="btn btn-secondary btn-m" data-dismiss="modal"><span class="fas fa-times"></span> Cancel</button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </form>
+                                                        </div>';
+                                    }
+                                }
+                                ?>
+
+                            </tbody>
+
+                            <tfoot>
+                                <tr>
+                                    <th>Edit</th>
+                                    <th>Document #</th>
+                                    <th>Date Submitted</th>
+                                    <th>Date Modified</th>
+                                    <th>Submitted By</th>
+                                    <th>Title</th>
+                                    <th>Status</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        <br>
+                    </div>
+
             </div>
+
+            <br>
+            </main>
         </div>
+    </div>
 
-        <!-- Bootstrap core JavaScript
-        ================================================== -->
-        <!-- Placed at the end of the document so the pages load faster -->
-        <script src="../../js/jquery-3.3.1.js"></script>
-        <script>window.jQuery || document.write('<script src = "../../js/jquery-3.3.1.js"><\/script>')</script>
-        <script src="../../js/popper.js"></script>
-        <script src="../../js/bootstrap.min.js"></script>
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="../../js/jquery-3.3.1.js"></script>
+    <script>window.jQuery || document.write('<script src = "../../js/jquery-3.3.1.js"><\/script>')</script>
+    <script src="../../js/popper.js"></script>
+    <script src="../../js/bootstrap.min.js"></script>
 
-        <!-- Icons -->
-        <script src="../../js/feather.min.js"></script>
-        <script>
+    <!-- Icons -->
+    <script src="../../js/feather.min.js"></script>
+    <script>
                         feather.replace()
-        </script>
+    </script>
 
 
-        <!-- DataTable js -->
-        <script src="../../DataTables/DataTables-1.10.16/js/jquery.dataTables.min.js"></script>
-        <script src="../../DataTables/DataTables-1.10.16/js/dataTables.bootstrap4.min.js"></script>
-        <script src="../../DataTables/Responsive-2.2.1/js/responsive.bootstrap4.min.js"></script>
+    <!-- DataTable js -->
+    <script src="../../DataTables/DataTables-1.10.16/js/jquery.dataTables.min.js"></script>
+    <script src="../../DataTables/DataTables-1.10.16/js/dataTables.bootstrap4.min.js"></script>
+    <script src="../../DataTables/Responsive-2.2.1/js/responsive.bootstrap4.min.js"></script>
 
-        <!-- DatatableButtons -->
-        <script src="../../DataTables/Buttons-1.5.1/js/dataTables.buttons.min.js"></script>
-        <script src="../../DataTables/Buttons-1.5.1/js/buttons.bootstrap4.min.js"></script>
-        <script src="../../DataTables/Buttons-1.5.1/js/buttons.flash.min.js"></script>
-        <script src="../../DataTables/JSZip-2.5.0/jszip.min.js"></script>
-        <script src="../../DataTables/pdfmake-0.1.32/pdfmake.min.js"></script>
-        <script src="../../DataTables/pdfmake-0.1.32/vfs_fonts.js"></script>
-        <script src="../../DataTables/Buttons-1.5.1/js/buttons.html5.min.js"></script>
-        <script src="../../DataTables/Buttons-1.5.1/js/buttons.print.min.js"></script>
+    <!-- DatatableButtons -->
+    <script src="../../DataTables/Buttons-1.5.1/js/dataTables.buttons.min.js"></script>
+    <script src="../../DataTables/Buttons-1.5.1/js/buttons.bootstrap4.min.js"></script>
+    <script src="../../DataTables/Buttons-1.5.1/js/buttons.flash.min.js"></script>
+    <script src="../../DataTables/JSZip-2.5.0/jszip.min.js"></script>
+    <script src="../../DataTables/pdfmake-0.1.32/pdfmake.min.js"></script>
+    <script src="../../DataTables/pdfmake-0.1.32/vfs_fonts.js"></script>
+    <script src="../../DataTables/Buttons-1.5.1/js/buttons.html5.min.js"></script>
+    <script src="../../DataTables/Buttons-1.5.1/js/buttons.print.min.js"></script>
 
-        <script>
+    <script>
                         $(document).ready(function () {
 <?php
 $thisDate = date("m/d/Y");
 ?>
 
-                            $('#data_table').DataTable({
-                                dom: 'lBfrtip',
+                        $('#data_table').DataTable({
+                        dom: 'lBfrtip',
                                 buttons: [
-                                    {extend: 'copy', className: 'btn btn-secondary', text: '<i class="fas fa-copy"></i>', titleAttr: 'Copy', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
-                                    {extend: 'csv', className: 'btn bg-primary', text: '<i class="fas fa-file-alt"></i>', titleAttr: 'CSV', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
-                                    {extend: 'excel', className: 'btn btn-success', text: '<i class="fas fa-file-excel"></i>', titleAttr: 'Excel', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
-                                    {extend: 'pdf', className: 'btn btn-danger', orientation: 'landscape', pageSize: 'LEGAL', text: '<i class="fas fa-file-pdf"></i>', titleAttr: 'PDF', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
-                                    {extend: 'print', className: 'btn btn-dark', text: '<i class="fas fa-print"></i>', titleAttr: 'Print', title: 'Report printed by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'}
+                                {extend: 'copy', className: 'btn btn-secondary', text: '<i class="fas fa-copy"></i>', titleAttr: 'Copy', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
+                                {extend: 'csv', className: 'btn bg-primary', text: '<i class="fas fa-file-alt"></i>', titleAttr: 'CSV', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
+                                {extend: 'excel', className: 'btn btn-success', text: '<i class="fas fa-file-excel"></i>', titleAttr: 'Excel', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
+                                {extend: 'pdf', className: 'btn btn-danger', orientation: 'landscape', pageSize: 'LEGAL', text: '<i class="fas fa-file-pdf"></i>', titleAttr: 'PDF', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
+                                {extend: 'print', className: 'btn btn-dark', text: '<i class="fas fa-print"></i>', titleAttr: 'Print', title: 'Report printed by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'}
                                 ],
-
                                 initComplete: function () {
-                                    this.api().columns().every(function () {
-                                        var column = this;
-                                        var select = $('<select><option value="">Show all</option></select>')
-                                                .appendTo($(column.footer()).empty())
-                                                .on('change', function () {
-                                                    var val = $.fn.dataTable.util.escapeRegex(
-                                                            $(this).val()
-                                                            );
-
-                                                    column
-                                                            .search(val ? '^' + val + '$' : '', true, false)
-                                                            .draw();
-                                                });
-
-                                        column.data().unique().sort().each(function (d, j) {
-                                            select.append('<option value="' + d + '">' + d + '</option>')
+                                this.api().columns([1, 2, 3, 4, 5, 6, 7, 8]).every(function () {
+                                var column = this;
+                                var select = $('<select><option value="">Show all</option></select>')
+                                        .appendTo($(column.footer()).empty())
+                                        .on('change', function () {
+                                        var val = $.fn.dataTable.util.escapeRegex(
+                                                $(this).val()
+                                                );
+                                        column
+                                                .search(val ? '^' + val + '$' : '', true, false)
+                                                .draw();
                                         });
-                                    });
+                                column.data().unique().sort().each(function (d, j) {
+                                select.append('<option value="' + d + '">' + d + '</option>')
+                                });
+                                });
                                 }
 
 
 
-                            });
                         });
-        </script>
+                        });
+                        $(document).ready(function () {
+<?php
+$thisDate = date("m/d/Y");
+?>
 
-        <script>
-            $('.collapse').on('shown.bs.collapse', function () {
-                $(this).parent().find(".fa-plus-circle").removeClass("fa-plus-circle").addClass("fa-minus-circle");
-            }).on('hidden.bs.collapse', function () {
-                $(this).parent().find(".fa-minus-circle").removeClass("fa-minus-circle").addClass("fa-plus-circle");
-            });
-        </script>
-    </body>
+                        $('#archive').DataTable({
+                        dom: 'lBfrtip',
+                                buttons: [
+                                {extend: 'copy', className: 'btn btn-secondary', text: '<i class="fas fa-copy"></i>', titleAttr: 'Copy', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
+                                {extend: 'csv', className: 'btn bg-primary', text: '<i class="fas fa-file-alt"></i>', titleAttr: 'CSV', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
+                                {extend: 'excel', className: 'btn btn-success', text: '<i class="fas fa-file-excel"></i>', titleAttr: 'Excel', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
+                                {extend: 'pdf', className: 'btn btn-danger', orientation: 'landscape', pageSize: 'LEGAL', text: '<i class="fas fa-file-pdf"></i>', titleAttr: 'PDF', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
+                                {extend: 'print', className: 'btn btn-dark', text: '<i class="fas fa-print"></i>', titleAttr: 'Print', title: 'Report printed by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'}
+                                ],
+                                initComplete: function () {
+                                this.api().columns().every(function () {
+                                var column = this;
+                                var select = $('<select><option value="">Show all</option></select>')
+                                        .appendTo($(column.footer()).empty())
+                                        .on('change', function () {
+                                        var val = $.fn.dataTable.util.escapeRegex(
+                                                $(this).val()
+                                                );
+                                        column
+                                                .search(val ? '^' + val + '$' : '', true, false)
+                                                .draw();
+                                        });
+                                column.data().unique().sort().each(function (d, j) {
+                                select.append('<option value="' + d + '">' + d + '</option>')
+                                });
+                                });
+                                }
+
+
+
+                        });
+                        });
+                        $(document).ready(function () {
+<?php
+$thisDate = date("m/d/Y");
+?>
+
+                        $('#received').DataTable({
+                        dom: 'lBfrtip',
+                                buttons: [
+                                {extend: 'copy', className: 'btn btn-secondary', text: '<i class="fas fa-copy"></i>', titleAttr: 'Copy', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
+                                {extend: 'csv', className: 'btn bg-primary', text: '<i class="fas fa-file-alt"></i>', titleAttr: 'CSV', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
+                                {extend: 'excel', className: 'btn btn-success', text: '<i class="fas fa-file-excel"></i>', titleAttr: 'Excel', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
+                                {extend: 'pdf', className: 'btn btn-danger', orientation: 'landscape', pageSize: 'LEGAL', text: '<i class="fas fa-file-pdf"></i>', titleAttr: 'PDF', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
+                                {extend: 'print', className: 'btn btn-dark', text: '<i class="fas fa-print"></i>', titleAttr: 'Print', title: 'Report printed by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'}
+                                ],
+                                initComplete: function () {
+                                this.api().columns([1, 2, 3, 4, 5, 6, 7, 8]).every(function () {
+                                var column = this;
+                                var select = $('<select><option value="">Show all</option></select>')
+                                        .appendTo($(column.footer()).empty())
+                                        .on('change', function () {
+                                        var val = $.fn.dataTable.util.escapeRegex(
+                                                $(this).val()
+                                                );
+                                        column
+                                                .search(val ? '^' + val + '$' : '', true, false)
+                                                .draw();
+                                        });
+                                column.data().unique().sort().each(function (d, j) {
+                                select.append('<option value="' + d + '">' + d + '</option>')
+                                });
+                                });
+                                }
+
+
+
+                        });
+                        });
+    </script>
+
+    <script>
+        $('.collapse').on('shown.bs.collapse', function () {
+        $(this).parent().find(".fa-plus-circle").removeClass("fa-plus-circle").addClass("fa-minus-circle");
+        }).on('hidden.bs.collapse', function () {
+        $(this).parent().find(".fa-minus-circle").removeClass("fa-minus-circle").addClass("fa-plus-circle");
+        });
+    </script>
+</body>
 </html>

@@ -295,6 +295,7 @@ if (isset($_POST['deletepost'])) {
                                             <button style="float:right;" type="submit" name="postAnnouncement" class="btn btn-primary">
                                                 Post
                                             </button>
+                                            <br>
                                         </div>
 
                                     </form>
@@ -302,37 +303,37 @@ if (isset($_POST['deletepost'])) {
                             </div>
                         </div>
 
-                            <div class="card">
-                                <div class="card-header" id="headingTwo">
-                                    <h5 class="mb-0">
-                                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                            <span class="fas fa-plus-circle"></span> My Announcements
-                                        </button>
-                                    </h5>
+                        <div class="card">
+                            <div class="card-header" id="headingTwo">
+                                <h5 class="mb-0">
+                                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                        <span class="fas fa-plus-circle"></span> My Announcements
+                                    </button>
+                                </h5>
+                            </div>
+
+
+                            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+
+                                <div class="alert alert-warning alert-dismissible" role="alert">
+                                    <p style="font-size: 15px;"><strong>Note: </strong>You can manage each post by clicking the <span class="fas fa-edit"></span> button. 
                                 </div>
 
+                                <div class="card-body">
+                                    <div class="row">
+                                        <?php
+                                        $announceSelect = "SELECT announcements.annno, announcements.anntitle, announcements.anndesc, announcements.anndate, announcements.userno, users.fname, users.mname, users.lname FROM announcements LEFT JOIN users ON users.userno = announcements.userno WHERE announcements.hidden = '0' AND announcements.userno = '" . $_SESSION['userno'] . "' ORDER BY announcements.annno DESC";
+                                        $result = $conn->query($announceSelect);
 
-                                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+                                        if ($result->num_rows > 0) {
+                                            while ($row = $result->fetch_assoc()) {
+                                                $annno = $row['annno'];
+                                                $anntitle = $row['anntitle'];
+                                                $anndesc = $row['anndesc'];
+                                                $anndate = $row['anndate'];
+                                                $usercreated = ($row['fname'] . ' ' . $row['mname'] . ' ' . $row['lname']);
 
-                                    <div class="alert alert-warning alert-dismissible" role="alert">
-                                        <p style="font-size: 15px;"><strong>Note: </strong>You can manage each post by clicking the <span class="fas fa-edit"></span> button. 
-                                    </div>
-
-                                    <div class="card-body">
-                                        <div class="row">
-                                            <?php
-                                            $announceSelect = "SELECT announcements.annno, announcements.anntitle, announcements.anndesc, announcements.anndate, announcements.userno, users.fname, users.mname, users.lname FROM announcements LEFT JOIN users ON users.userno = announcements.userno WHERE announcements.hidden = '0' AND announcements.userno = '" . $_SESSION['userno'] . "' ORDER BY announcements.annno DESC";
-                                            $result = $conn->query($announceSelect);
-
-                                            if ($result->num_rows > 0) {
-                                                while ($row = $result->fetch_assoc()) {
-                                                    $annno = $row['annno'];
-                                                    $anntitle = $row['anntitle'];
-                                                    $anndesc = $row['anndesc'];
-                                                    $anndate = $row['anndate'];
-                                                    $usercreated = ($row['fname'] . ' ' . $row['mname'] . ' ' . $row['lname']);
-
-                                                    echo '                           
+                                                echo '                           
                                                         <div class="col-md-4">
                                                             <div class="card">
                                                                 <div class="card-header bg-dark text-white">
@@ -352,7 +353,7 @@ if (isset($_POST['deletepost'])) {
                                                         </div>
                                                         <br>';
 
-                                                    echo '<div id="edit' . $annno . '" class="modal fade" role="dialog">
+                                                echo '<div id="edit' . $annno . '" class="modal fade" role="dialog">
                                                         <form method="post">
                                                             <div class="modal-dialog modal-lg">
                                                                 <!-- Modal content-->
@@ -388,30 +389,33 @@ if (isset($_POST['deletepost'])) {
                                                             </div>
                                                         </form>
                                                     </div>';
-                                                }
                                             }
-                                            ?>
-                                        </div>
+                                        }
+                                        else{
+                                            echo "<h5>You haven't made any announcements yet.</h5>";
+                                        }
+                                        ?>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
 
-                        <br>
+                    <br>
 
-                        <?php
-                        $announceSelect = "SELECT announcements.annno, announcements.anntitle, announcements.anndesc, announcements.anndate, announcements.userno, users.fname, users.mname, users.lname FROM announcements LEFT JOIN users ON users.userno = announcements.userno WHERE announcements.hidden = '0' ORDER BY announcements.annno DESC";
-                        $result = $conn->query($announceSelect);
+                    <?php
+                    $announceSelect = "SELECT announcements.annno, announcements.anntitle, announcements.anndesc, announcements.anndate, announcements.userno, users.fname, users.mname, users.lname FROM announcements LEFT JOIN users ON users.userno = announcements.userno WHERE announcements.hidden = '0' ORDER BY announcements.annno DESC";
+                    $result = $conn->query($announceSelect);
 
-                        if ($result->num_rows > 0) {
-                            while ($row = $result->fetch_assoc()) {
-                                $annno = $row['annno'];
-                                $anntitle = $row['anntitle'];
-                                $anndesc = $row['anndesc'];
-                                $anndate = $row['anndate'];
-                                $usercreated = ($row['fname'] . ' ' . $row['mname'] . ' ' . $row['lname']);
+                    if ($result->num_rows > 0) {
+                        while ($row = $result->fetch_assoc()) {
+                            $annno = $row['annno'];
+                            $anntitle = $row['anntitle'];
+                            $anndesc = $row['anndesc'];
+                            $anndate = $row['anndate'];
+                            $usercreated = ($row['fname'] . ' ' . $row['mname'] . ' ' . $row['lname']);
 
-                                echo '<div class="card">
+                            echo '<div class="card">
                                         <div class="card-header bg-dark text-white">
                                             <h6>Announcement</h6>
                                         </div>
@@ -421,88 +425,90 @@ if (isset($_POST['deletepost'])) {
                                             <p class="card-text" style="font-size: 15px;">' . $anndesc . '</p>
                                         </div>
                                   </div><br>';
-                            }
                         }
-                        ?>
+                    } else {
+                        echo "<h5>There are no announcements yet.</h5>";
+                    }
+                    ?>
 
 
-                        <br>
+                    <br>
 
-                        </main>
-                    </div>
+                </main>
             </div>
+        </div>
 
-            <!-- Bootstrap core JavaScript
-            ================================================== -->
-            <!-- Placed at the end of the document so the pages load faster -->
-            <script src="../../js/jquery-3.3.1.js" ></script>
-            <script>window.jQuery || document.write('<script src="../../js/jquery-3.3.1.js"><\/script>')</script>
-            <script src="../../js/popper.js"></script>
-            <script src="../../js/bootstrap.min.js"></script>
+        <!-- Bootstrap core JavaScript
+        ================================================== -->
+        <!-- Placed at the end of the document so the pages load faster -->
+        <script src="../../js/jquery-3.3.1.js" ></script>
+        <script>window.jQuery || document.write('<script src="../../js/jquery-3.3.1.js"><\/script>')</script>
+        <script src="../../js/popper.js"></script>
+        <script src="../../js/bootstrap.min.js"></script>
 
-            <!-- DataTable js -->
-            <script src="../../DataTables/DataTables-1.10.16/js/jquery.dataTables.min.js"></script>
-            <script src="../../DataTables/DataTables-1.10.16/js/dataTables.bootstrap4.min.js"></script>
-            <script src="../../DataTables/Responsive-2.2.1/js/responsive.bootstrap4.min.js"></script>
+        <!-- DataTable js -->
+        <script src="../../DataTables/DataTables-1.10.16/js/jquery.dataTables.min.js"></script>
+        <script src="../../DataTables/DataTables-1.10.16/js/dataTables.bootstrap4.min.js"></script>
+        <script src="../../DataTables/Responsive-2.2.1/js/responsive.bootstrap4.min.js"></script>
 
-            <!-- DatatableButtons -->
-            <script src="../../DataTables/Buttons-1.5.1/js/dataTables.buttons.min.js"></script>
-            <script src="../../DataTables/Buttons-1.5.1/js/buttons.bootstrap4.min.js"></script>
-            <script src="../../DataTables/Buttons-1.5.1/js/buttons.flash.min.js"></script>
-            <script src="../../DataTables/JSZip-2.5.0/jszip.min.js"></script>
-            <script src="../../DataTables/pdfmake-0.1.32/pdfmake.min.js"></script>
-            <script src="../../DataTables/pdfmake-0.1.32/vfs_fonts.js"></script>
-            <script src="../../DataTables/Buttons-1.5.1/js/buttons.html5.min.js"></script>
-            <script src="../../DataTables/Buttons-1.5.1/js/buttons.print.min.js"></script>
-            <!-- Icons -->
-            <script src="../../js/feather.min.js"></script>
-            <script>
-                        feather.replace()
-            </script>
+        <!-- DatatableButtons -->
+        <script src="../../DataTables/Buttons-1.5.1/js/dataTables.buttons.min.js"></script>
+        <script src="../../DataTables/Buttons-1.5.1/js/buttons.bootstrap4.min.js"></script>
+        <script src="../../DataTables/Buttons-1.5.1/js/buttons.flash.min.js"></script>
+        <script src="../../DataTables/JSZip-2.5.0/jszip.min.js"></script>
+        <script src="../../DataTables/pdfmake-0.1.32/pdfmake.min.js"></script>
+        <script src="../../DataTables/pdfmake-0.1.32/vfs_fonts.js"></script>
+        <script src="../../DataTables/Buttons-1.5.1/js/buttons.html5.min.js"></script>
+        <script src="../../DataTables/Buttons-1.5.1/js/buttons.print.min.js"></script>
+        <!-- Icons -->
+        <script src="../../js/feather.min.js"></script>
+        <script>
+                    feather.replace()
+        </script>
 
-            <script>
-                $(document).ready(function () {
+        <script>
+            $(document).ready(function () {
 <?php
 $thisDate = date("m/d/Y");
 ?>
 
-                    $('#myannouncements').DataTable({
-                        "bLengthChange": false,
-                        pageLength: 5,
-                        initComplete: function () {
-                            this.api().columns().every(function () {
-                                var column = this;
-                                var select = $('<select><option value="">Show all</option></select>')
-                                        .appendTo($(column.footer()).empty())
-                                        .on('change', function () {
-                                            var val = $.fn.dataTable.util.escapeRegex(
-                                                    $(this).val()
-                                                    );
+                $('#myannouncements').DataTable({
+                    "bLengthChange": false,
+                    pageLength: 5,
+                    initComplete: function () {
+                        this.api().columns().every(function () {
+                            var column = this;
+                            var select = $('<select><option value="">Show all</option></select>')
+                                    .appendTo($(column.footer()).empty())
+                                    .on('change', function () {
+                                        var val = $.fn.dataTable.util.escapeRegex(
+                                                $(this).val()
+                                                );
 
-                                            column
-                                                    .search(val ? '^' + val + '$' : '', true, false)
-                                                    .draw();
-                                        });
+                                        column
+                                                .search(val ? '^' + val + '$' : '', true, false)
+                                                .draw();
+                                    });
 
-                                column.data().unique().sort().each(function (d, j) {
-                                    select.append('<option value="' + d + '">' + d + '</option>')
-                                });
+                            column.data().unique().sort().each(function (d, j) {
+                                select.append('<option value="' + d + '">' + d + '</option>')
                             });
-                        }
+                        });
+                    }
 
 
 
-                    });
                 });
+            });
 
-            </script>
+        </script>
 
-            <script>
-                $('.collapse').on('shown.bs.collapse', function () {
-                    $(this).parent().find(".fa-plus-circle").removeClass("fa-plus-circle").addClass("fa-minus-circle");
-                }).on('hidden.bs.collapse', function () {
-                    $(this).parent().find(".fa-minus-circle").removeClass("fa-minus-circle").addClass("fa-plus-circle");
-                });
-            </script>
+        <script>
+            $('.collapse').on('shown.bs.collapse', function () {
+                $(this).parent().find(".fa-plus-circle").removeClass("fa-plus-circle").addClass("fa-minus-circle");
+            }).on('hidden.bs.collapse', function () {
+                $(this).parent().find(".fa-minus-circle").removeClass("fa-minus-circle").addClass("fa-plus-circle");
+            });
+        </script>
     </body>
 </html>

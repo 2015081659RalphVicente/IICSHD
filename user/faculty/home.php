@@ -284,11 +284,11 @@ if (isset($_POST['deletepost'])) {
 
 
                             <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
-                                
+
                                 <div class="alert alert-warning alert-dismissible" role="alert">
                                     <p style="font-size: 15px;"><strong>Note: </strong>You can manage each post by clicking the <span class="fas fa-edit"></span> button. 
                                 </div>
-                                
+
                                 <div class="card-body">
                                     <div class="row">
                                         <?php
@@ -360,6 +360,8 @@ if (isset($_POST['deletepost'])) {
                                                         </form>
                                                     </div>';
                                             }
+                                        } else {
+                                            echo "<h5>You haven't made any announcements yet.</h5>";
                                         }
                                         ?>
                                     </div>
@@ -394,6 +396,8 @@ if (isset($_POST['deletepost'])) {
                                         </div>
                                   </div><br>';
                         }
+                    } else {
+                        echo "<h5>There are no announcements yet.</h5>";
                     }
                     ?>
 
@@ -447,6 +451,14 @@ if (isset($_POST['deletepost'])) {
                                 }
                             }
                         });
+        </script>
+
+        <script>
+            $('.collapse').on('shown.bs.collapse', function () {
+                $(this).parent().find(".fa-plus-circle").removeClass("fa-plus-circle").addClass("fa-minus-circle");
+            }).on('hidden.bs.collapse', function () {
+                $(this).parent().find(".fa-minus-circle").removeClass("fa-minus-circle").addClass("fa-plus-circle");
+            });
         </script>
     </body>
 </html>
