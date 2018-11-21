@@ -40,6 +40,13 @@ if (!isset($_SESSION['user_name'])) {
         <!-- Font Awesome JS -->
         <script defer src="../../fa-5.5.0/js/solid.js"></script>
         <script defer src="../../fa-5.5.0/js/fontawesome.js"></script>
+
+        <!-- DataTable-->
+        <link rel="stylesheet" href="../../DataTables/DataTables-1.10.16/css/dataTables.bootstrap4.min.css">
+        <link rel="stylesheet" href="../../DataTables/Responsive-2.2.1/css/responsive.bootstrap4.min.css">
+        <link rel="stylesheet" href="../../DataTables/Buttons-1.5.1/css/buttons.dataTables.min.css">
+
+
     </head>
 
     <body>
@@ -113,147 +120,64 @@ if (!isset($_SESSION['user_name'])) {
                 <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
                     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                         <h1 class="h2">Consultation Requests</h1>
-                        <div class="btn-toolbar mb-2 mb-md-0">
-                            <div class="btn-group mr-2">
-                                <button class="btn btn-sm btn-outline-secondary">Share</button>
-                                <button class="btn btn-sm btn-outline-secondary">Export</button>
-                            </div>
-                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle">
-                                <span data-feather="calendar"></span>
-                                This week
-                            </button>
-                        </div>
                     </div>
 
-                    <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas>
-
-                    <h2>Table Examples</h2>
                     <div class="table-responsive">
-                        <table class="table table-striped table-sm">
+
+                        <table id="consultation" class="table table-striped table-responsive-lg">
+
                             <thead>
                                 <tr>
-                                    <th>#</th>
-                                    <th>Header</th>
-                                    <th>Header</th>
-                                    <th>Header</th>
-                                    <th>Header</th>
+                                    <th>Consultation #</th>
+                                    <th>Date Created</th>
+                                    <th>Requested By</th>
+                                    <th>Subject</th>
+                                    <th>Description</th>
+                                    <th>Status</th>
                                 </tr>
                             </thead>
+
                             <tbody>
-                                <tr>
-                                    <td>1,001</td>
-                                    <td>Lorem</td>
-                                    <td>ipsum</td>
-                                    <td>dolor</td>
-                                    <td>sit</td>
-                                </tr>
-                                <tr>
-                                    <td>1,002</td>
-                                    <td>amet</td>
-                                    <td>consectetur</td>
-                                    <td>adipiscing</td>
-                                    <td>elit</td>
-                                </tr>
-                                <tr>
-                                    <td>1,003</td>
-                                    <td>Integer</td>
-                                    <td>nec</td>
-                                    <td>odio</td>
-                                    <td>Praesent</td>
-                                </tr>
-                                <tr>
-                                    <td>1,003</td>
-                                    <td>libero</td>
-                                    <td>Sed</td>
-                                    <td>cursus</td>
-                                    <td>ante</td>
-                                </tr>
-                                <tr>
-                                    <td>1,004</td>
-                                    <td>dapibus</td>
-                                    <td>diam</td>
-                                    <td>Sed</td>
-                                    <td>nisi</td>
-                                </tr>
-                                <tr>
-                                    <td>1,005</td>
-                                    <td>Nulla</td>
-                                    <td>quis</td>
-                                    <td>sem</td>
-                                    <td>at</td>
-                                </tr>
-                                <tr>
-                                    <td>1,006</td>
-                                    <td>nibh</td>
-                                    <td>elementum</td>
-                                    <td>imperdiet</td>
-                                    <td>Duis</td>
-                                </tr>
-                                <tr>
-                                    <td>1,007</td>
-                                    <td>sagittis</td>
-                                    <td>ipsum</td>
-                                    <td>Praesent</td>
-                                    <td>mauris</td>
-                                </tr>
-                                <tr>
-                                    <td>1,008</td>
-                                    <td>Fusce</td>
-                                    <td>nec</td>
-                                    <td>tellus</td>
-                                    <td>sed</td>
-                                </tr>
-                                <tr>
-                                    <td>1,009</td>
-                                    <td>augue</td>
-                                    <td>semper</td>
-                                    <td>porta</td>
-                                    <td>Mauris</td>
-                                </tr>
-                                <tr>
-                                    <td>1,010</td>
-                                    <td>massa</td>
-                                    <td>Vestibulum</td>
-                                    <td>lacinia</td>
-                                    <td>arcu</td>
-                                </tr>
-                                <tr>
-                                    <td>1,011</td>
-                                    <td>eget</td>
-                                    <td>nulla</td>
-                                    <td>Class</td>
-                                    <td>aptent</td>
-                                </tr>
-                                <tr>
-                                    <td>1,012</td>
-                                    <td>taciti</td>
-                                    <td>sociosqu</td>
-                                    <td>ad</td>
-                                    <td>litora</td>
-                                </tr>
-                                <tr>
-                                    <td>1,013</td>
-                                    <td>torquent</td>
-                                    <td>per</td>
-                                    <td>conubia</td>
-                                    <td>nostra</td>
-                                </tr>
-                                <tr>
-                                    <td>1,014</td>
-                                    <td>per</td>
-                                    <td>inceptos</td>
-                                    <td>himenaeos</td>
-                                    <td>Curabitur</td>
-                                </tr>
-                                <tr>
-                                    <td>1,015</td>
-                                    <td>sodales</td>
-                                    <td>ligula</td>
-                                    <td>in</td>
-                                    <td>libero</td>
-                                </tr>
+
+                                <?php
+                                $newsubquery = mysqli_query($conn, "SELECT LPAD(c.conno,4,0), c.condatecreated, u.fname, u.mname, u.lname, c.consub,"
+                                        . "c.condesc, c.constatus, c.conprof FROM consultations c INNER JOIN users u WHERE c.userno = u.userno "
+                                        . "AND c.userno = " . $_SESSION['userno'] . "");
+
+                                if ($newsubquery->num_rows > 0) {
+                                    while ($row = $newsubquery->fetch_assoc()) {
+                                        $docid = $row['LPAD(c.conno,4,0)'];
+                                        $docdatesubmit = $row['condatecreated'];
+                                        $userid = ($row['fname'] . ' ' . $row['mname'] . ' ' . $row['lname']);
+                                        $doctitle = $row['contitle'];
+                                        $docdesc = $row['condesc'];
+                                        $docstatus = $row['constatus'];
+
+                                        echo '<tr>'
+                                        . '<td>' . $docid . '</td>'
+                                        . '<td>' . $docdatesubmit . '</td>'
+                                        . '<td>' . $userid . '</td>'
+                                        . '<td>' . $doctitle . '</td>'
+                                        . '<td>' . $docdesc . '</td>'
+                                        . '<td>' . $docstatus . '</td>';
+                                    }
+                                }
+                                ?>
+
                             </tbody>
+
+                            <tfoot>
+                                <tr>
+                                    <th>Consultation #</th>
+                                    <th>Date Created</th>
+                                    <th>Requested By</th>
+                                    <th>Subject</th>
+                                    <th>Description</th>
+                                    <th>Status</th>
+                                </tr>
+                            </tfoot>
                         </table>
+
                     </div>
                 </main>
             </div>
@@ -267,42 +191,68 @@ if (!isset($_SESSION['user_name'])) {
         <script src="../../js/popper.js"></script>
         <script src="../../js/bootstrap.min.js"></script>
 
+        <!-- DataTable js -->
+        <script src="../../DataTables/DataTables-1.10.16/js/jquery.dataTables.min.js"></script>
+        <script src="../../DataTables/DataTables-1.10.16/js/dataTables.bootstrap4.min.js"></script>
+        <script src="../../DataTables/Responsive-2.2.1/js/responsive.bootstrap4.min.js"></script>
+
+        <!-- DatatableButtons -->
+        <script src="../../DataTables/Buttons-1.5.1/js/dataTables.buttons.min.js"></script>
+        <script src="../../DataTables/Buttons-1.5.1/js/buttons.bootstrap4.min.js"></script>
+        <script src="../../DataTables/Buttons-1.5.1/js/buttons.flash.min.js"></script>
+        <script src="../../DataTables/JSZip-2.5.0/jszip.min.js"></script>
+        <script src="../../DataTables/pdfmake-0.1.32/pdfmake.min.js"></script>
+        <script src="../../DataTables/pdfmake-0.1.32/vfs_fonts.js"></script>
+        <script src="../../DataTables/Buttons-1.5.1/js/buttons.html5.min.js"></script>
+        <script src="../../DataTables/Buttons-1.5.1/js/buttons.print.min.js"></script>
+
+
         <!-- Icons -->
         <script src="../../js/feather.min.js"></script>
         <script>
-            feather.replace()
+                        feather.replace()
         </script>
 
-        <!-- Graphs -->
-        <script src="../../js/Chart.min.js"></script>
         <script>
-            var ctx = document.getElementById("myChart");
-            var myChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-                    datasets: [{
-                            data: [15339, 21345, 18483, 24003, 23489, 24092, 12034],
-                            lineTension: 0,
-                            backgroundColor: 'transparent',
-                            borderColor: '#007bff',
-                            borderWidth: 4,
-                            pointBackgroundColor: '#007bff'
-                        }]
-                },
-                options: {
-                    scales: {
-                        yAxes: [{
-                                ticks: {
-                                    beginAtZero: false
-                                }
-                            }]
-                    },
-                    legend: {
-                        display: false,
+            $(document).ready(function () {
+<?php
+$thisDate = date("m/d/Y");
+?>
+
+                $('#consultation').DataTable({
+                    dom: 'lBfrtip',
+                    buttons: [
+                        {extend: 'copy', className: 'btn btn-secondary', text: '<i class="fas fa-copy"></i>', titleAttr: 'Copy', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
+                        {extend: 'csv', className: 'btn bg-primary', text: '<i class="fas fa-file-alt"></i>', titleAttr: 'CSV', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
+                        {extend: 'excel', className: 'btn btn-success', text: '<i class="fas fa-file-excel"></i>', titleAttr: 'Excel', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
+                        {extend: 'pdf', className: 'btn btn-danger', orientation: 'landscape', pageSize: 'LEGAL', text: '<i class="fas fa-file-pdf"></i>', titleAttr: 'PDF', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
+                        {extend: 'print', className: 'btn btn-dark', text: '<i class="fas fa-print"></i>', titleAttr: 'Print', title: 'Report printed by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'}
+                    ],
+                    initComplete: function () {
+                        this.api().columns([1, 2, 3, 4, 5, 6, 7, 8]).every(function () {
+                            var column = this;
+                            var select = $('<select><option value="">Show all</option></select>')
+                                    .appendTo($(column.footer()).empty())
+                                    .on('change', function () {
+                                        var val = $.fn.dataTable.util.escapeRegex(
+                                                $(this).val()
+                                                );
+                                        column
+                                                .search(val ? '^' + val + '$' : '', true, false)
+                                                .draw();
+                                    });
+                            column.data().unique().sort().each(function (d, j) {
+                                select.append('<option value="' + d + '">' + d + '</option>')
+                            });
+                        });
                     }
-                }
+
+
+
+                });
             });
+
         </script>
+
     </body>
 </html>

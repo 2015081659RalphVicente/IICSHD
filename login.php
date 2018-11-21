@@ -13,12 +13,15 @@ if (isset($_SESSION['resetpass']) && $_SESSION['resetpass'] == 0) {
     session_unset();
     session_destroy();
 }
+
+unset($_SESSION['seq']);
+
 ?>
 
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>Log In - IICS Help Desk </title>
+        <title>IICS Help Desk - Log In</title>
         <link rel="shortcut icon" href="img/favicon.png">
         <link rel="stylesheet" href="css/bootstrap.min.css">
         <link rel="stylesheet" href="css/style.css">
@@ -47,7 +50,7 @@ if (isset($_SESSION['resetpass']) && $_SESSION['resetpass'] == 0) {
                     <p><input type="password" id="inputPassword" class="form-control" placeholder="Password" name = "password"><?php echo $passwordErr; ?></p>
                     <button class="btn btn-lg btn-success btn-block btn-signin" type="submit" name="login">Log-In</button>
                 </form><!-- /form -->
-                <a href="#" class="forgot-password">
+                <a href="forgot.php" class="forgot-password">
                     Forgot Password?
                 </a>
                 <a href="register.php" class="forgot-password">

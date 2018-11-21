@@ -10,7 +10,7 @@ $thisDate = date("Y-m-d");
 $date_time = date("Y-m-d h:i:sa");
 
 //initial variables
-$userid = $password = $email = $success = $fail = $passwordErr = $registerSuccess = "";
+$userid = $password = $email = $success = $fail = $passwordErr = $registerSuccess = $usernameErr = $usernameErr2 = $seq = $answerErr = "";
 
 //login
 if (isset($_POST['login'])) {
@@ -73,4 +73,90 @@ if (isset($_POST['login'])) {
     }
 }
 
+if (isset($_POST['forgotPass'])) {
+    $email = $_POST['email'];
+    $_SESSION['requser'] = $email;
+    //$checker = "SELECT * FROM personnel WHERE BINARY USERNAME = '$username' AND  HIDDEN = 0";
+    $checker = $conn->prepare("SELECT * FROM users WHERE email = ? AND  hidden = 0");
+    $checker->bind_param("s", $email);
+    $checker->execute();
+    $resultcheck = $checker->get_result();
+
+    if ($resultcheck->num_rows > 0) {
+        $usernameErr = '<div class="alert alert-success">
+                        <strong> User</strong> found!
+                        </div>';
+        $usernameErr2 = '<form method = "POST" action="">
+                        <button type = "submit" class="btn btn-success btn-block" name="requestNew">Request for Password Change</button>';
+        $updatebool = FALSE;
+    } if ($resultcheck->num_rows == 0) {
+        $usernameErr = '<div class="alert alert-danger">
+                        </span><strong> User</strong> not found.
+                        </div>';
+    }
+}
+
+if (isset($_POST['requestNew'])) {
+    $email = $_POST['email'];
+
+    $sql = "SELECT SECQ from secq where SECQNO=(SELECT SECQNO from users WHERE email='$email')";
+    $result = mysqli_query($conn, $sql);
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $seq = $row['SECQ'];
+        }
+        $_SESSION['seq'] = $seq;
+        $_SESSION['requser'] = $email;
+        header("location:/iicshd/security.php");
+        exit;
+    } else {
+        echo 'No security question found.';
+    }
+}
+
+if (isset($_POST['submitAnswer'])) {
+
+    $requser = $_SESSION['requser'];
+    $reqname = "";
+    $securityans = $_POST['securityans'];
+
+
+    $sql = "SELECT SECQA from users where email='$requser'";
+    $result = mysqli_query($conn, $sql);
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $checkans = $row['SECQA'];
+        }
+        $hashedans = password_verify($securityans, $checkans);
+        if ($hashedans == TRUE) {
+            $getpno = "SELECT userno,FNAME,MNAME,LNAME FROM users WHERE email='$requser'";
+            $resultpno = mysqli_query($conn, $getpno);
+            if ($resultpno->num_rows > 0) {
+                while ($row = $resultpno->fetch_assoc()) {
+                    $reqpno = $row['userno'];
+                    $reqname = $row['FNAME'] . ' ' . $row['MNAME'] . ' ' . $row['LNAME'];
+                }
+            }
+
+
+//            $sql2 = "INSERT INTO authlistpass VALUES ('','$reqpno','0')";
+//            if ($sql2 == TRUE) {
+//                $reqpassresult = mysqli_query($conn, $sql2);
+//                $userval = 'Personnel ID: ' . $requser . ' / ' . $reqname . ' requested';
+//
+//                $useraction = "Forgot Password";
+//
+//                $loguser = $conn->prepare("INSERT INTO updatelogs VALUES ('',?,?,NOW(),?)");
+//                $loguser->bind_param("sss", $useraction, $reqname, $userval);
+//                $loguser->execute();
+//                $loguser->close();
+            $_SESSION['param'] = "successChange";
+            header("location:/iicshd/securitysuccess.php");
+        } else {
+            $answerErr = '<div class="alert alert-danger">
+                        <strong>Security Answer</strong> incorrect.
+                        </div>';
+        }
+    }
+}
 ?>
