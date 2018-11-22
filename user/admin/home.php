@@ -271,7 +271,7 @@ if (isset($_POST['deletepost'])) {
                         <div class="card">
                             <div class="card-header" id="headingOne">
                                 <h5 class="mb-0">
-                                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                    <button class="btn bg-dark text-white" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
                                         <span class="fas fa-plus-circle"></span> Post Announcement
                                     </button>
                                 </h5>
@@ -292,7 +292,7 @@ if (isset($_POST['deletepost'])) {
                                         </div>
 
                                         <div class="form-group">
-                                            <button style="float:right;" type="submit" name="postAnnouncement" class="btn btn-primary">
+                                            <button style="float:right;" type="submit" name="postAnnouncement" class="btn btn-success">
                                                 Post
                                             </button>
                                             <br>
@@ -306,7 +306,7 @@ if (isset($_POST['deletepost'])) {
                         <div class="card">
                             <div class="card-header" id="headingTwo">
                                 <h5 class="mb-0">
-                                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                    <button class="btn bg-dark text-white" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
                                         <span class="fas fa-plus-circle"></span> My Announcements
                                     </button>
                                 </h5>
@@ -337,11 +337,11 @@ if (isset($_POST['deletepost'])) {
                                                         <div class="col-md-4">
                                                             <div class="card">
                                                                 <div class="card-header bg-dark text-white">
-                                                                    <h6>Announcement
+                                                                    <h7>
                                                                     <div style="float: right;" class="btn-group" role="group">
-                                                                        <a href="#edit' . $annno . '" data-toggle="modal" title="Edit Post"><button type="button" class="btn btn-info btn-sm"><span class="fas fa-edit" aria-hidden="true"></span></button></a>
+                                                                        <a href="#edit' . $annno . '" data-toggle="modal" title="Edit Post"><button type="button" class="btn btn-outline-light btn-xl"><span class="fas fa-edit" aria-hidden="true"></span></button></a>
                                                                     </div>
-                                                                    </h6>
+                                                                    </h7>
                                                                 </div>
                                                                 <div class="card-body">
                                                                     <h5 class="card-title">' . $anntitle . '</h5>
@@ -380,9 +380,10 @@ if (isset($_POST['deletepost'])) {
                                                                         </div>
                                                                         <br>
                                                                         <div class="modal-footer">
+                                                                            <button style="float: right;" type="button" class="btn btn-secondary btn-m" data-dismiss="modal"><span class="fas fa-times"></span> Cancel</button> 
                                                                             <button style="float: left;" type="submit" name="deletepost" class="btn btn-danger btn-m"><span class="fas fa-trash"></span> Delete Post</button>
-                                                                            <button style="float: right;" type="submit" name="editpost" class="btn btn-info btn-m"><span class="fas fa-check" ></span> Save Changes</button>
-                                                                            <button style="float: right;" type="button" class="btn btn-secondary btn-m" data-dismiss="modal"><span class="fas fa-times"></span> Cancel</button>
+                                                                            <button style="float: right;" type="submit" name="editpost" class="btn btn-success btn-m"><span class="fas fa-save" ></span> Save Changes</button>
+                                                                            
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -402,6 +403,9 @@ if (isset($_POST['deletepost'])) {
                     </div>
 
                     <br>
+                    
+                    <h5>Announcements</h5>
+                    <hr>
 
                     <?php
                     $announceSelect = "SELECT announcements.annno, announcements.anntitle, announcements.anndesc, announcements.anndate, announcements.userno, users.fname, users.mname, users.lname FROM announcements LEFT JOIN users ON users.userno = announcements.userno WHERE announcements.hidden = '0' ORDER BY announcements.annno DESC";
@@ -417,7 +421,7 @@ if (isset($_POST['deletepost'])) {
 
                             echo '<div class="card">
                                         <div class="card-header bg-dark text-white">
-                                            <h6>Announcement</h6>
+                                            <h6></h6>
                                         </div>
                                         <div class="card-body">
                                             <h5 class="card-title">' . $anntitle . '</h5>

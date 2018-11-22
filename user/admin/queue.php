@@ -139,7 +139,7 @@ if (!isset($_SESSION['user_name'])) {
 
                         <div class="col-6 col-lg-6">
                             <div class="card">
-                                <div class="card-header  bg-info text-white">
+                                <div class="card-header  bg-success text-white">
                                     <center><h5>Now Serving</h5></center>
                                 </div>
                                 <div class="card-body">
@@ -216,7 +216,7 @@ if (!isset($_SESSION['user_name'])) {
 
                         <div class="col-2 col-sm-2">
                             <div class="card">
-                                <div class="card-header  bg-danger text-white">
+                                <div class="card-header  bg-dark text-white">
                                     <center><h5>No-Show</h5></center>
                                 </div>
                                 <div class="card-body">
@@ -228,7 +228,7 @@ if (!isset($_SESSION['user_name'])) {
 
                         <div class="col-2 col-sm-2">
                             <div class="card">
-                                <div class="card-header  bg-success text-white">
+                                <div class="card-header  bg-dark text-white">
                                     <center><h5>Done</h5></center>
                                 </div>
                                 <div class="card-body">

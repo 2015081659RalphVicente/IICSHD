@@ -138,7 +138,7 @@ if (!isset($_SESSION['user_name'])) {
                         <div class="card">
                             <div class="card-header" id="headingOne">
                                 <h5 class="mb-0">
-                                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                    <button class="bg-dark text-white" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
                                         <span class="fas fa-plus-circle"></span> Request for Consultation
                                     </button>
                                 </h5>
@@ -178,7 +178,7 @@ if (!isset($_SESSION['user_name'])) {
                                         </div>
 
                                         <div class="form-group">
-                                            <button style="float:right;" type="submit" name="submitDoc" class="btn btn-primary">
+                                            <button style="float:right;" type="submit" name="submitDoc" class="btn btn-success">
                                                 Submit
                                             </button>
                                             <br>

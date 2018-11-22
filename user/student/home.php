@@ -144,7 +144,7 @@ if (!isset($_SESSION['user_name'])) {
 
                             echo '<div class="card">
                                         <div class="card-header bg-dark text-white">
-                                            <h6>Announcement
+                                            <h6>
                                             </h6>
                                         </div>
                                         <div class="card-body">

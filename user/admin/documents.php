@@ -182,7 +182,7 @@ if (isset($_POST['updatedoc2'])) {
                         <div class="card">
                             <div class="card-header" id="headingOne">
                                 <h5 class="mb-0">
-                                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                    <button class="btn bg-dark text-white" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
                                         <span class="fas fa-plus-circle"></span> New Submissions
                                     </button>
                                 </h5>
@@ -221,7 +221,7 @@ if (isset($_POST['updatedoc2'])) {
                                                     $docstatus = $row['docstatus'];
 
                                                     echo "<tr>"
-                                                    . "<td>" . "<a href='#edit" . $docid . "'data-toggle='modal'><button type='button' class='btn btn-info btn-sm' title='Edit'><span class='fas fa-edit' aria-hidden='true'></span></button></a>" . "</td>"
+                                                    . "<td>" . "<a href='#edit" . $docid . "'data-toggle='modal'><button type='button' class='btn btn-dark btn-sm' title='Edit'><span class='fas fa-edit' aria-hidden='true'></span></button></a>" . "</td>"
                                                     . "<td>" . $docid . "</td>"
                                                     . "<td>" . $docdatesubmit . "</td>"
                                                     . "<td>" . $userid . "</td>"
@@ -284,8 +284,9 @@ if (isset($_POST['updatedoc2'])) {
                                                                             </div>
                                                                             <br>
                                                                             <div class="modal-footer">
-                                                                                <button style="float: right;" type="submit" name="updatedoc" class="btn btn-info btn-m"><span class="fas fa-clipboard-check" ></span> Save Changes</button>
                                                                                 <button style="float: right;" type="button" class="btn btn-secondary btn-m" data-dismiss="modal"><span class="fas fa-times"></span> Cancel</button>
+                                                                                <button style="float: right;" type="submit" name="updatedoc" class="btn btn-success btn-m"><span class="fas fa-clipboard-check" ></span> Save Changes</button>
+                                                                                
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -318,7 +319,7 @@ if (isset($_POST['updatedoc2'])) {
                         <div class="card">
                             <div class="card-header" id="headingTwo">
                                 <h5 class="mb-0">
-                                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                    <button class="btn bg-dark text-white" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
                                         <span class="fas fa-plus-circle"></span> Archived Documents
                                     </button>
                                 </h5>
@@ -386,8 +387,11 @@ if (isset($_POST['updatedoc2'])) {
 
 
                     </div>
-
+                    
                     <br>
+                    
+                    <h5>Tracking</h5>
+                    <hr>
 
                     <div class="table-responsive">
 
@@ -423,7 +427,7 @@ if (isset($_POST['updatedoc2'])) {
                                         $doceditedby = ($row['fname'] . ' ' . $row['mname'] . ' ' . $row['lname']);
 
                                         echo "<tr>"
-                                        . "<td>" . "<a href='#edit2" . $docid . "'data-toggle='modal'><button type='button' class='btn btn-info btn-sm' title='Edit'><span class='fas fa-edit' aria-hidden='true'></span></button></a>" . "</td>"
+                                        . "<td>" . "<a href='#edit2" . $docid . "'data-toggle='modal'><button type='button' class='btn btn-dark btn-sm' title='Edit'><span class='fas fa-edit' aria-hidden='true'></span></button></a>" . "</td>"
                                         . "<td>" . $docid . "</td>"
                                         . "<td>" . $docdatesubmit . "</td>"
                                         . "<td>" . $docdatechange . "</td>"
@@ -476,8 +480,9 @@ if (isset($_POST['updatedoc2'])) {
                                                                             </div>
                                                                             <br>
                                                                             <div class="modal-footer">
-                                                                                <button style="float: right;" type="submit" name="updatedoc2" class="btn btn-info btn-m"><span class="fas fa-clipboard-check" ></span> Save Changes</button>
                                                                                 <button style="float: right;" type="button" class="btn btn-secondary btn-m" data-dismiss="modal"><span class="fas fa-times"></span> Cancel</button>
+                                                                                <button style="float: right;" type="submit" name="updatedoc2" class="btn btn-success btn-m"><span class="fas fa-clipboard-check" ></span> Save Changes</button>
+                                                                                 
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -549,14 +554,7 @@ $thisDate = date("m/d/Y");
 ?>
 
                             $('#data_table').DataTable({
-                                dom: 'lBfrtip',
-                                buttons: [
-                                    {extend: 'copy', className: 'btn btn-secondary', text: '<i class="fas fa-copy"></i>', titleAttr: 'Copy', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
-                                    {extend: 'csv', className: 'btn bg-primary', text: '<i class="fas fa-file-alt"></i>', titleAttr: 'CSV', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
-                                    {extend: 'excel', className: 'btn btn-success', text: '<i class="fas fa-file-excel"></i>', titleAttr: 'Excel', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
-                                    {extend: 'pdf', className: 'btn btn-danger', orientation: 'landscape', pageSize: 'LEGAL', text: '<i class="fas fa-file-pdf"></i>', titleAttr: 'PDF', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
-                                    {extend: 'print', className: 'btn btn-dark', text: '<i class="fas fa-print"></i>', titleAttr: 'Print', title: 'Report printed by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'}
-                                ],
+
                                 initComplete: function () {
                                     this.api().columns([1, 2, 3, 4, 5, 6, 7, 8]).every(function () {
                                         var column = this;
@@ -586,14 +584,7 @@ $thisDate = date("m/d/Y");
 ?>
 
                             $('#archive').DataTable({
-                                dom: 'lBfrtip',
-                                buttons: [
-                                    {extend: 'copy', className: 'btn btn-secondary', text: '<i class="fas fa-copy"></i>', titleAttr: 'Copy', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
-                                    {extend: 'csv', className: 'btn bg-primary', text: '<i class="fas fa-file-alt"></i>', titleAttr: 'CSV', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
-                                    {extend: 'excel', className: 'btn btn-success', text: '<i class="fas fa-file-excel"></i>', titleAttr: 'Excel', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
-                                    {extend: 'pdf', className: 'btn btn-danger', orientation: 'landscape', pageSize: 'LEGAL', text: '<i class="fas fa-file-pdf"></i>', titleAttr: 'PDF', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
-                                    {extend: 'print', className: 'btn btn-dark', text: '<i class="fas fa-print"></i>', titleAttr: 'Print', title: 'Report printed by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'}
-                                ],
+
                                 initComplete: function () {
                                     this.api().columns().every(function () {
                                         var column = this;

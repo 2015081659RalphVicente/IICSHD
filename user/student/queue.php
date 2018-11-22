@@ -40,6 +40,12 @@ if (!isset($_SESSION['user_name'])) {
         <!-- Font Awesome JS -->
         <script defer src="../../fa-5.5.0/js/solid.js"></script>
         <script defer src="../../fa-5.5.0/js/fontawesome.js"></script>
+        
+        <style>
+            .bg-black{
+                background-color: #b71c1c;
+            }
+        </style>
     </head>
 
     <body>
@@ -139,9 +145,9 @@ if (!isset($_SESSION['user_name'])) {
                             <!-- Card # -->
                             <div class="col-6 col-lg-3">
                                 <div class="card flex-fill">
-                                    <div class="card-header bg-info text-light">Document Inquiry</div>
+                                    <div class="card-header bg-black text-light">Document Inquiry</div>
                                     <div class="card-footer">
-                                        <button class="btn btn-outline-info d-block w-75 mx-auto">Select</button>
+                                        <button class="btn btn-outline-danger d-block w-75 mx-auto">Select</button>
                                     </div>
                                 </div>
                                 <br>
@@ -152,9 +158,9 @@ if (!isset($_SESSION['user_name'])) {
                             <!-- Card # -->
                             <div class="col-6 col-lg-3">
                                 <div class="card flex-fill">
-                                    <div class="card-header bg-info text-light rounded">Enrollment Concern</div>
+                                    <div class="card-header bg-black text-light rounded">Enrollment Concern</div>
                                     <div class="card-footer">
-                                        <button class="btn btn-outline-info d-block w-75 mx-auto">Select</button>
+                                        <button class="btn btn-outline-danger d-block w-75 mx-auto">Select</button>
                                     </div>
                                 </div>
                                 <br>
@@ -163,9 +169,9 @@ if (!isset($_SESSION['user_name'])) {
                             <!-- Card # -->
                             <div class="col-6 col-lg-3">
                                 <div class="card flex-fill">
-                                    <div class="card-header bg-info text-light rounded">Meeting</div>
+                                    <div class="card-header bg-black text-light rounded">Meeting</div>
                                     <div class="card-footer">
-                                        <button class="btn btn-outline-info d-block w-75 mx-auto">Select</button>
+                                        <button class="btn btn-outline-danger d-block w-75 mx-auto">Select</button>
                                     </div>
                                 </div>
                                 <br>
@@ -174,9 +180,9 @@ if (!isset($_SESSION['user_name'])) {
                             <!-- Card # -->
                             <div class="col-6 col-lg-3">
                                 <div class="card flex-fill">
-                                    <div class="card-header bg-info text-light rounded">Other Inquiry</div>
+                                    <div class="card-header bg-black text-light rounded">Other Inquiry</div>
                                     <div class="card-footer">
-                                        <button class="btn btn-outline-info d-block w-75 mx-auto">Select</button>
+                                        <button class="btn btn-outline-danger d-block w-75 mx-auto">Select</button>
                                     </div>
                                 </div>
                                 <br>
@@ -196,7 +202,7 @@ if (!isset($_SESSION['user_name'])) {
 
                         <div class="col-6 col-lg-6">
                             <div class="card flex-fill">
-                                <div class="card-header bg-primary text-light rounded">Now Serving</div>
+                                <div class="card-header bg-info text-light rounded">Now Serving</div>
                                 <div class="card-footer">
                                     <h2 class="timer count-title count-number" data-to="100" data-speed="1500">N001</h2>
                                 </div>
@@ -206,7 +212,7 @@ if (!isset($_SESSION['user_name'])) {
 
                         <div class="col-6 col-lg-3">
                             <div class="card flex-fill">
-                                <div class="card-header bg-dark text-light rounded">Waiting</div>
+                                <div class="card-header bg-black text-light rounded">Waiting</div>
                                 <div class="card-footer">
                                     <h2 class="timer count-title count-number" data-to="100" data-speed="1500">N003</h2>
                                     <h2 class="timer count-title count-number" data-to="100" data-speed="1500">N004</h2>

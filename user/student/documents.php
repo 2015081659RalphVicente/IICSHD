@@ -160,7 +160,7 @@ if (isset($_POST['submitDoc'])) {
                         <div class="card">
                             <div class="card-header" id="headingOne">
                                 <h5 class="mb-0">
-                                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                    <button class="btn bg-dark text-white" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
                                         <span class="fas fa-plus-circle"></span> Submit Document
                                     </button>
                                 </h5>
@@ -181,7 +181,7 @@ if (isset($_POST['submitDoc'])) {
                                         </div>
 
                                         <div class="form-group">
-                                            <button style="float:right;" type="submit" name="submitDoc" class="btn btn-primary">
+                                            <button style="float:right;" type="submit" name="submitDoc" class="btn btn-success">
                                                 Submit
                                             </button>
                                             <br>
@@ -196,6 +196,7 @@ if (isset($_POST['submitDoc'])) {
                     </div>
 
                     <br>
+                    <h5>Tracking</h5><hr>
 
                     <div class="table-responsive">
 
