@@ -38,19 +38,23 @@ $(function () {
     }, "Your password must be atleast 8 characters long and must be a combination of uppercase letters, lowercase letters and numbers.");
 
     jQuery.validator.addMethod("num", function (value, element) {
-        return this.optional(element) || /^[0-9]{10,10}$/.test(value);
-    }, "Input must contain numbers only and should have 10 digits.");
+        return this.optional(element) || /^(20)([0-9]{8})*$/.test(value);
+    }, "Invalid student number. Sample: 2011001234");
+
+    jQuery.validator.addMethod("empnum", function (value, element) {
+        return this.optional(element) || /^(19|20)([0-9]{8})*$/.test(value);
+    }, "Invalid faculty number. Sample: 2011001234");
 
     jQuery.validator.addMethod("fname", function (value, element) {
-        return this.optional(element) || /^[a-zA-Z\ ]*$/.test(value);
+        return this.optional(element) || /^[a-zA-Z\u00f1\u00d1 ]*$/u.test(value);
     }, "Input must contain letters only.");
 
     jQuery.validator.addMethod("mname", function (value, element) {
-        return this.optional(element) || /^[a-zA-Z\. {2,4}]*$/.test(value);
+        return this.optional(element) || /^[a-zA-Z\u00f1\u00d1. {2,4}]*$/u.test(value);
     }, "Input must contain a letter and a period (.)");
 
     jQuery.validator.addMethod("lname", function (value, element) {
-        return this.optional(element) || /^[a-zA-Z\ ]*$/.test(value);
+        return this.optional(element) || /^[a-zA-Z\u00f1\u00d1 ]*$/u.test(value);
     }, "Input must contain letters only.");
 
 
@@ -139,7 +143,7 @@ $(function () {
         rules: {
             empnum: {
                 required: true,
-                num: true
+                empnum: true
             },
             empfname: {
                 required: true,

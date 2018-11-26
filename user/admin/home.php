@@ -339,7 +339,7 @@ if (isset($_POST['deletepost'])) {
                                                                 <div class="card-header bg-dark text-white">
                                                                     <h7>
                                                                     <div style="float: right;" class="btn-group" role="group">
-                                                                        <a href="#edit' . $annno . '" data-toggle="modal" title="Edit Post"><button type="button" class="btn btn-outline-light btn-xl"><span class="fas fa-edit" aria-hidden="true"></span></button></a>
+                                                                        <a href="#edit' . $annno . '" data-toggle="modal" title="Edit Post"><button type="button" class="btn btn-outline-light btn-sm"><span class="fas fa-edit" aria-hidden="true"></span></button></a>
                                                                     </div>
                                                                     </h7>
                                                                 </div>

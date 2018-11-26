@@ -21,7 +21,7 @@ if (isset($_SESSION['user_name'])) {
 
 $studnum = $studfname = $studmname = $studlname = $studsection = $studemail = $studpass = $studconfpass = $studsecq = $studsecans = $studrole = $forgot = $hidden = "";
 $empnum = $empfname = $empmname = $emplname = $empsection = $empemail = $emppass = $empconfpass = $empsecq = $empsecans = $emprole = $forgot = $hidden = "";
-$tab1 = $tab2 = $studnumErr = $empnumErr2 = $numErr = $numErr2 = $firstErr = $firstErr2 = $midErr = $midErr2 = $lastErr = $lastErr2 = $emailErr = $emailErr2 = $confirmErr = $confirmErr2 = $passwordErr = $passwordErr2 = "";
+$tab1 = $tab2 = $studnumErr = $empnumErr2 = $emailErr3 = $empnumErr3 = $numErr = $numErr2 = $firstErr = $firstErr2 = $midErr = $midErr2 = $lastErr = $lastErr2 = $emailErr = $emailErr2 = $confirmErr = $confirmErr2 = $passwordErr = $passwordErr2 = "";
 
 
 //register student
@@ -45,6 +45,12 @@ if (isset($_POST['studRegister'])) {
     $pcheck->execute();
     $resultpcheck = $pcheck->get_result();
     $pcheck->close();
+
+    $emailcheck = $conn->prepare("SELECT email from users where email=?");
+    $emailcheck->bind_param("s", $studemail);
+    $emailcheck->execute();
+    $resultemailcheck = $emailcheck->get_result();
+    $emailcheck->close();
 
     $updateBool = TRUE;
 
@@ -80,8 +86,14 @@ if (isset($_POST['studRegister'])) {
         $updateBool = FALSE;
     }
     if ($resultpcheck->num_rows > 0) {
-        $studnumErr = '<div class="alert alert-warning">
-                        <strong>Student Number</strong> already has an account.
+        $studnumErr = '<div class="alert alert-danger">
+                        This user already has an account.
+                        </div>';
+        $updateBool = FALSE;
+    }
+    if ($resultemailcheck->num_rows > 0) {
+        $emailErr3 = '<div class="alert alert-danger">
+                        This email is already in use.
                         </div>';
         $updateBool = FALSE;
     }
@@ -105,7 +117,7 @@ if (isset($_POST['studRegister'])) {
         $hashedSecAns = password_hash($studsecans, PASSWORD_DEFAULT);
         //insert the user into the database
 
-        $sqladd = $conn->prepare("INSERT INTO users VALUES ('',?,?,?,?,?,?,?,?,?,?,?,?)");
+        $sqladd = $conn->prepare("INSERT INTO users VALUES ('',?,?,?,?,?,?,?,?,?,?,?,?,'')");
         $sqladd->bind_param("ssssssissisi", $studnum, $studfname, $studmname, $studlname, $studemail, $hashedPwd, $forgot, $studrole, $studsection, $studsecq, $hashedSecAns, $hidden);
         $sqladd->execute();
         $sqladd->close();
@@ -150,6 +162,12 @@ if (isset($_POST['empRegister'])) {
     $resultecheck = $echeck->get_result();
     $echeck->close();
 
+    $emailcheck = $conn->prepare("SELECT email from users where email=?");
+    $emailcheck->bind_param("s", $empemail);
+    $emailcheck->execute();
+    $resultemailcheck = $emailcheck->get_result();
+    $emailcheck->close();
+
     $updateBool = TRUE;
 
     //validators
@@ -189,6 +207,12 @@ if (isset($_POST['empRegister'])) {
                         </div>';
         $updateBool = FALSE;
     }
+    if ($resultemailcheck->num_rows > 0) {
+        $empnumErr3 = '<div class="alert alert-danger">
+                        This email is already in use.
+                        </div>';
+        $updateBool = FALSE;
+    }
     if (!preg_match("/(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/", $emppass)) {
         $passwordErr2 = '<div class="alert alert-warning">
                         Password must be atleast 8 characters long and must be a combination of uppercase letters, lowercase letters and numbers.
@@ -209,7 +233,7 @@ if (isset($_POST['empRegister'])) {
         $hashedSecAns = password_hash($empsecans, PASSWORD_DEFAULT);
         //insert the user into the database
 
-        $sqladd = $conn->prepare("INSERT INTO users VALUES ('',?,?,?,?,?,?,?,?,?,?,?,?)");
+        $sqladd = $conn->prepare("INSERT INTO users VALUES ('',?,?,?,?,?,?,?,?,?,?,?,?,'')");
         $sqladd->bind_param("ssssssissisi", $empnum, $empfname, $empmname, $emplname, $empemail, $hashedPwd, $forgot, $emprole, $empsection, $empsecq, $hashedSecAns, $hidden);
         $sqladd->execute();
         $sqladd->close();
@@ -223,7 +247,7 @@ if (isset($_POST['empRegister'])) {
 //        $logper->bind_param("sss", $peraction, $_SESSION['user_name'], $perval);
 //        $logper->execute();
 //        $logper->close();
-        
+
         $_SESSION['param'] = "registerSuccess";
         header("Location: success.php");
         exit;
@@ -344,6 +368,7 @@ if (isset($_SESSION['tab'])) {
                                     <div class="form-group">
                                         <input type="email" class="form-control" placeholder="E-mail (ust.edu.ph) *" value="<?php echo $studemail; ?>" name="studemail" required/>
                                         <?php echo $emailErr; ?>
+                                        <?php echo $emailErr3; ?>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -417,6 +442,7 @@ if (isset($_SESSION['tab'])) {
                                         <input type="email" class="form-control" placeholder="E-mail (ust.edu.ph) *" value="<?php echo $empemail; ?>" name="empemail" required/>
                                         <?php
                                         echo $emailErr2;
+                                        echo $empnumErr3;
                                         ?>
                                     </div>  
                                 </div>

@@ -26,12 +26,21 @@ if (isset($_POST['submitDoc'])) {
     $dStatus = "Submitted";
 
     $submitSql = $conn->prepare("INSERT INTO documents VALUES ('', NOW(), ?, ?, ?, ?, '0', '0')");
-    $submitSql->bind_param("isss", $_SESSION['userno'],$dTitle,$dDesc,$dStatus);
+    $submitSql->bind_param("isss", $_SESSION['userno'], $dTitle, $dDesc, $dStatus);
+    $submitSql2 = $conn->prepare("INSERT INTO doclogs VALUES ('', NOW(), ?, ?, ?, ?, '0', '0')");
+    $submitSql2->bind_param("isss", $_SESSION['userno'], $dTitle, $dDesc, $dStatus);
+
 
     if ($submitSql == TRUE) {
 
         $submitSql->execute();
         $submitSql->close();
+
+        if ($submitSql2 == TRUE) {
+            $submitSql2->execute();
+            $submitSql2->close();
+        }
+
 
         header("Location: documents.php");
         exit;
@@ -39,6 +48,32 @@ if (isset($_POST['submitDoc'])) {
         $postFailed = '<div class="alert alert-danger">
                         Submit Failed!
                         </div>';
+    }
+}
+
+if (isset($_POST['receiveRel'])) {
+    $recDoc = $_POST['recDoc'];
+    $docstatus = "Received by Student";
+
+    $editquery = $conn->prepare("UPDATE documents SET docstatus=?, docdatechange=NOW() WHERE docno=?");
+    $editquery->bind_param("si", $docstatus, $recDoc);
+    $editquery->execute();
+    $editquery->close();
+
+    $editquery2 = $conn->prepare("UPDATE doclogs SET docstatus=?, docdatechange=NOW() WHERE docno=?");
+    $editquery2->bind_param("si", $docstatus, $recDoc);
+    $editquery2->execute();
+    $editquery2->close();
+
+    if ($editquery == TRUE) {
+
+        if ($editquery2 == TRUE) {
+
+            header("location: documents.php");
+            exit;
+        }
+    } else {
+        echo "Update failed.";
     }
 }
 ?>
@@ -191,6 +226,81 @@ if (isset($_POST['submitDoc'])) {
                                 </div>
                             </div>
 
+
+
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header" id="headingTwo">
+                                <h5 class="mb-0">
+                                    <button class="btn bg-dark text-white" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                        <span class="fas fa-plus-circle"></span> Received Documents
+                                    </button>
+                                </h5>
+                            </div>
+
+                            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+                                <div class="card-body">
+
+
+                                    <div class="table-responsive">
+
+                                        <table id="received" class="table table-striped table-responsive-lg">
+
+                                            <thead>
+                                                <tr>
+                                                    <th>Document #</th>
+                                                    <th>Date Submitted</th>
+                                                    <th>Title</th>
+                                                    <th>Description</th>
+                                                    <th>Status</th>
+                                                </tr>
+                                            </thead>
+
+                                            <tbody>
+
+                                                <?php
+                                                $receivedQuery = mysqli_query($conn, "SELECT LPAD(documents.docno,4,0), documents.docdatesubmit, users.fname, users.mname, users.lname, documents.doctitle,"
+                                                        . "documents.docdesc, documents.docstatus FROM documents INNER JOIN users WHERE documents.userno = users.userno "
+                                                        . "AND documents.docstatus = 'Received by Student' AND documents.userno = " . $_SESSION['userno'] . "");
+
+                                                if ($receivedQuery->num_rows > 0) {
+                                                    while ($row = $receivedQuery->fetch_assoc()) {
+                                                        $docid = $row['LPAD(documents.docno,4,0)'];
+                                                        $docdatesubmit = $row['docdatesubmit'];
+                                                        $userid = ($row['fname'] . ' ' . $row['mname'] . ' ' . $row['lname']);
+                                                        $doctitle = $row['doctitle'];
+                                                        $docdesc = $row['docdesc'];
+                                                        $docstatus = $row['docstatus'];
+
+                                                        echo '<tr>'
+                                                        . '<td>' . $docid . '</td>'
+                                                        . '<td>' . $docdatesubmit . '</td>'
+                                                        . '<td>' . $doctitle . '</td>'
+                                                        . '<td>' . $docdesc . '</td>'
+                                                        . '<td>' . $docstatus . '</td>';
+                                                    }
+                                                }
+                                                ?>
+
+                                            </tbody>
+
+                                            <tfoot>
+                                                <tr>
+                                                    <th>Document #</th>
+                                                    <th>Date Submitted</th>
+                                                    <th>Title</th>
+                                                    <th>Description</th>
+                                                    <th>Status</th>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
                         </div>
 
                     </div>
@@ -210,6 +320,7 @@ if (isset($_POST['submitDoc'])) {
                                     <th>Title</th>
                                     <th>Description</th>
                                     <th>Status</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
 
@@ -218,7 +329,8 @@ if (isset($_POST['submitDoc'])) {
                                 <?php
                                 $newsubquery = mysqli_query($conn, "SELECT LPAD(documents.docno,4,0), documents.docdatesubmit, users.fname, users.mname, users.lname, documents.doctitle,"
                                         . "documents.docdesc, documents.docstatus FROM documents INNER JOIN users WHERE documents.userno = users.userno "
-                                        . "AND documents.userno = " . $_SESSION['userno'] . "");
+                                        . "AND documents.userno = " . $_SESSION['userno'] . " AND documents.docstatus != 'Received by Student'");
+
 
                                 if ($newsubquery->num_rows > 0) {
                                     while ($row = $newsubquery->fetch_assoc()) {
@@ -236,12 +348,20 @@ if (isset($_POST['submitDoc'])) {
                                         . '<td>' . $doctitle . '</td>'
                                         . '<td>' . $docdesc . '</td>'
                                         . '<td>' . $docstatus . '</td>';
+                                        if ($docstatus == 'Released') {
+                                            echo '<td>'
+                                            . '<form method="post">'
+                                            . '<input type = "hidden" name="recDoc" value="' . $docid . '">'
+                                            . '<button type = "submit" class="btn btn-success btn-sm" name ="receiveRel"><span class="fas fa-check"></span></button>'
+                                            . '</td></tr>';
+                                        } else {
+                                            echo '<td> - </td></tr>';
+                                        }
                                     }
                                 }
                                 ?>
 
                             </tbody>
-
                             <tfoot>
                                 <tr>
                                     <th>Document #</th>
@@ -250,8 +370,10 @@ if (isset($_POST['submitDoc'])) {
                                     <th>Title</th>
                                     <th>Description</th>
                                     <th>Status</th>
+                                    <th>Action</th>
                                 </tr>
                             </tfoot>
+
                         </table>
                     </div>
 
@@ -295,6 +417,47 @@ $thisDate = date("m/d/Y");
 ?>
 
                 $('#submitted').DataTable({
+                    dom: 'lBfrtip',
+                    buttons: [
+                        {extend: 'copy', className: 'btn btn-secondary', text: '<i class="fas fa-copy"></i>', titleAttr: 'Copy', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
+                        {extend: 'csv', className: 'btn bg-primary', text: '<i class="fas fa-file-alt"></i>', titleAttr: 'CSV', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
+                        {extend: 'excel', className: 'btn btn-success', text: '<i class="fas fa-file-excel"></i>', titleAttr: 'Excel', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
+                        {extend: 'pdf', className: 'btn btn-danger', orientation: 'landscape', pageSize: 'LEGAL', text: '<i class="fas fa-file-pdf"></i>', titleAttr: 'PDF', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
+                        {extend: 'print', className: 'btn btn-dark', text: '<i class="fas fa-print"></i>', titleAttr: 'Print', title: 'Report printed by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'}
+                    ],
+
+                    initComplete: function () {
+                        this.api().columns().every(function () {
+                            var column = this;
+                            var select = $('<select><option value="">Show all</option></select>')
+                                    .appendTo($(column.footer()).empty())
+                                    .on('change', function () {
+                                        var val = $.fn.dataTable.util.escapeRegex(
+                                                $(this).val()
+                                                );
+
+                                        column
+                                                .search(val ? '^' + val + '$' : '', true, false)
+                                                .draw();
+                                    });
+
+                            column.data().unique().sort().each(function (d, j) {
+                                select.append('<option value="' + d + '">' + d + '</option>')
+                            });
+                        });
+                    }
+
+
+
+                });
+            });
+
+            $(document).ready(function () {
+<?php
+$thisDate = date("m/d/Y");
+?>
+
+                $('#received').DataTable({
                     dom: 'lBfrtip',
                     buttons: [
                         {extend: 'copy', className: 'btn btn-secondary', text: '<i class="fas fa-copy"></i>', titleAttr: 'Copy', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},

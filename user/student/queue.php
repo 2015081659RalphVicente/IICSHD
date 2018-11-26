@@ -19,6 +19,47 @@ if (isset($_SESSION['user_name'])) {
 if (!isset($_SESSION['user_name'])) {
     header("location:/iicshd/login.php");
 }
+
+if (isset($_POST['getQueueNum'])) {
+
+    $qType = $_POST["selectType"];
+    $qDesc = $_POST['qDesc'];
+    $userno = $_SESSION['userno'];
+    $qStatus = "Waiting";
+    $inqueue = "1";
+
+    $submitSql = $conn->prepare("INSERT INTO queue VALUES ('', ?, ?, ?, NOW(), ?)");
+    $submitSql->bind_param("isss", $_SESSION['userno'], $qType, $qDesc, $qStatus);
+
+    $submitSql2 = $conn->prepare("INSERT INTO queuelogs VALUES ('', ?, ?, ?, NOW(), ?)");
+    $submitSql2->bind_param("isss", $_SESSION['userno'], $qType, $qDesc, $qStatus);
+
+    $userQ = $conn->prepare("UPDATE users SET inqueue=? WHERE userno=?");
+    $userQ->bind_param("ii", $inqueue, $_SESSION['userno']);
+
+
+    if ($submitSql == TRUE) {
+
+        $submitSql->execute();
+        $submitSql->close();
+
+        if ($submitSql2 == TRUE) {
+            $submitSql2->execute();
+            $submitSql2->close();
+        }
+
+        if ($userQ == TRUE) {
+            $userQ->execute();
+            $userQ->close();
+        }
+        header("Location: queue.php");
+        exit;
+    } else {
+        $postFailed = '<div class="alert alert-danger">
+                        Queue Failed!
+                        </div>';
+    }
+}
 ?>
 
 <!doctype html>
@@ -40,10 +81,10 @@ if (!isset($_SESSION['user_name'])) {
         <!-- Font Awesome JS -->
         <script defer src="../../fa-5.5.0/js/solid.js"></script>
         <script defer src="../../fa-5.5.0/js/fontawesome.js"></script>
-        
+
         <style>
-            .bg-black{
-                background-color: #b71c1c;
+            .bg-orange{
+                background-color: #da5913;
             }
         </style>
     </head>
@@ -134,121 +175,263 @@ if (!isset($_SESSION['user_name'])) {
                         <h1 class="h2">Queue</h1>
                     </div>
 
+                    <?php
+                    $qcToggle = mysqli_query($conn, "SELECT * FROM qtoggle WHERE qtogno = '1'");
 
-                    <!-- cards -->
-                    <h3 class="font-weight-light text-center my-3">Choose Transaction Type</h3>
+                    if ($qcToggle->num_rows > 0) {
+                        while ($row = $qcToggle->fetch_assoc()) {
+                            $qtoggle = $row['qtoggle'];
 
-                    <!-- full size Card container -->
-                    <div class="container-fluid mx-auto d-md-block my-3 ">
-                        <div class="row text-center">
+                            if ($qtoggle == '0') {
+                                echo
 
-                            <!-- Card # -->
-                            <div class="col-6 col-lg-3">
-                                <div class="card flex-fill">
-                                    <div class="card-header bg-black text-light">Document Inquiry</div>
-                                    <div class="card-footer">
-                                        <button class="btn btn-outline-danger d-block w-75 mx-auto">Select</button>
-                                    </div>
+                                '<div class="card">'
+                                . '<div class="card-header bg-dark text-white">'
+                                . '<h5>Status: Closed '
+                                . '</h5> '
+                                . '</div> '
+                                . '</div>'
+                                . '<br>';
+                            } else {
+
+                                echo '<div class="card">'
+                                . '<div class="card-header bg-success text-white">'
+                                . '<h5>Status: Open '
+                                . '</h5> '
+                                . '</div> '
+                                . '</div>'
+                                . '<br>';
+                                ;
+                                $qCheck = mysqli_query($conn, "SELECT *, LPAD(queue.qno,4,0) FROM users LEFT JOIN queue ON users.userno = queue.userno WHERE users.userid = " . $_SESSION['userid'] . " ORDER BY queue.qno DESC LIMIT 1");
+
+                                if ($qCheck->num_rows > 0) {
+                                    while ($row = $qCheck->fetch_assoc()) {
+                                        $inqueue = $row['inqueue'];
+                                        $qno = $row['LPAD(queue.qno,4,0)'];
+                                        $qdate = $row['qdate'];
+                                        $qdesc = $row['qdesc'];
+                                        $qtype = $row['qtype'];
+
+
+                                        if ($inqueue == '0') {
+                                            echo '
+                    <a href="#getQueue" data-toggle="modal">
+                        <button class="btn btn-primary btn-block">
+                            <h4 class="text-center my-3">Get Queue Number</h4>
+                        </button>
+                    </a>
+
+                    <div id="getQueue" class="modal fade" role="dialog">
+
+                        <div class="modal-dialog modal-lg">
+                            <!-- Modal content-->
+                            <div class="modal-content">
+                                <div class="modal-header">
+
+                                    <h4 class="modal-title">Get Queue Number</h4>
                                 </div>
-                                <br>
-                            </div><!-- Card # -->
 
-                            <br>
+                                <div class="modal-body">
+                                    <form method="post" action="">
+                                        <div class="row">
+                                            <div class="col-sm-12">
 
-                            <!-- Card # -->
-                            <div class="col-6 col-lg-3">
-                                <div class="card flex-fill">
-                                    <div class="card-header bg-black text-light rounded">Enrollment Concern</div>
-                                    <div class="card-footer">
-                                        <button class="btn btn-outline-danger d-block w-75 mx-auto">Select</button>
-                                    </div>
+                                                <div class="form-group">
+                                                    <label for="title"><h5>Transaction Type: <span class="require">*</span></h5></label>
+                                                    <select name="selectType" class="form-control" id="selectType" required>
+                                                        <option selected disabled>Select one:</option>
+                                                        <option value="Document Inquiry">Document Inquiry</option>
+                                                        <option value="Enrollment Concern">Enrollment Concern</option>
+                                                        <option value="Meeting with Admin">Meeting with Admin</option>
+                                                        <option value="Other">Other</option>
+                                                    </select>
+                                                </div>
+
+                                                <div class="form-group" id="qDesc">
+                                                    <label for="description"><h5>Description: *</h5></label>
+                                                    <textarea rows="2" class="form-control" name="qDesc"></textarea>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <div class="modal-footer">
+                                            <button style="float: right;" type="button" class="btn btn-secondary btn-m" data-dismiss="modal"><span class="fas fa-times"></span> Cancel</button>
+                                            <button style="float: right;" type="submit" name="getQueueNum" class="btn btn-success btn-m"><span class="fas fa-clipboard-check" ></span> Queue</button>
+
+                                        </div>
                                 </div>
-                                <br>
-                            </div><!-- Card # -->
-
-                            <!-- Card # -->
-                            <div class="col-6 col-lg-3">
-                                <div class="card flex-fill">
-                                    <div class="card-header bg-black text-light rounded">Meeting</div>
-                                    <div class="card-footer">
-                                        <button class="btn btn-outline-danger d-block w-75 mx-auto">Select</button>
-                                    </div>
-                                </div>
-                                <br>
-                            </div><!-- Card # -->
-
-                            <!-- Card # -->
-                            <div class="col-6 col-lg-3">
-                                <div class="card flex-fill">
-                                    <div class="card-header bg-black text-light rounded">Other Inquiry</div>
-                                    <div class="card-footer">
-                                        <button class="btn btn-outline-danger d-block w-75 mx-auto">Select</button>
-                                    </div>
-                                </div>
-                                <br>
-                            </div><!-- Card # -->
-
+                                </form>
+                            </div>
                         </div>
-                    </div><!-- /full size Card container -->
 
-
+                    </div>';
+                                        } else {
+                                            echo '<div class="card">'
+                                            . '<div class="card-header">'
+                                            . '<h4 class="text-center my-3">Your Queue Number</h4>'
+                                            . '</div>'
+                                            . '<div class="card-body">'
+                                            . '<h2 class="text-center">' . $qno . '</h2>'
+                                            . '<h6 class="text-center">' . $qdate . '</h6>'
+                                            . '<hr>'
+                                            . '<h6 class="text-center">Transaction Type: ' . $qtype . '</h6>';
+                                            if ($qtype == 'Other') {
+                                                echo '<h6 class="text-center">Description: ' . $qdesc . '</h6>'
+                                                . '</div></div>';
+                                            } else {
+                                                echo '</div>'
+                                                . '</div>';
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    ?>
 
 
                     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                         <h1 class="h2">In Line</h1>
                     </div>
 
-                    <div class="row text-center">
 
-                        <div class="col-6 col-lg-6">
+
+                    <?php
+                    $qcToggle = mysqli_query($conn, "SELECT * FROM qtoggle WHERE qtogno = '1'");
+
+                    if ($qcToggle->num_rows > 0) {
+                        while ($row = $qcToggle->fetch_assoc()) {
+                            $qtoggle = $row['qtoggle'];
+
+                            if ($qtoggle == '0') {
+                                echo
+
+                                '<div class="card">'
+                                . '<div class="card-header bg-dark text-white">'
+                                . '<h5>Status: Closed '
+                                . '</h5> '
+                                . '</div> '
+                                . '</div>'
+                                . '<br>';
+                            } else {
+
+                                echo '                    <div class="row text-center">
+                                        <div class="col-lg-6">
                             <div class="card flex-fill">
-                                <div class="card-header bg-info text-light rounded">Now Serving</div>
-                                <div class="card-footer">
-                                    <h2 class="timer count-title count-number" data-to="100" data-speed="1500">N001</h2>
-                                </div>
-                            </div>
-                            <br>
-                        </div>
+                                <div class="card-header bg-info text-light rounded"><h5>Now Serving</h5></div>
+                                <div class="card-body">';
 
-                        <div class="col-6 col-lg-3">
-                            <div class="card flex-fill">
-                                <div class="card-header bg-black text-light rounded">Waiting</div>
-                                <div class="card-footer">
-                                    <h2 class="timer count-title count-number" data-to="100" data-speed="1500">N003</h2>
-                                    <h2 class="timer count-title count-number" data-to="100" data-speed="1500">N004</h2>
-                                </div>
-                            </div><br>
-                        </div>
-
-                        <div class="col-6 col-lg-3">
-                            <div class="card flex-fill">
-                                <div class="card-header bg-success text-light rounded">Done</div>
-                                <div class="card-footer">
-                                    <h2 class="timer count-title count-number" data-to="100" data-speed="1500">N000</h2>
-                                </div>
-                            </div>
-                            <br>
-                        </div>
-
-                    </div>
-
-                </main>
+                                $qWaiting = mysqli_query($conn, "SELECT LPAD(qno,4,0) FROM queue WHERE qstatus = 'Now' LIMIT 1");
+                                if ($qWaiting->num_rows > 0) {
+                                    while ($row = $qWaiting->fetch_assoc()) {
+                                        $qno = $row['LPAD(qno,4,0)'];
+                                        echo '<center><h2>' . $qno . '</h2></center></div>';
+                                    }
+                                } else {
+                                    echo '<center><h4>Empty</h4></center></div>';
+                                }
+                            }
+                        }
+                    }
+                    ?>
             </div>
         </div>
 
-        <!-- Bootstrap core JavaScript
-        ================================================== -->
-        <!-- Placed at the end of the document so the pages load faster -->
-        <script src="../../js/jquery-3.3.1.js" ></script>
-        <script>window.jQuery || document.write('<script src="../../js/jquery-3.3.1.js"><\/script>')</script>
-        <script src="../../js/popper.js"></script>
-        <script src="../../js/bootstrap.min.js"></script>
+        <br>
 
-        <!-- Icons -->
-        <script src="../../js/feather.min.js"></script>
-        <script>
-            feather.replace()
-        </script>
+        <div class="col-lg-2">
+            <div class="card flex-fill">
+                <div class="card-header bg-orange text-light rounded"><h5>Waiting</h5></div>
+                <div class="card-body">
+                    <?php
+                    $qWaiting = mysqli_query($conn, "SELECT LPAD(qno,4,0) FROM queue WHERE qstatus = 'Waiting' LIMIT 5");
+                    if ($qWaiting->num_rows > 0) {
+                        while ($row = $qWaiting->fetch_assoc()) {
+                            $qno = $row['LPAD(qno,4,0)'];
+                            echo '<center><h4>' . $qno . '</h4></center><hr>';
+                        }
+                    } else {
+                        echo '<center><h4>Empty</h4></center>';
+                    }
+                    ?>
+                </div>
+            </div>
+            <br>
+        </div>
 
-    </body>
+        <div class="col-lg-2">
+            <div class="card flex-fill">
+                <div class="card-header bg-dark text-light rounded"><h5>No-Show</h5></div>
+                <div class="card-body">
+                    <?php
+                    $qWaiting = mysqli_query($conn, "SELECT LPAD(qno,4,0) FROM queue WHERE qstatus = 'No-Show' ORDER BY qno DESC LIMIT 5");
+                    if ($qWaiting->num_rows > 0) {
+                        while ($row = $qWaiting->fetch_assoc()) {
+                            $qno = $row['LPAD(qno,4,0)'];
+                            echo '<center><h4>' . $qno . '</h4></center><hr>';
+                        }
+                    } else {
+                        echo '<center><h4>Empty</h4></center>';
+                    }
+                    ?>
+                </div>
+            </div>
+            <br>
+        </div>
+
+        <div class="col-lg-2">
+            <div class="card flex-fill">
+                <div class="card-header bg-success text-light rounded"><h5>Done</h5></div>
+                <div class="card-body">
+                    <?php
+                    $qWaiting = mysqli_query($conn, "SELECT LPAD(qno,4,0) FROM queue WHERE qstatus = 'Done' ORDER BY qno DESC LIMIT 5");
+                    if ($qWaiting->num_rows > 0) {
+                        while ($row = $qWaiting->fetch_assoc()) {
+                            $qno = $row['LPAD(qno,4,0)'];
+                            echo '<center><h4>' . $qno . '</h4></center><hr>';
+                        }
+                    } else {
+                        echo '<center><h4>Empty</h4></center>';
+                    }
+                    ?>
+                </div>
+            </div>
+            <br>
+            <br>
+        </div>
+    </div>
+
+</main>
+</div>
+</div>
+
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="../../js/jquery-3.3.1.js" ></script>
+<script>window.jQuery || document.write('<script src="../../js/jquery-3.3.1.js"><\/script>')</script>
+<script src="../../js/popper.js"></script>
+<script src="../../js/bootstrap.min.js"></script>
+
+<!-- Icons -->
+<script src="../../js/feather.min.js"></script>
+<script>
+                        feather.replace()
+</script>
+
+<script>
+    $("#qDesc").hide();
+    $("#selectType").change(function () {
+        var val = $("#selectType").val();
+        if (val == "Other") {
+            $("#qDesc").show();
+        } else {
+            $("#qDesc").hide();
+        }
+    });
+</script>
+
+</body>
 </html>

@@ -249,30 +249,10 @@ if (isset($_POST['updatedoc2'])) {
                                                                                     <p><strong>Date Submitted: </strong>' . $docdatesubmit . '</p>
                                                                                     <p><strong>Submitted By: </strong>' . $userid . '</p> 
                                                                                     <strong>Update Status: </strong><select name="edit_status" id="edit_status">
-                                                                                    <option value="Submitted"';
-                                                    if ($docstatus == 'Submitted') {
+                                                                                    <option value="Received by Office"';
+                                                    if ($docstatus == 'Received by Office') {
                                                         echo "selected";
-                                                    } echo' disabled >Submitted
-                                                                                    </option>
-                                                                                    <option value="Received"';
-                                                    if ($docstatus == 'Received') {
-                                                        echo "selected";
-                                                    } echo' >Received
-                                                                                    </option>
-                                                                                    <option value="On-Process"';
-                                                    if ($docstatus == 'On-Process') {
-                                                        echo "selected";
-                                                    } echo'>On-Process
-                                                                                    </option>
-                                                                                    <option value="Processed"';
-                                                    if ($docstatus == 'Processed') {
-                                                        echo "selected";
-                                                    } echo'>Processed
-                                                                                    </option>
-                                                                                    <option value="Pending"';
-                                                    if ($docstatus == 'Released') {
-                                                        echo "selected";
-                                                    } echo'>Released
+                                                    } echo' >Received by Office
                                                                                     </option>
                                                                                     <option value="Not Received"';
                                                     if ($docstatus == 'Not Received') {
@@ -345,7 +325,7 @@ if (isset($_POST['updatedoc2'])) {
 
                                             <?php
                                             $newsubquery = mysqli_query($conn, "SELECT LPAD(documents.docno,4,0), documents.docdatechange, documents.docdatesubmit, users.fname, users.mname, users.lname, documents.doctitle,"
-                                                    . "documents.docdesc, documents.docstatus FROM documents INNER JOIN users WHERE documents.userno = users.userno AND documents.docstatus = 'Not Received' OR documents.docstatus = 'Done'");
+                                                    . "documents.docdesc, documents.docstatus FROM documents INNER JOIN users WHERE documents.userno = users.userno AND documents.docstatus = 'Received by Student'");
 
                                             if ($newsubquery->num_rows > 0) {
                                                 while ($row = $newsubquery->fetch_assoc()) {
@@ -387,9 +367,9 @@ if (isset($_POST['updatedoc2'])) {
 
 
                     </div>
-                    
+
                     <br>
-                    
+
                     <h5>Tracking</h5>
                     <hr>
 
@@ -413,7 +393,7 @@ if (isset($_POST['updatedoc2'])) {
 
                                 <?php
                                 $newsubquery = mysqli_query($conn, "SELECT LPAD(documents.docno,4,0), documents.docdatechange, documents.docdatesubmit, users.fname, users.mname, users.lname, documents.doctitle, documents.docdesc, documents.docstatus FROM documents INNER JOIN users "
-                                        . "ON documents.userno = users.userno WHERE documents.hidden = '0'");
+                                        . "ON documents.userno = users.userno WHERE documents.hidden = '0' AND documents.docstatus != 'Submitted' AND documents.docstatus != 'Received by Student' ORDER BY documents.docno DESC");
 
                                 if ($newsubquery->num_rows > 0) {
                                     while ($row = $newsubquery->fetch_assoc()) {
@@ -426,9 +406,14 @@ if (isset($_POST['updatedoc2'])) {
                                         $docdatechange = $row['docdatechange'];
                                         $doceditedby = ($row['fname'] . ' ' . $row['mname'] . ' ' . $row['lname']);
 
-                                        echo "<tr>"
-                                        . "<td>" . "<a href='#edit2" . $docid . "'data-toggle='modal'><button type='button' class='btn btn-dark btn-sm' title='Edit'><span class='fas fa-edit' aria-hidden='true'></span></button></a>" . "</td>"
-                                        . "<td>" . $docid . "</td>"
+                                        echo "<tr>";
+                                        if ($docstatus == 'Received by Student') {
+                                            echo '<td> - </td>';
+                                        } else {
+                                            echo
+                                            "<td>" . "<a href='#edit2" . $docid . "'data-toggle='modal'><button type='button' class='btn btn-dark btn-sm' title='Edit'><span class='fas fa-edit' aria-hidden='true'></span></button></a>" . "</td>";
+                                        } echo
+                                        "<td>" . $docid . "</td>"
                                         . "<td>" . $docdatesubmit . "</td>"
                                         . "<td>" . $docdatechange . "</td>"
                                         . "<td>" . $userid . "</td>"
@@ -455,10 +440,10 @@ if (isset($_POST['updatedoc2'])) {
                                                                                     <p><strong>Date Submitted: </strong>' . $docdatesubmit . '</p>
                                                                                     <p><strong>Submitted By: </strong>' . $userid . '</p>  
                                                                                          <strong>Update Status: </strong><select name="edit_status2" id="edit_status2">
-                                                                                    <option value="Received"';
-                                        if ($docstatus == 'Received') {
+                                                                                    <option value="Received by Office"';
+                                        if ($docstatus == 'Received by Office') {
                                             echo "selected";
-                                        } echo'>Received
+                                        } echo' >Received by Office
                                                                                     </option>
                                                                                     <option value="On-Process"';
                                         if ($docstatus == 'On-Process') {
@@ -614,14 +599,7 @@ $thisDate = date("m/d/Y");
 ?>
 
                             $('#received').DataTable({
-                                dom: 'lBfrtip',
-                                buttons: [
-                                    {extend: 'copy', className: 'btn btn-secondary', text: '<i class="fas fa-copy"></i>', titleAttr: 'Copy', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
-                                    {extend: 'csv', className: 'btn bg-primary', text: '<i class="fas fa-file-alt"></i>', titleAttr: 'CSV', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
-                                    {extend: 'excel', className: 'btn btn-success', text: '<i class="fas fa-file-excel"></i>', titleAttr: 'Excel', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
-                                    {extend: 'pdf', className: 'btn btn-danger', orientation: 'landscape', pageSize: 'LEGAL', text: '<i class="fas fa-file-pdf"></i>', titleAttr: 'PDF', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
-                                    {extend: 'print', className: 'btn btn-dark', text: '<i class="fas fa-print"></i>', titleAttr: 'Print', title: 'Report printed by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'}
-                                ],
+
                                 initComplete: function () {
                                     this.api().columns([1, 2, 3, 4, 5, 6, 7, 8]).every(function () {
                                         var column = this;
