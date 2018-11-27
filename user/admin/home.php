@@ -10,7 +10,7 @@ if (isset($_SESSION['user_name']) && $_SESSION['role'] == "student") {
 }
 if (isset($_SESSION['user_name'])) {
 
-    if ((time() - $_SESSION['last_time']) > 1200) {
+    if ((time() - $_SESSION['last_time']) > 2000) {
         header("Location:../../logout.php");
     } else {
         $_SESSION['last_time'] = time();
@@ -174,8 +174,10 @@ if (isset($_POST['deletepost'])) {
 
     <body>
 
+
         <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-            <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#"><img src="../../img/logosolo.png"> IICS Help Desk</a>
+            <a class="navbar-brand col-sm-3 col-md-2" href="#"><img src="../../img/logosolo.png"> IICS Help Desk</a>
+
             <ul class="navbar-nav px-3">
                 <li class="nav-item text-nowrap">
                     <a style="font-size: 13px;" class="btn btn-danger" href="../../logout.php" onclick="if (!confirm('Are you sure you want to log out?')) {
@@ -192,79 +194,86 @@ if (isset($_POST['deletepost'])) {
 
             <div class="row">
 
-                <nav class="col-md-2 d-none d-md-block bg-light sidebar">
-                    <div class="sidebar sidebar-sticky">
-                        <ul class="nav flex-column">
-                            <br>
-                            <center><span class="fas fa-6x fa-user-circle"></span><br><br>
-                                <h6 class="nav-item">Welcome, <?php echo $_SESSION['user_name']; ?></h6>
-                            </center>                   
-                            <li class="nav-item">
-                                <a class="nav-link active" href="home.php">
-                                    <span data-feather="home"></span>
-                                    Home <span class="sr-only">(current)</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="documents.php">
-                                    <span data-feather="file-text"></span>
-                                    Documents
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="queue.php">
-                                    <span data-feather="users"></span>
-                                    Queue
-                                </a>
-                            </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-                                    <span data-feather="calendar"></span>
-                                    Schedule
-                                </a>
-                                <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="fschedule.php">
-                                        <span data-feather="book-open"></span>
-                                        Faculty Schedule
+                <div class="wrapper">
+
+                    <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+                        <div class="sidebar sidebar-sticky">
+                            <ul class="nav flex-column">
+                                <br>
+                                <center><span class="fas fa-6x fa-user-circle"></span><br><br>
+                                    <h6 class="nav-item">Welcome, <?php echo $_SESSION['user_name']; ?></h6>
+                                </center>                   
+                                <li class="nav-item">
+                                    <a class="nav-link active" href="home.php">
+                                        <span data-feather="home"></span>
+                                        Home <span class="sr-only">(current)</span>
                                     </a>
-                                    <a class="dropdown-item" href="cschedule.php">
-                                        <span data-feather="book-open"></span>
-                                        Class Schedule
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="documents.php">
+                                        <span data-feather="file-text"></span>
+                                        Documents
                                     </a>
-                                    <a class="dropdown-item" href="rschedule.php">
-                                        <span data-feather="book-open"></span>
-                                        Room Schedule
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="queue.php">
+                                        <span data-feather="users"></span>
+                                        Queue
                                     </a>
-                                </div>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="stats.php">
-                                    <span data-feather="bar-chart-2"></span>
-                                    Statistics
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="reports.php">
-                                    <span data-feather="layers"></span>
-                                    Reports
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="account.php">
-                                    <span data-feather="user"></span>
-                                    Account
-                                </a>
-                            </li> 
-                        </ul>
-                    </div>
-                </nav>
+                                </li>
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                                        <span data-feather="calendar"></span>
+                                        Schedule
+                                    </a>
+                                    <div class="dropdown-menu">
+                                        <a class="dropdown-item" href="fschedule.php">
+                                            <span data-feather="book-open"></span>
+                                            Faculty Schedule
+                                        </a>
+                                        <a class="dropdown-item" href="cschedule.php">
+                                            <span data-feather="book-open"></span>
+                                            Class Schedule
+                                        </a>
+                                        <a class="dropdown-item" href="rschedule.php">
+                                            <span data-feather="book-open"></span>
+                                            Room Schedule
+                                        </a>
+                                    </div>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="stats.php">
+                                        <span data-feather="bar-chart-2"></span>
+                                        Statistics
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="reports.php">
+                                        <span data-feather="layers"></span>
+                                        Reports
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="account.php">
+                                        <span data-feather="user"></span>
+                                        Account
+                                    </a>
+                                </li> 
+                            </ul>
+                        </div>
+                    </nav>
+
+                </div>
+
 
                 <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+
                     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                         <h1 class="h2">Home</h1>
                     </div>
 
                     <?php echo $postFailed; ?>
+
 
                     <div class="accordion" id="accordionExample">
 
@@ -391,8 +400,7 @@ if (isset($_POST['deletepost'])) {
                                                         </form>
                                                     </div>';
                                             }
-                                        }
-                                        else{
+                                        } else {
                                             echo "<h5>You haven't made any announcements yet.</h5>";
                                         }
                                         ?>
@@ -403,7 +411,7 @@ if (isset($_POST['deletepost'])) {
                     </div>
 
                     <br>
-                    
+
                     <h5>Announcements</h5>
                     <hr>
 
@@ -440,7 +448,10 @@ if (isset($_POST['deletepost'])) {
 
                 </main>
             </div>
+            
         </div>
+        
+
 
         <!-- Bootstrap core JavaScript
         ================================================== -->
@@ -467,7 +478,7 @@ if (isset($_POST['deletepost'])) {
         <!-- Icons -->
         <script src="../../js/feather.min.js"></script>
         <script>
-                    feather.replace()
+                        feather.replace()
         </script>
 
         <script>

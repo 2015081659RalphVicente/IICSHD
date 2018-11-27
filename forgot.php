@@ -17,7 +17,7 @@ if (isset($_SESSION['user_name']) && $_SESSION['role'] == "student") {
 }
 if (isset($_SESSION['user_name'])) {
 
-    if ((time() - $_SESSION['last_time']) > 1200) {
+    if ((time() - $_SESSION['last_time']) > 2000) {
         header("Location:../../logout.php");
     } else {
         $_SESSION['last_time'] = time();
@@ -26,7 +26,6 @@ if (isset($_SESSION['user_name'])) {
 
 
 unset($_SESSION['seq']);
-
 ?>
 
 <html>
@@ -42,7 +41,12 @@ unset($_SESSION['seq']);
         <!-- Font Awesome JS -->
         <script defer src="fa-5.5.0/js/solid.js"></script>
         <script defer src="fa-5.5.0/js/fontawesome.js"></script>
-
+        
+        <style>
+            .container{
+                height: 100%;
+            }
+        </style>
 
     </head>
 
@@ -95,8 +99,6 @@ unset($_SESSION['seq']);
                 </div>
             </div>
         </div>
-
-        <br><br>
 
         <div class="container-fluid headerline">
             &nbsp;

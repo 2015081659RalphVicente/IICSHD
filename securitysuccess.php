@@ -17,7 +17,7 @@ if (isset($_SESSION['user_name']) && $_SESSION['role'] == "student") {
 }
 if (isset($_SESSION['user_name'])) {
 
-    if ((time() - $_SESSION['last_time']) > 1200) {
+    if ((time() - $_SESSION['last_time']) > 2000) {
         header("Location:../../logout.php");
     } else {
         $_SESSION['last_time'] = time();

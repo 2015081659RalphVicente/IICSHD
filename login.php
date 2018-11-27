@@ -8,14 +8,13 @@ if (isset($_SESSION['resetpass']) && $_SESSION['resetpass'] == 0) {
         header("location:/iicshd/user/student/home.php");
     } elseif (isset($_SESSION['user_name']) && $_SESSION['role'] == "faculty") {
         header("location:/iicshd/user/faculty/home.php");
-    } 
+    }
 } elseif (isset($_SESSION['resetpass']) && $_SESSION['resetpass'] == 1) {
     session_unset();
     session_destroy();
 }
 
 unset($_SESSION['seq']);
-
 ?>
 
 <html>
@@ -25,6 +24,12 @@ unset($_SESSION['seq']);
         <link rel="shortcut icon" href="img/favicon.png">
         <link rel="stylesheet" href="css/bootstrap.min.css">
         <link rel="stylesheet" href="css/style.css">
+
+        <style>
+            .container{
+                height: 100%;
+            }
+        </style>
     </head>
 
     <body>
@@ -60,14 +65,14 @@ unset($_SESSION['seq']);
 
         </div><!-- /container -->
         <br>
-    <!-- form end -->
+        <!-- form end -->
 
-    <div class="container-fluid headerline">
-        &nbsp;
-    </div>
-    <div class="container-fluid footer">
-        &nbsp;
-    </div>
+        <div class="container-fluid headerline">
+            &nbsp;
+        </div>
+        <div class="container-fluid footer">
+            &nbsp;
+        </div>
 
-</body>
+    </body>
 </html>

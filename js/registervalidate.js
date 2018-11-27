@@ -50,8 +50,8 @@ $(function () {
     }, "Input must contain letters only.");
 
     jQuery.validator.addMethod("mname", function (value, element) {
-        return this.optional(element) || /^[a-zA-Z\u00f1\u00d1. {2,4}]*$/u.test(value);
-    }, "Input must contain a letter and a period (.)");
+        return this.optional(element) || /^[a-zA-Z\u00f1\u00d1 ]*$/u.test(value);
+    }, "Input must contain letters only.");
 
     jQuery.validator.addMethod("lname", function (value, element) {
         return this.optional(element) || /^[a-zA-Z\u00f1\u00d1 ]*$/u.test(value);
@@ -71,7 +71,7 @@ $(function () {
                 fname: true
             },
             studmname: {
-                required: true,
+                required: false,
                 mname: true
             },
             studlname: {
@@ -107,9 +107,6 @@ $(function () {
                 required: 'This field is required.'
             },
             studfname: {
-                required: 'This field is required.'
-            },
-            studmname: {
                 required: 'This field is required.'
             },
             studlname: {
@@ -150,7 +147,7 @@ $(function () {
                 fname: true
             },
             empmname: {
-                required: true,
+                required: false,
                 mname: true
             },
             emplname: {
@@ -183,9 +180,6 @@ $(function () {
                 required: 'This field is required.'
             },
             empfname: {
-                required: 'This field is required.'
-            },
-            empmname: {
                 required: 'This field is required.'
             },
             emplname: {

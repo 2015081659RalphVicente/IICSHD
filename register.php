@@ -12,7 +12,7 @@ if (isset($_SESSION['user_name']) && $_SESSION['role'] == "student") {
 }
 if (isset($_SESSION['user_name'])) {
 
-    if ((time() - $_SESSION['last_time']) > 1200) {
+    if ((time() - $_SESSION['last_time']) > 2000) {
         header("Location:../../logout.php");
     } else {
         $_SESSION['last_time'] = time();
@@ -314,6 +314,8 @@ if (isset($_SESSION['tab'])) {
                         <p style="padding-top: 1px;"></p>
                         <h3>Register as Student</h3><hr>
 
+                        <div class="alert alert-danger">Fields with <em>asterisk (*)</em> are <b>required.</b></div>
+
                         <form id="student-register" action="" method="POST">
                             <div class="row">
                                 <div class="col-md-6">
@@ -329,7 +331,7 @@ if (isset($_SESSION['tab'])) {
                                         <?php echo $firstErr; ?>
                                     </div>
                                     <div class="form-group">
-                                        <input type="text" class="form-control" placeholder="Middle Initial *" value="<?php echo $studmname; ?>" name="studmname" required/>
+                                        <input type="text" class="form-control" placeholder="Middle Name" value="<?php echo $studmname; ?>" name="studmname"/>
                                         <?php echo $midErr; ?>
                                     </div>
                                     <div class="form-group">
@@ -394,7 +396,7 @@ if (isset($_SESSION['tab'])) {
                                     <div class="custom-control custom-checkbox form-group">
                                         <input type="checkbox" class="custom-control-input" name="customCheck1" id="customCheck1" required>
                                         <label class="custom-control-label" for="customCheck1">
-                                            I agree to the <a href="https://www.privacy.gov.ph/data-privacy-act/">R.A. 10173 (Data Privacy Act of 2012)</a> and I hereby confirm that the information given in this form is true, complete and accurate.
+                                            I agree to the <a href="https://www.privacy.gov.ph/data-privacy-act/" target="_blank">R.A. 10173 (Data Privacy Act of 2012)</a> and I hereby confirm that the information given in this form is true, complete and accurate.
                                         </label>
                                     </div>
                                     <br>
@@ -410,11 +412,13 @@ if (isset($_SESSION['tab'])) {
                         <p style="padding-top: 1px;"></p>
                         <h3>Register as Faculty</h3><hr>
 
+                        <div class="alert alert-danger">Fields with <em>asterisk (*)</em> are <b>required.</b></div>
+
                         <form id="faculty-register" action="" method="POST">
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <input type="text" class="form-control" placeholder="Employee Number *" value="<?php echo $empnum; ?>" name="empnum" required/>
+                                        <input type="text" class="form-control" placeholder="Faculty Number *" value="<?php echo $empnum; ?>" name="empnum" required/>
                                         <?php
                                         echo $empnumErr2;
                                         echo $numErr2;
@@ -427,7 +431,7 @@ if (isset($_SESSION['tab'])) {
                                         ?>
                                     </div>
                                     <div class="form-group">
-                                        <input type="text" class="form-control" placeholder="Middle Initial *" value="<?php echo $empmname; ?>" name="empmname" required/>
+                                        <input type="text" class="form-control" placeholder="Middle Name" value="<?php echo $empmname; ?>" name="empmname"/>
                                         <?php
                                         echo $midErr2;
                                         ?>
@@ -473,7 +477,7 @@ if (isset($_SESSION['tab'])) {
                                     <div class="custom-control custom-checkbox form-group">
                                         <input type="checkbox" class="custom-control-input" name="customCheck2" id="customCheck2" required>
                                         <label class="custom-control-label" for="customCheck2">
-                                            I agree to the <a href="https://www.privacy.gov.ph/data-privacy-act/">R.A. 10173 (Data Privacy Act of 2012)</a> and I hereby confirm that the information given in this form is true, complete and accurate.
+                                            I agree to the <a href="https://www.privacy.gov.ph/data-privacy-act/" target="_blank">R.A. 10173 (Data Privacy Act of 2012)</a> and I hereby confirm that the information given in this form is true, complete and accurate.
                                         </label>
                                     </div>
                                     <br>
