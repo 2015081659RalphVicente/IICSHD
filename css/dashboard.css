@@ -69,20 +69,21 @@ body {
  * Content
  */
 
-[role="main"] {
-  padding-top: 48px; /* Space for fixed navbar */
-}
 
 /*
  * Navbar
  */
 
 .navbar-brand {
-  padding-top: .75rem;
-  padding-bottom: .75rem;
+  padding-top: .60rem;
+  padding-bottom: .60rem;
   font-size: 1rem;
-  background-color: rgba(0, 0, 0, .25);
-  box-shadow: inset -1px 0 0 rgba(0, 0, 0, .25);
+}
+
+.navbar{
+        -webkit-box-shadow: 0 8px 6px -6px #999;
+    -moz-box-shadow: 0 8px 6px -6px #999;
+    box-shadow: 0 8px 6px -6px #999;
 }
 
 .navbar .form-control {

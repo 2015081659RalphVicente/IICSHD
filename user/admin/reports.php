@@ -49,93 +49,101 @@ if (!isset($_SESSION['user_name'])) {
     </head>
 
     <body>
+        <!--NEW NAVBAR-->
 
-        <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-            <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#"><img src="../../img/logosolo.png"> IICS Help Desk</a>
-            <ul class="navbar-nav px-3">
-                <li class="nav-item text-nowrap">
-                    <a style="font-size: 13px;" class="btn btn-danger" href="../../logout.php" onclick="if (!confirm('Are you sure you want to log out?')) {
-                                return false;
-                            }">
-                        <span data-feather="log-out"></span>  Log Out
-                    </a>
-                </li>
-            </ul>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <a class="navbar-brand">
+                <img src = "../../img/logosolo.png"></img>       
+                <span class="mb-0 h6" style="color:white;">IICS Help Desk</span> 
+            </a>
+
+
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+                <ul class="navbar-nav mr-auto">
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="home.php">
+                            <span data-feather="home"></span>
+                            Home <span class="sr-only">(current)</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="documents.php">
+                            <span data-feather="file-text"></span>
+                            Documents
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="queue.php">
+                            <span data-feather="users"></span>
+                            Queue
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                            <span data-feather="calendar"></span>
+                            Schedule
+                        </a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="fschedule.php">
+                                <span data-feather="book-open"></span>
+                                Faculty Schedule
+                            </a>
+                            <a class="dropdown-item" href="cschedule.php">
+                                <span data-feather="book-open"></span>
+                                Class Schedule
+                            </a>
+                            <a class="dropdown-item" href="rschedule.php">
+                                <span data-feather="book-open"></span>
+                                Room Schedule
+                            </a>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="stats.php">
+                            <span data-feather="bar-chart-2"></span>
+                            Statistics
+                        </a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="reports.php">
+                            <span data-feather="layers"></span>
+                            Reports
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="account.php">
+                            <span data-feather="user"></span>
+                            Account
+                        </a>
+                    </li>
+
+                </ul>
+
+                <ul class="navbar-nav px-2">
+                    <li class="nav-item text-nowrap">
+                        <a style="font-size: 13px;" class="btn btn-danger bg-danger" href="../../logout.php" onclick="if (!confirm('Are you sure you want to log out?')) {
+                                    return false;
+                                }">
+                            <span data-feather="log-out"></span>  Log Out
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </nav>
+
 
 
         <div class="container-fluid">
 
-            <div class="row">
-
-                <nav class="col-md-2 d-none d-md-block bg-light sidebar">
-                    <div class="sidebar sidebar-sticky">
-                        <ul class="nav flex-column">
-                            <br>
-                            <center><span class="fas fa-6x fa-user-circle"></span><br><br>
-                                <h6 class="nav-item">Welcome, <?php echo $_SESSION['user_name']; ?></h6>
-                            </center>
-                            <li class="nav-item">
-                                <a class="nav-link" href="home.php">
-                                    <span data-feather="home"></span>
-                                    Home <span class="sr-only">(current)</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="documents.php">
-                                    <span data-feather="file-text"></span>
-                                    Documents
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="queue.php">
-                                    <span data-feather="users"></span>
-                                    Queue
-                                </a>
-                            </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-                                    <span data-feather="calendar"></span>
-                                    Schedule
-                                </a>
-                                <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="fschedule.php">
-                                        <span data-feather="book-open"></span>
-                                        Faculty Schedule
-                                    </a>
-                                    <a class="dropdown-item" href="cschedule.php">
-                                        <span data-feather="book-open"></span>
-                                        Class Schedule
-                                    </a>
-                                    <a class="dropdown-item" href="rschedule.php">
-                                        <span data-feather="book-open"></span>
-                                        Room Schedule
-                                    </a>
-                                </div>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="stats.php">
-                                    <span data-feather="bar-chart-2"></span>
-                                    Statistics
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link active" href="reports.php">
-                                    <span data-feather="layers"></span>
-                                    Reports
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="account.php">
-                                    <span data-feather="user"></span>
-                                    Account
-                                </a>
-                            </li> 
-                        </ul>
-                    </div>
-                </nav>
-
-                <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+                <main role="main" class="col-md-12 ml-sm-auto">
                     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                         <h1 class="h2">Reports</h1>
                     </div>
@@ -281,8 +289,8 @@ if (!isset($_SESSION['user_name'])) {
 
                     </div>
                 </main>
+            <br>
             </div>
-        </div>
 
         <!-- Bootstrap core JavaScript
         ================================================== -->
@@ -295,7 +303,7 @@ if (!isset($_SESSION['user_name'])) {
         <!-- Icons -->
         <script src="../../js/feather.min.js"></script>
         <script>
-                        feather.replace()
+                            feather.replace()
         </script>
 
 
@@ -315,85 +323,85 @@ if (!isset($_SESSION['user_name'])) {
         <script src="../../DataTables/Buttons-1.5.1/js/buttons.print.min.js"></script>
 
         <script>
-                        $(document).ready(function () {
+                            $(document).ready(function () {
 <?php
 $thisDate = date("m/d/Y");
 ?>
 
-                            $('#docLog').DataTable({
+                                $('#docLog').DataTable({
 
-                                dom: 'lBfrtip',
-                                buttons: [
-                                    {extend: 'copy', className: 'btn btn-secondary', text: '<i class="fas fa-copy"></i>', titleAttr: 'Copy', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
-                                    {extend: 'csv', className: 'btn bg-primary', text: '<i class="fas fa-file-alt"></i>', titleAttr: 'CSV', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
-                                    {extend: 'excel', className: 'btn btn-success', text: '<i class="fas fa-file-excel"></i>', titleAttr: 'Excel', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
-                                    {extend: 'pdf', className: 'btn btn-danger', orientation: 'landscape', pageSize: 'LEGAL', text: '<i class="fas fa-file-pdf"></i>', titleAttr: 'PDF', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
-                                    {extend: 'print', className: 'btn btn-dark', text: '<i class="fas fa-print"></i>', titleAttr: 'Print', title: 'Report printed by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'}
-                                ],
+                                    dom: 'lBfrtip',
+                                    buttons: [
+                                        {extend: 'copy', className: 'btn btn-secondary', text: '<i class="fas fa-copy"></i>', titleAttr: 'Copy', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
+                                        {extend: 'csv', className: 'btn bg-primary', text: '<i class="fas fa-file-alt"></i>', titleAttr: 'CSV', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
+                                        {extend: 'excel', className: 'btn btn-success', text: '<i class="fas fa-file-excel"></i>', titleAttr: 'Excel', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
+                                        {extend: 'pdf', className: 'btn btn-danger', orientation: 'landscape', pageSize: 'LEGAL', text: '<i class="fas fa-file-pdf"></i>', titleAttr: 'PDF', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
+                                        {extend: 'print', className: 'btn btn-dark', text: '<i class="fas fa-print"></i>', titleAttr: 'Print', title: 'Report printed by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'}
+                                    ],
 
-                                initComplete: function () {
-                                    this.api().columns([1, 2, 3, 4, 5, 6, 7, 8]).every(function () {
-                                        var column = this;
-                                        var select = $('<select><option value="">Show all</option></select>')
-                                                .appendTo($(column.footer()).empty())
-                                                .on('change', function () {
-                                                    var val = $.fn.dataTable.util.escapeRegex(
-                                                            $(this).val()
-                                                            );
-                                                    column
-                                                            .search(val ? '^' + val + '$' : '', true, false)
-                                                            .draw();
-                                                });
-                                        column.data().unique().sort().each(function (d, j) {
-                                            select.append('<option value="' + d + '">' + d + '</option>')
+                                    initComplete: function () {
+                                        this.api().columns([1, 2, 3, 4, 5, 6, 7, 8]).every(function () {
+                                            var column = this;
+                                            var select = $('<select><option value="">Show all</option></select>')
+                                                    .appendTo($(column.footer()).empty())
+                                                    .on('change', function () {
+                                                        var val = $.fn.dataTable.util.escapeRegex(
+                                                                $(this).val()
+                                                                );
+                                                        column
+                                                                .search(val ? '^' + val + '$' : '', true, false)
+                                                                .draw();
+                                                    });
+                                            column.data().unique().sort().each(function (d, j) {
+                                                select.append('<option value="' + d + '">' + d + '</option>')
+                                            });
                                         });
-                                    });
-                                }
+                                    }
 
 
 
+                                });
                             });
-                        });
 
-                        $(document).ready(function () {
+                            $(document).ready(function () {
 <?php
 $thisDate = date("m/d/Y");
 ?>
 
-                            $('#queueLog').DataTable({
+                                $('#queueLog').DataTable({
 
-                                dom: 'lBfrtip',
-                                buttons: [
-                                    {extend: 'copy', className: 'btn btn-secondary', text: '<i class="fas fa-copy"></i>', titleAttr: 'Copy', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
-                                    {extend: 'csv', className: 'btn bg-primary', text: '<i class="fas fa-file-alt"></i>', titleAttr: 'CSV', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
-                                    {extend: 'excel', className: 'btn btn-success', text: '<i class="fas fa-file-excel"></i>', titleAttr: 'Excel', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
-                                    {extend: 'pdf', className: 'btn btn-danger', orientation: 'landscape', pageSize: 'LEGAL', text: '<i class="fas fa-file-pdf"></i>', titleAttr: 'PDF', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
-                                    {extend: 'print', className: 'btn btn-dark', text: '<i class="fas fa-print"></i>', titleAttr: 'Print', title: 'Report printed by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'}
-                                ],
+                                    dom: 'lBfrtip',
+                                    buttons: [
+                                        {extend: 'copy', className: 'btn btn-secondary', text: '<i class="fas fa-copy"></i>', titleAttr: 'Copy', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
+                                        {extend: 'csv', className: 'btn bg-primary', text: '<i class="fas fa-file-alt"></i>', titleAttr: 'CSV', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
+                                        {extend: 'excel', className: 'btn btn-success', text: '<i class="fas fa-file-excel"></i>', titleAttr: 'Excel', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
+                                        {extend: 'pdf', className: 'btn btn-danger', orientation: 'landscape', pageSize: 'LEGAL', text: '<i class="fas fa-file-pdf"></i>', titleAttr: 'PDF', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
+                                        {extend: 'print', className: 'btn btn-dark', text: '<i class="fas fa-print"></i>', titleAttr: 'Print', title: 'Report printed by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'}
+                                    ],
 
-                                initComplete: function () {
-                                    this.api().columns([1, 2, 3, 4, 5, 6, 7, 8]).every(function () {
-                                        var column = this;
-                                        var select = $('<select><option value="">Show all</option></select>')
-                                                .appendTo($(column.footer()).empty())
-                                                .on('change', function () {
-                                                    var val = $.fn.dataTable.util.escapeRegex(
-                                                            $(this).val()
-                                                            );
-                                                    column
-                                                            .search(val ? '^' + val + '$' : '', true, false)
-                                                            .draw();
-                                                });
-                                        column.data().unique().sort().each(function (d, j) {
-                                            select.append('<option value="' + d + '">' + d + '</option>')
+                                    initComplete: function () {
+                                        this.api().columns([1, 2, 3, 4, 5, 6, 7, 8]).every(function () {
+                                            var column = this;
+                                            var select = $('<select><option value="">Show all</option></select>')
+                                                    .appendTo($(column.footer()).empty())
+                                                    .on('change', function () {
+                                                        var val = $.fn.dataTable.util.escapeRegex(
+                                                                $(this).val()
+                                                                );
+                                                        column
+                                                                .search(val ? '^' + val + '$' : '', true, false)
+                                                                .draw();
+                                                    });
+                                            column.data().unique().sort().each(function (d, j) {
+                                                select.append('<option value="' + d + '">' + d + '</option>')
+                                            });
                                         });
-                                    });
-                                }
+                                    }
 
 
 
+                                });
                             });
-                        });
         </script>
 
     </body>

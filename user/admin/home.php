@@ -170,179 +170,182 @@ if (isset($_POST['deletepost'])) {
         <link rel="stylesheet" href="../../DataTables/DataTables-1.10.16/css/dataTables.bootstrap4.min.css">
         <link rel="stylesheet" href="../../DataTables/Responsive-2.2.1/css/responsive.bootstrap4.min.css">
         <link rel="stylesheet" href="../../DataTables/Buttons-1.5.1/css/buttons.dataTables.min.css">
+
     </head>
 
     <body>
 
+        <!--NEW NAVBAR-->
 
-        <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-            <a class="navbar-brand col-sm-3 col-md-2" href="#"><img src="../../img/logosolo.png"> IICS Help Desk</a>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <a class="navbar-brand">
+                <img src = "../../img/logosolo.png"></img>       
+                <span class="mb-0 h6" style="color:white;">IICS Help Desk</span> 
+            </a>
 
-            <ul class="navbar-nav px-3">
-                <li class="nav-item text-nowrap">
-                    <a style="font-size: 13px;" class="btn btn-danger" href="../../logout.php" onclick="if (!confirm('Are you sure you want to log out?')) {
-                                return false;
-                            }">
-                        <span data-feather="log-out"></span>  Log Out
-                    </a>
-                </li>
-            </ul>
+
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+                <ul class="navbar-nav mr-auto">
+
+                    <li class="nav-item active">
+                        <a class="nav-link active" href="home.php">
+                            <span data-feather="home"></span>
+                            Home <span class="sr-only">(current)</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="documents.php">
+                            <span data-feather="file-text"></span>
+                            Documents
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="queue.php">
+                            <span data-feather="users"></span>
+                            Queue
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                            <span data-feather="calendar"></span>
+                            Schedule
+                        </a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="fschedule.php">
+                                <span data-feather="book-open"></span>
+                                Faculty Schedule
+                            </a>
+                            <a class="dropdown-item" href="cschedule.php">
+                                <span data-feather="book-open"></span>
+                                Class Schedule
+                            </a>
+                            <a class="dropdown-item" href="rschedule.php">
+                                <span data-feather="book-open"></span>
+                                Room Schedule
+                            </a>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="stats.php">
+                            <span data-feather="bar-chart-2"></span>
+                            Statistics
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="reports.php">
+                            <span data-feather="layers"></span>
+                            Reports
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="account.php">
+                            <span data-feather="user"></span>
+                            Account
+                        </a>
+                    </li>
+
+                </ul>
+
+                <ul class="navbar-nav px-2">
+                    <li class="nav-item text-nowrap">
+                        <a style="font-size: 13px;" class="btn btn-danger bg-danger" href="../../logout.php" onclick="if (!confirm('Are you sure you want to log out?')) {
+                                    return false;
+                                }">
+                            <span data-feather="log-out"></span>  Log Out
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </nav>
 
 
         <div class="container-fluid">
 
-            <div class="row">
 
-                <div class="wrapper">
+            <main role="main" class="col-md-12 ml-sm-auto">
 
-                    <nav class="col-md-2 d-none d-md-block bg-light sidebar">
-                        <div class="sidebar sidebar-sticky">
-                            <ul class="nav flex-column">
-                                <br>
-                                <center><span class="fas fa-6x fa-user-circle"></span><br><br>
-                                    <h6 class="nav-item">Welcome, <?php echo $_SESSION['user_name']; ?></h6>
-                                </center>                   
-                                <li class="nav-item">
-                                    <a class="nav-link active" href="home.php">
-                                        <span data-feather="home"></span>
-                                        Home <span class="sr-only">(current)</span>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="documents.php">
-                                        <span data-feather="file-text"></span>
-                                        Documents
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="queue.php">
-                                        <span data-feather="users"></span>
-                                        Queue
-                                    </a>
-                                </li>
-                                <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-                                        <span data-feather="calendar"></span>
-                                        Schedule
-                                    </a>
-                                    <div class="dropdown-menu">
-                                        <a class="dropdown-item" href="fschedule.php">
-                                            <span data-feather="book-open"></span>
-                                            Faculty Schedule
-                                        </a>
-                                        <a class="dropdown-item" href="cschedule.php">
-                                            <span data-feather="book-open"></span>
-                                            Class Schedule
-                                        </a>
-                                        <a class="dropdown-item" href="rschedule.php">
-                                            <span data-feather="book-open"></span>
-                                            Room Schedule
-                                        </a>
-                                    </div>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="stats.php">
-                                        <span data-feather="bar-chart-2"></span>
-                                        Statistics
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="reports.php">
-                                        <span data-feather="layers"></span>
-                                        Reports
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="account.php">
-                                        <span data-feather="user"></span>
-                                        Account
-                                    </a>
-                                </li> 
-                            </ul>
-                        </div>
-                    </nav>
-
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Home</h1>
                 </div>
 
-
-                <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
-
-                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                        <h1 class="h2">Home</h1>
-                    </div>
-
-                    <?php echo $postFailed; ?>
+                <?php echo $postFailed; ?>
 
 
-                    <div class="accordion" id="accordionExample">
+                <div class="accordion" id="accordionExample">
 
-                        <div class="card">
-                            <div class="card-header" id="headingOne">
-                                <h5 class="mb-0">
-                                    <button class="btn bg-dark text-white" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-                                        <span class="fas fa-plus-circle"></span> Post Announcement
-                                    </button>
-                                </h5>
-                            </div>
-
-                            <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
-                                <div class="card-body">
-                                    <form action="" method="POST">
-
-                                        <div class="form-group">
-                                            <label for="title">Title <span class="require">*</span></label>
-                                            <input type="text" class="form-control" name="pTitle" required />
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label for="description">Description</label>
-                                            <textarea rows="2" class="form-control" name="pDesc" required ></textarea>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <button style="float:right;" type="submit" name="postAnnouncement" class="btn btn-success">
-                                                Post
-                                            </button>
-                                            <br>
-                                        </div>
-
-                                    </form>
-                                </div>
-                            </div>
+                    <div class="card">
+                        <div class="card-header" id="headingOne">
+                            <h5 class="mb-0">
+                                <button class="btn bg-dark text-white" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                    <span class="fas fa-plus-circle"></span> Post Announcement
+                                </button>
+                            </h5>
                         </div>
 
-                        <div class="card">
-                            <div class="card-header" id="headingTwo">
-                                <h5 class="mb-0">
-                                    <button class="btn bg-dark text-white" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                        <span class="fas fa-plus-circle"></span> My Announcements
-                                    </button>
-                                </h5>
+                        <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+                            <div class="card-body">
+                                <form action="" method="POST">
+
+                                    <div class="form-group">
+                                        <label for="title">Title <span class="require">*</span></label>
+                                        <input type="text" class="form-control" name="pTitle" required />
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="description">Description</label>
+                                        <textarea rows="2" class="form-control" name="pDesc" required ></textarea>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <button style="float:right;" type="submit" name="postAnnouncement" class="btn btn-success">
+                                            Post
+                                        </button>
+                                        <br>
+                                    </div>
+
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header" id="headingTwo">
+                            <h5 class="mb-0">
+                                <button class="btn bg-dark text-white" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                    <span class="fas fa-plus-circle"></span> My Announcements
+                                </button>
+                            </h5>
+                        </div>
+
+
+                        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+
+                            <div class="alert alert-warning alert-dismissible" role="alert">
+                                <p style="font-size: 15px;"><strong>Note: </strong>You can manage each post by clicking the <span class="fas fa-edit"></span> button. 
                             </div>
 
+                            <div class="card-body">
+                                <div class="row">
+                                    <?php
+                                    $announceSelect = "SELECT announcements.annno, announcements.anntitle, announcements.anndesc, announcements.anndate, announcements.userno, users.fname, users.mname, users.lname FROM announcements LEFT JOIN users ON users.userno = announcements.userno WHERE announcements.hidden = '0' AND announcements.userno = '" . $_SESSION['userno'] . "' ORDER BY announcements.annno DESC";
+                                    $result = $conn->query($announceSelect);
 
-                            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+                                    if ($result->num_rows > 0) {
+                                        while ($row = $result->fetch_assoc()) {
+                                            $annno = $row['annno'];
+                                            $anntitle = $row['anntitle'];
+                                            $anndesc = $row['anndesc'];
+                                            $anndate = $row['anndate'];
+                                            $usercreated = ($row['fname'] . ' ' . $row['mname'] . ' ' . $row['lname']);
 
-                                <div class="alert alert-warning alert-dismissible" role="alert">
-                                    <p style="font-size: 15px;"><strong>Note: </strong>You can manage each post by clicking the <span class="fas fa-edit"></span> button. 
-                                </div>
-
-                                <div class="card-body">
-                                    <div class="row">
-                                        <?php
-                                        $announceSelect = "SELECT announcements.annno, announcements.anntitle, announcements.anndesc, announcements.anndate, announcements.userno, users.fname, users.mname, users.lname FROM announcements LEFT JOIN users ON users.userno = announcements.userno WHERE announcements.hidden = '0' AND announcements.userno = '" . $_SESSION['userno'] . "' ORDER BY announcements.annno DESC";
-                                        $result = $conn->query($announceSelect);
-
-                                        if ($result->num_rows > 0) {
-                                            while ($row = $result->fetch_assoc()) {
-                                                $annno = $row['annno'];
-                                                $anntitle = $row['anntitle'];
-                                                $anndesc = $row['anndesc'];
-                                                $anndate = $row['anndate'];
-                                                $usercreated = ($row['fname'] . ' ' . $row['mname'] . ' ' . $row['lname']);
-
-                                                echo '                           
+                                            echo '                           
                                                         <div class="col-md-4">
                                                             <div class="card">
                                                                 <div class="card-header bg-dark text-white">
@@ -362,7 +365,7 @@ if (isset($_POST['deletepost'])) {
                                                         </div>
                                                         <br>';
 
-                                                echo '<div id="edit' . $annno . '" class="modal fade" role="dialog">
+                                            echo '<div id="edit' . $annno . '" class="modal fade" role="dialog">
                                                         <form method="post">
                                                             <div class="modal-dialog modal-lg">
                                                                 <!-- Modal content-->
@@ -399,35 +402,35 @@ if (isset($_POST['deletepost'])) {
                                                             </div>
                                                         </form>
                                                     </div>';
-                                            }
-                                        } else {
-                                            echo "<h5>You haven't made any announcements yet.</h5>";
                                         }
-                                        ?>
-                                    </div>
+                                    } else {
+                                        echo "<h5>You haven't made any announcements yet.</h5>";
+                                    }
+                                    ?>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <br>
+                <br>
 
-                    <h5>Announcements</h5>
-                    <hr>
+                <h5>Announcements</h5>
+                <hr>
 
-                    <?php
-                    $announceSelect = "SELECT announcements.annno, announcements.anntitle, announcements.anndesc, announcements.anndate, announcements.userno, users.fname, users.mname, users.lname FROM announcements LEFT JOIN users ON users.userno = announcements.userno WHERE announcements.hidden = '0' ORDER BY announcements.annno DESC";
-                    $result = $conn->query($announceSelect);
+                <?php
+                $announceSelect = "SELECT announcements.annno, announcements.anntitle, announcements.anndesc, announcements.anndate, announcements.userno, users.fname, users.mname, users.lname FROM announcements LEFT JOIN users ON users.userno = announcements.userno WHERE announcements.hidden = '0' ORDER BY announcements.annno DESC";
+                $result = $conn->query($announceSelect);
 
-                    if ($result->num_rows > 0) {
-                        while ($row = $result->fetch_assoc()) {
-                            $annno = $row['annno'];
-                            $anntitle = $row['anntitle'];
-                            $anndesc = $row['anndesc'];
-                            $anndate = $row['anndate'];
-                            $usercreated = ($row['fname'] . ' ' . $row['mname'] . ' ' . $row['lname']);
+                if ($result->num_rows > 0) {
+                    while ($row = $result->fetch_assoc()) {
+                        $annno = $row['annno'];
+                        $anntitle = $row['anntitle'];
+                        $anndesc = $row['anndesc'];
+                        $anndate = $row['anndate'];
+                        $usercreated = ($row['fname'] . ' ' . $row['mname'] . ' ' . $row['lname']);
 
-                            echo '<div class="card">
+                        echo '<div class="card">
                                         <div class="card-header bg-dark text-white">
                                             <h6></h6>
                                         </div>
@@ -437,20 +440,19 @@ if (isset($_POST['deletepost'])) {
                                             <p class="card-text" style="font-size: 15px;">' . $anndesc . '</p>
                                         </div>
                                   </div><br>';
-                        }
-                    } else {
-                        echo "<h5>There are no announcements yet.</h5>";
                     }
-                    ?>
+                } else {
+                    echo "<h5>There are no announcements yet.</h5>";
+                }
+                ?>
 
 
-                    <br>
+                <br>
 
-                </main>
-            </div>
-            
+            </main>
+
         </div>
-        
+
 
 
         <!-- Bootstrap core JavaScript
@@ -478,7 +480,7 @@ if (isset($_POST['deletepost'])) {
         <!-- Icons -->
         <script src="../../js/feather.min.js"></script>
         <script>
-                        feather.replace()
+                            feather.replace()
         </script>
 
         <script>
