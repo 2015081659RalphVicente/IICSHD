@@ -165,6 +165,7 @@ if (isset($_POST['deletepost'])) {
         <!-- Font Awesome JS -->
         <script defer src="../../fa-5.5.0/js/solid.js"></script>
         <script defer src="../../fa-5.5.0/js/fontawesome.js"></script>
+        
 
         <!-- DataTable-->
         <link rel="stylesheet" href="../../DataTables/DataTables-1.10.16/css/dataTables.bootstrap4.min.css">
@@ -244,22 +245,29 @@ if (isset($_POST['deletepost'])) {
                             Reports
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="account.php">
-                            <span data-feather="user"></span>
-                            Account
-                        </a>
-                    </li>
 
                 </ul>
 
-                <ul class="navbar-nav px-2">
+                <ul class="navbar-nav px-3">
                     <li class="nav-item text-nowrap">
-                        <a style="font-size: 13px;" class="btn btn-danger bg-danger" href="../../logout.php" onclick="if (!confirm('Are you sure you want to log out?')) {
-                                    return false;
-                                }">
-                            <span data-feather="log-out"></span>  Log Out
-                        </a>
+                    <li class="nav-item dropdown">
+                        <button type="button" class="btn btn-dark btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span data-feather="user"></span>
+                            <?php
+                            echo $_SESSION['user_name'];
+                            ?>
+                        </button>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="account.php">
+                                <i class="fas fa-user-cog"></i>
+                                Account
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="../../logout.php">
+                                <span data-feather="log-out"></span>  Log Out
+                            </a>
+                        </div>
+                    </li>
                     </li>
                 </ul>
             </div>
@@ -480,7 +488,7 @@ if (isset($_POST['deletepost'])) {
         <!-- Icons -->
         <script src="../../js/feather.min.js"></script>
         <script>
-                            feather.replace()
+                                feather.replace()
         </script>
 
         <script>
