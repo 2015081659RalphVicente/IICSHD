@@ -165,8 +165,8 @@ if (isset($_POST['deletepost'])) {
         <!-- Font Awesome JS -->
         <script defer src="../../fa-5.5.0/js/solid.js"></script>
         <script defer src="../../fa-5.5.0/js/fontawesome.js"></script>
+                
         
-
         <!-- DataTable-->
         <link rel="stylesheet" href="../../DataTables/DataTables-1.10.16/css/dataTables.bootstrap4.min.css">
         <link rel="stylesheet" href="../../DataTables/Responsive-2.2.1/css/responsive.bootstrap4.min.css">
@@ -201,20 +201,20 @@ if (isset($_POST['deletepost'])) {
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" href="documents.php">
+                        <a class="nav-link" style="color:white;" href="documents.php">
                             <span data-feather="file-text"></span>
                             Documents
                         </a>
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" href="queue.php">
+                        <a class="nav-link" style="color:white;" href="queue.php">
                             <span data-feather="users"></span>
                             Queue
                         </a>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle" style="color:white;" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
                             <span data-feather="calendar"></span>
                             Schedule
                         </a>
@@ -234,18 +234,19 @@ if (isset($_POST['deletepost'])) {
                         </div>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="stats.php">
+                        <a class="nav-link" style="color:white;" href="stats.php">
                             <span data-feather="bar-chart-2"></span>
                             Statistics
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="reports.php">
+                        <a class="nav-link" style="color:white;" href="reports.php">
                             <span data-feather="layers"></span>
                             Reports
                         </a>
                     </li>
-
+                    
+                    
                 </ul>
 
                 <ul class="navbar-nav px-3">

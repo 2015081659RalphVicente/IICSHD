@@ -69,20 +69,20 @@ if (!isset($_SESSION['user_name'])) {
                 <ul class="navbar-nav mr-auto">
 
                     <li class="nav-item">
-                        <a class="nav-link" href="home.php">
+                        <a class="nav-link" style="color:white;" href="home.php">
                             <span data-feather="home"></span>
                             Home <span class="sr-only">(current)</span>
                         </a>
                     </li>
 
                     <li class="nav-item active">
-                        <a class="nav-link" href="consultations.php">
+                        <a class="nav-link" style="color:white;" href="consultations.php">
                             <span data-feather="file-text"></span>
                             Consultation
                         </a>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle" style="color:white;" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
                             <span data-feather="calendar"></span>
                             Schedule
                         </a>
