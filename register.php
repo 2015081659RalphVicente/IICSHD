@@ -23,6 +23,17 @@ $studnum = $studfname = $studmname = $studlname = $studsection = $studemail = $s
 $empnum = $empfname = $empmname = $emplname = $empsection = $empemail = $emppass = $empconfpass = $empsecq = $empsecans = $emprole = $forgot = $hidden = "";
 $tab1 = $tab2 = $studnumErr = $empnumErr2 = $emailErr3 = $empnumErr3 = $numErr = $numErr2 = $firstErr = $firstErr2 = $midErr = $midErr2 = $lastErr = $lastErr2 = $emailErr = $emailErr2 = $confirmErr = $confirmErr2 = $passwordErr = $passwordErr2 = "";
 
+function RandomString($length) {
+    $keys = array_merge(range(0, 9), range('a', 'z'));
+
+    $key = "";
+    for ($i = 0; $i < $length; $i++) {
+        $key .= $keys[mt_rand(0, count($keys) - 1)];
+    }
+    return $key;
+}
+
+$vcode = RandomString(5);
 
 //register student
 if (isset($_POST['studRegister'])) {
@@ -37,7 +48,8 @@ if (isset($_POST['studRegister'])) {
     $studsecq = clean($_POST["studsecq"]);
     $studsecans = $_POST["studsecans"];
     $studrole = "student";
-    $forgot = $hidden = "0";
+    $forgot = $hidden = $verified = "0";
+    $vcode = RandomString(5);
 
     //checker
     $pcheck = $conn->prepare("SELECT userid from users where userid=?");
@@ -117,8 +129,8 @@ if (isset($_POST['studRegister'])) {
         $hashedSecAns = password_hash($studsecans, PASSWORD_DEFAULT);
         //insert the user into the database
 
-        $sqladd = $conn->prepare("INSERT INTO users VALUES ('',?,?,?,?,?,?,?,?,?,?,?,?,'')");
-        $sqladd->bind_param("ssssssissisi", $studnum, $studfname, $studmname, $studlname, $studemail, $hashedPwd, $forgot, $studrole, $studsection, $studsecq, $hashedSecAns, $hidden);
+        $sqladd = $conn->prepare("INSERT INTO users_temp VALUES ('',?,?,?,?,?,?,?,?,?,?,?,?,'',?,?)");
+        $sqladd->bind_param("ssssssissisisi", $studnum, $studfname, $studmname, $studlname, $studemail, $hashedPwd, $forgot, $studrole, $studsection, $studsecq, $hashedSecAns, $hidden, $vcode, $verified);
         $sqladd->execute();
         $sqladd->close();
 
@@ -153,7 +165,8 @@ if (isset($_POST['empRegister'])) {
     $empsecans = $_POST["empsecans"];
     $empsection = "Faculty";
     $emprole = "faculty";
-    $forgot = $hidden = "0";
+    $forgot = $hidden = $verified = "0";
+    $vcode = RandomString(5);
 
     //checker
     $echeck = $conn->prepare("SELECT userid from users where userid=?");
@@ -233,8 +246,8 @@ if (isset($_POST['empRegister'])) {
         $hashedSecAns = password_hash($empsecans, PASSWORD_DEFAULT);
         //insert the user into the database
 
-        $sqladd = $conn->prepare("INSERT INTO users VALUES ('',?,?,?,?,?,?,?,?,?,?,?,?,'')");
-        $sqladd->bind_param("ssssssissisi", $empnum, $empfname, $empmname, $emplname, $empemail, $hashedPwd, $forgot, $emprole, $empsection, $empsecq, $hashedSecAns, $hidden);
+        $sqladd = $conn->prepare("INSERT INTO users_temp VALUES ('',?,?,?,?,?,?,?,?,?,?,?,?,'',?,?)");
+        $sqladd->bind_param("ssssssissisisi", $empnum, $empfname, $empmname, $emplname, $empemail, $hashedPwd, $forgot, $emprole, $empsection, $empsecq, $hashedSecAns, $hidden, $vcode, $verified);
         $sqladd->execute();
         $sqladd->close();
 

@@ -165,8 +165,8 @@ if (isset($_POST['deletepost'])) {
         <!-- Font Awesome JS -->
         <script defer src="../../fa-5.5.0/js/solid.js"></script>
         <script defer src="../../fa-5.5.0/js/fontawesome.js"></script>
-                
-        
+
+
         <!-- DataTable-->
         <link rel="stylesheet" href="../../DataTables/DataTables-1.10.16/css/dataTables.bootstrap4.min.css">
         <link rel="stylesheet" href="../../DataTables/Responsive-2.2.1/css/responsive.bootstrap4.min.css">
@@ -245,8 +245,8 @@ if (isset($_POST['deletepost'])) {
                             Reports
                         </a>
                     </li>
-                    
-                    
+
+
                 </ul>
 
                 <ul class="navbar-nav px-3">
@@ -489,7 +489,7 @@ if (isset($_POST['deletepost'])) {
         <!-- Icons -->
         <script src="../../js/feather.min.js"></script>
         <script>
-                                feather.replace()
+            feather.replace()
         </script>
 
         <script>

@@ -257,6 +257,27 @@ body, html {
     transition: all 0.218s;
 }
 
+.btnVerify{
+    border: none;
+    border-radius: 1.5rem;
+    padding: 2%;
+    background: #0062cc;
+    color: #fff;
+    font-weight: 600;
+    width: 50%;
+    cursor: pointer;
+    -o-transition: all 0.218s;
+    -moz-transition: all 0.218s;
+    -webkit-transition: all 0.218s;
+    transition: all 0.218s;
+}
+
+.btnVerify:hover,
+.btnVerify:active,
+.btnVerify:focus {
+    background-color: rgb(12, 97, 33);
+}
+
 .btnRegister:hover,
 .btnRegister:active,
 .btnRegister:focus {
