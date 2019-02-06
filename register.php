@@ -24,7 +24,7 @@ $empnum = $empfname = $empmname = $emplname = $empsection = $empemail = $emppass
 $tab1 = $tab2 = $studnumErr = $empnumErr2 = $emailErr3 = $empnumErr3 = $numErr = $numErr2 = $firstErr = $firstErr2 = $midErr = $midErr2 = $lastErr = $lastErr2 = $emailErr = $emailErr2 = $confirmErr = $confirmErr2 = $passwordErr = $passwordErr2 = "";
 
 function RandomString($length) {
-    $keys = array_merge(range(0, 9), range('a', 'z'));
+    $keys = array_merge(range(0, 9), range('A', 'Z'));
 
     $key = "";
     for ($i = 0; $i < $length; $i++) {
@@ -143,8 +143,14 @@ if (isset($_POST['studRegister'])) {
 //        $logper->bind_param("sss", $peraction, $_SESSION['user_name'], $perval);
 //        $logper->execute();
 //        $logper->close();
-
+        $_SESSION['studnum'] = $studnum;
+        $_SESSION['studfname'] = $studfname;
+        $_SESSION['studlname'] = $studlname;
+        $_SESSION['studrole'] = $studrole;
+        $_SESSION['vcode'] = $vcode;
+        $_SESSION['studemail'] = $studemail;
         $_SESSION['param'] = "registerSuccess";
+        
         header("Location: success.php");
         exit;
     } else {
@@ -261,7 +267,13 @@ if (isset($_POST['empRegister'])) {
 //        $logper->execute();
 //        $logper->close();
 
-        $_SESSION['param'] = "registerSuccess";
+        $_SESSION['empnum'] = $empnum;
+        $_SESSION['empfname'] = $empfname;
+        $_SESSION['emplname'] = $emplname;
+        $_SESSION['vcode'] = $vcode;
+        $_SESSION['emprole'] = $emprole;
+        $_SESSION['empemail'] = $empemail;
+        $_SESSION['param'] = "registerSuccess2";
         header("Location: success.php");
         exit;
     } else {

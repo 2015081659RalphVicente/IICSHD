@@ -1,5 +1,9 @@
 <?php
 require './include/controller.php';
+require './include/PHPMailer/src/PHPMailer.php';
+require './include/PHPMailer/src/SMTP.php';
+require './include/PHPMailer/src/Exception.php';
+
 
 //if (isset($_SESSION['user_name']) && $_SESSION['role'] == "admin") {
 //    header("location:/iicshd/user/admin/home.php");
@@ -19,13 +23,30 @@ require './include/controller.php';
 //    }
 //}
 //
-//if (!isset($_SESSION['user_name'])) {
-//    if ($_SESSION['param'] == "registerSuccess") {
-//        
-//    } else {
-//        header("location:/iicshd/index.php");
-//    }
-//}
+if (!isset($_SESSION['user_name'])) {
+
+    if ($_SESSION['param'] == "registerSuccess") {
+
+        $role = $_SESSION['studrole'];
+
+        $studnum = $_SESSION['studnum'];
+        $studfname = $_SESSION['studfname'];
+        $studlname = $_SESSION['studlname'];
+        $vcode = $_SESSION['vcode'];
+        $studemail = $_SESSION['studemail'];
+    } elseif ($_SESSION['param'] == "registerSuccess2") {
+
+        $role = $_SESSION['emprole'];
+
+        $empnum = $_SESSION['empnum'];
+        $empfname = $_SESSION['empfname'];
+        $emplname = $_SESSION['emplname'];
+        $vcode = $_SESSION['vcode'];
+        $empemail = $_SESSION['empemail'];
+    } else {
+        header("location:/iicshd/index.php");
+    }
+}
 ?>
 
 <html>
@@ -68,51 +89,95 @@ require './include/controller.php';
                             <center><h4>Almost Done!</h4></center>
                             <?php $_SESSION['param'] = ''; ?>
                             <div class="alert alert-success">
-                                We have sent a verification code to
+                                We have sent an email to
                                 <b><i>
                                         <?php
-                                        $query = "SELECT * FROM users_temp ORDER BY userno DESC LIMIT 1";
-                                        $result = $conn->query($query);
+                                        if ($role == "student") {
 
-                                        if ($result->num_rows > 0) {
-                                            while ($row = $result->fetch_assoc()) {
-                                                $temp_email = "rlphvicente@gmail.com";
-                                                $temp_name = ($row['fname'] . ' ' . $row['mname'] . ' ' . $row['lname']);
-                                                $temp_userid = $row['userid'];
-                                                $temp_verify = $row['vcode'];
+                                            $mail = new PHPMailer\PHPMailer\PHPMailer();
 
-                                                $to = $temp_email; // Send email to our user
-                                                $subject = 'IICS Help Desk | Verification Code'; // Give the email a subject 
-                                                $message = '
- 
-                                                Thank you for signing up!
-                                                Your account has been created, please input the verification code to complete registration.
-                                                ------------------------
-                                                Name: ' . $temp_name . '
-                                                User ID: ' . $temp_userid . '
-                                                Verification Code: ' . $temp_verify . '
-                                                ------------------------
+                                            try {
+                                                $mail->isSMTP();                                      // Set mailer to use SMTP
+                                                $mail->Host = 'smtp.gmail.com';  // Specify main and backup SMTP servers
+                                                $mail->SMTPAuth = true;                               // Enable SMTP authentication
+                                                $mail->Username = 'noreply.iicshd@gmail.com';                 // SMTP username
+                                                $mail->Password = '1ng0dw3trust';                           // SMTP password
+                                                $mail->SMTPSecure = 'tls';                            // Enable TLS encryption, `ssl` also accepted
+                                                $mail->Port = 587;                                    // TCP port to connect to
+                                                //Recipients
+                                                $mail->setFrom('noreply.iicshd@gmail.com', 'IICS Help Desk');
+                                                $mail->addAddress($_SESSION['studemail']);
+                                                //                                                $mail->addAddress('rlphvicente@gmail.com');
+                                                $mail->addReplyTo('noreply.iicshd@gmail.com', 'IICS Help Desk'); // Add a recipient
 
-                                                '; // Our message above including the link
+                                                $mail->isHTML(true);                                  // Set email format to HTML
+                                                $mail->Subject = 'IICS Help Desk | Verify Your Account';
+                                                $mail->Body = '<html><head></head><body><div align="center"><img src="https://i.imgur.com/TpIc9n9.png" alt="IICS Help Desk"/></center>'
+                                                        . '<p>Thank you for signing up STUDENT!</p>'
+                                                        . '<p>Please input the <b>verification code</b> to complete registration.</p>'
+                                                        . '<hr>'
+                                                        . '<p align="left"><b>Name: </b>' . $_SESSION['studfname'] . ' ' . $_SESSION['studlname'] . '</p>
+                                                           <p align="left"><b>User ID: </b>' . $_SESSION['studnum'] . '</p>
+                                                           <p align="left"><b>Verification Code: </b>' . $_SESSION['vcode'] . '</p>'
+                                                        . '<hr></body></html>';
 
-                                                $headers = 'From: rlphvicente@gmail.com' . "\r\n"; // Set from headers
-                                                mail($to, $subject, $message, $headers); // Send our email
-
-                                                echo $temp_email . '.';
+                                                $mail->send();
+                                            } catch (Exception $ex) {
+                                                echo 'Message could not be sent. Mailer Error: ', $mail->ErrorInfo;
                                             }
+
+                                            echo $_SESSION['studemail'] . '.';
                                         } else {
-                                            echo "Error";
+
+                                            $mail = new PHPMailer\PHPMailer\PHPMailer();
+
+                                            try {
+                                                $mail->isSMTP();                                      // Set mailer to use SMTP
+                                                $mail->Host = 'smtp.gmail.com';  // Specify main and backup SMTP servers
+                                                $mail->SMTPAuth = true;                               // Enable SMTP authentication
+                                                $mail->Username = 'noreply.iicshd@gmail.com';                 // SMTP username
+                                                $mail->Password = '1ng0dw3trust';                           // SMTP password
+                                                $mail->SMTPSecure = 'tls';                            // Enable TLS encryption, `ssl` also accepted
+                                                $mail->Port = 587;                                    // TCP port to connect to
+                                                //Recipients
+                                                $mail->setFrom('noreply.iicshd@gmail.com', 'IICS Help Desk');
+//                                                $mail->addAddress('rlphvicente@gmail.com');
+                                                $mail->addAddress($_SESSION['empemail']);
+                                                $mail->addReplyTo('noreply.iicshd@gmail.com', 'IICS Help Desk'); // Add a recipient
+
+                                                $mail->isHTML(true);                                  // Set email format to HTML
+                                                $mail->Subject = 'IICS Help Desk | Verify Your Account';
+                                                $mail->Body = '<div align="center"><img src="https://i.imgur.com/TpIc9n9.png" alt="IICS Help Desk"/></center>'
+                                                        . '<p>Thank you for signing up FACULTY!</p>'
+                                                        . '<p>Please input the <b>verification code</b> to complete registration.</p>'
+                                                        . '<hr>'
+                                                        . '<p align="left"><b>Name: </b>' . $_SESSION['empfname'] . ' ' . $_SESSION['emplname'] . '</p>
+                                                           <p align="left"><b>User ID: </b>' . $_SESSION['empnum'] . '</p>
+                                                           <p align="left"><b>Verification Code: </b>' . $_SESSION['vcode'] . '</p>'
+                                                        . '<hr>';
+
+                                                $mail->send();
+                                            } catch (Exception $ex) {
+                                                echo 'Message could not be sent. Mailer Error: ', $mail->ErrorInfo;
+                                            }
+
+                                            echo $_SESSION['empemail'] . '.';
                                         }
                                         ?>
-                                    </i></b>
-                                Input the verification code below to confirm your credentials.
+                                    </i></b> 
+                                Please check your <b>Spam</b> folder if you can't locate the email.
                             </div>
-                            <form id ="verify" action="" method="POST">
-                                <div class="form-group">
-                                    <input type="text" class="form-control" placeholder="Verification Code" name="vcode" required/>
-                                </div>
-                                <center><input type="submit" class="btnVerify" name="verify" value="Submit"/></center>
-                            </form>
+                            <div class="alert alert-secondary">
+                                <p>Input the <b>Verification Code</b> below to confirm your credentials.</p>
+
+                                <form id ="verify" action="" method="POST">
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" placeholder="Verification Code" name="vcode" required/>
+                                    </div>
+                                    <center><input type="submit" class="btnVerify" name="verify" value="Submit"/></center>
+                                </form>
+
+                            </div>
                         </div>
                     </div>
 
