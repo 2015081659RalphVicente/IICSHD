@@ -1,51 +1,203 @@
 <?php
 require './include/controller.php';
+
 require './include/PHPMailer/src/PHPMailer.php';
 require './include/PHPMailer/src/SMTP.php';
 require './include/PHPMailer/src/Exception.php';
+require './include/PHPMailer/src/Config.php';
 
+if (isset($_SESSION['user_name']) && $_SESSION['role'] == "admin") {
+    header("location:/iicshd/user/admin/home.php");
+}
+if (isset($_SESSION['user_name']) && $_SESSION['role'] == "faculty") {
+    header("location:/iicshd/user/faculty/home.php");
+}
+if (isset($_SESSION['user_name']) && $_SESSION['role'] == "student") {
+    header("location:/iicshd/user/student/home.php");
+}
+if (isset($_SESSION['user_name'])) {
 
-//if (isset($_SESSION['user_name']) && $_SESSION['role'] == "admin") {
-//    header("location:/iicshd/user/admin/home.php");
-//}
-//if (isset($_SESSION['user_name']) && $_SESSION['role'] == "faculty") {
-//    header("location:/iicshd/user/faculty/home.php");
-//}
-//if (isset($_SESSION['user_name']) && $_SESSION['role'] == "student") {
-//    header("location:/iicshd/user/student/home.php");
-//}
-//if (isset($_SESSION['user_name'])) {
-//
-//    if ((time() - $_SESSION['last_time']) > 2000) {
-//        header("Location:../../logout.php");
-//    } else {
-//        $_SESSION['last_time'] = time();
-//    }
-//}
-//
-if (!isset($_SESSION['user_name'])) {
-
-    if ($_SESSION['param'] == "registerSuccess") {
-
-        $role = $_SESSION['studrole'];
-
-        $studnum = $_SESSION['studnum'];
-        $studfname = $_SESSION['studfname'];
-        $studlname = $_SESSION['studlname'];
-        $vcode = $_SESSION['vcode'];
-        $studemail = $_SESSION['studemail'];
-    } elseif ($_SESSION['param'] == "registerSuccess2") {
-
-        $role = $_SESSION['emprole'];
-
-        $empnum = $_SESSION['empnum'];
-        $empfname = $_SESSION['empfname'];
-        $emplname = $_SESSION['emplname'];
-        $vcode = $_SESSION['vcode'];
-        $empemail = $_SESSION['empemail'];
+    if ((time() - $_SESSION['last_time']) > 2000) {
+        header("Location:../../logout.php");
     } else {
-        header("location:/iicshd/index.php");
+        $_SESSION['last_time'] = time();
     }
+}
+
+$studSuccess = $_SESSION['studSuccess'];
+
+$vcode = $vcodeErr = $studrole = $emprole = "";
+
+
+$studnum = $studfname = $studmname = $studlname = $studsection = $studemail = $studpass = $studconfpass = $studsecq = $studsecans = $studrole = $forgot = $hidden = "";
+$empnum = $empfname = $empmname = $emplname = $empsection = $empemail = $emppass = $empconfpass = $empsecq = $empsecans = $emprole = $forgot = $hidden = "";
+
+
+if ($studSuccess == TRUE) {
+
+    $role = $_SESSION['studrole'];
+    $vcode = $_SESSION['vcode'];
+
+    $studnum = $_SESSION['studnum'];
+    $studfname = $_SESSION['studfname'];
+    $studmname = $_SESSION['studmname'];
+    $studlname = $_SESSION['studlname'];
+    $studemail = $_SESSION['studemail'];
+    $hashedPwd = $_SESSION['studpass'];
+    $forgot = $_SESSION['studforgot'];
+    $studsection = $_SESSION['studsection'];
+    $studsecq = $_SESSION['studsecq'];
+    $hashedSecAns = $_SESSION['studseca'];
+    $hidden = $_SESSION['studhidden'];
+
+    if (isset($_POST['verify'])) {
+
+        if ($role == "student") {
+
+            $inputv = $_POST['inputv'];
+            $inputnum = $_SESSION['studnum'];
+
+            $checker = $conn->prepare("SELECT * FROM users_temp WHERE userid = ? AND  HIDDEN = 0");
+            $checker->bind_param("s", $inputnum);
+            $checker->execute();
+            $result = $checker->get_result();
+
+            if ($result->num_rows > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    $checkv = $row['vcode'];
+
+                    if ($inputv == $checkv) {
+
+//                        $studnum = $_SESSION['studnum'];
+//                        $studfname = $_SESSION['studfname'];
+//                        $studmname = $_SESSION['studmname'];
+//                        $studlname = $_SESSION['studlname'];
+//                        $studemail = $_SESSION['studemail'];
+//                        $hashedPwd = $_SESSION['studpass'];
+//                        $forgot = $_SESSION['studforgot'];
+                        $studrole = $role;
+//                        $studsection = $_SESSION['studsection'];
+//                        $studsecq = $_SESSION['studsecq'];
+//                        $hashedSecAns = $_SESSION['studseca'];
+//                        $hidden = $_SESSION['studhidden'];
+
+
+                        $verified = "1";
+                        $hashedv = password_hash($inputv, PASSWORD_DEFAULT);
+                        //insert the user into the database
+
+                        $sqladd = $conn->prepare("INSERT INTO users VALUES ('',?,?,?,?,?,?,?,?,?,?,?,?,'',?,?)");
+                        $sqladd->bind_param("ssssssissisisi", $studnum, $studfname, $studmname, $studlname, $studemail, $hashedPwd, $forgot, $studrole, $studsection, $studsecq, $hashedSecAns, $hidden, $hashedv, $verified);
+                        $sqladd->execute();
+                        $sqladd->close();
+
+                        if ($sqladd == TRUE) {
+
+                            $sqldelete = $conn->prepare("DELETE FROM users_temp WHERE userid = ?");
+                            $sqldelete->bind_param("s", $inputnum);
+                            $sqldelete->execute();
+                            $sqldelete->close();
+
+
+                            $_SESSION['studSuccess'] = 1;
+                            header("Location: verified.php");
+                            exit();
+                        } else {
+                            $vcodeErr = '<div class="alert alert-danger">
+                        Register error!
+                        </div>';
+                        }
+                    } else {
+                        $_SESSION['studSuccess'] = 0;
+                        header("Location: verifyfail.php");
+                    }
+                }
+            }
+        }
+    }
+} elseif ($studSuccess == FALSE) {
+
+    $role = $_SESSION['emprole'];
+    $vcode = $_SESSION['vcode'];
+
+    $empnum = $_SESSION['empnum'];
+    $empfname = $_SESSION['empfname'];
+    $empmname = $_SESSION['empmname'];
+    $emplname = $_SESSION['emplname'];
+    $empemail = $_SESSION['empemail'];
+    $hashedPwd = $_SESSION['emppass'];
+    $forgot = $_SESSION['empforgot'];
+    $empsection = $_SESSION['empsection'];
+    $empsecq = $_SESSION['empsecq'];
+    $hashedSecAns = $_SESSION['empseca'];
+    $hidden = $_SESSION['emphidden'];
+
+    if (isset($_POST['verify'])) {
+
+        if ($role == "faculty") {
+
+            $inputv = $_POST['inputv'];
+            $inputnum = $_SESSION['empnum'];
+
+            $checker = $conn->prepare("SELECT * FROM users_temp WHERE userid = ? AND  HIDDEN = 0");
+            $checker->bind_param("s", $inputnum);
+            $checker->execute();
+            $result = $checker->get_result();
+
+            if ($result->num_rows > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    $checkv = $row['vcode'];
+
+                    if ($inputv == $checkv) {
+
+//                        $empnum = $_SESSION['empnum'];
+//                        $empfname = $_SESSION['empfname'];
+//                        $empmname = $_SESSION['empmname'];
+//                        $emplname = $_SESSION['emplname'];
+//                        $empemail = $_SESSION['empemail'];
+//                        $hashedPwd = $_SESSION['emppass'];
+//                        $forgot = $_SESSION['empforgot'];
+                        $emprole = $role;
+//                        $empsection = $_SESSION['empsection'];
+//                        $empsecq = $_SESSION['empsecq'];
+//                        $hashedSecAns = $_SESSION['empseca'];
+//                        $hidden = $_SESSION['emphidden'];
+
+
+                        $verified = "1";
+                        $hashedv = password_hash($inputv, PASSWORD_DEFAULT);
+                        //insert the user into the database
+
+                        $sqladd = $conn->prepare("INSERT INTO users VALUES ('',?,?,?,?,?,?,?,?,?,?,?,?,'',?,?)");
+                        $sqladd->bind_param("ssssssissisisi", $empnum, $empfname, $empmname, $emplname, $empemail, $hashedPwd, $forgot, $emprole, $empsection, $empsecq, $hashedSecAns, $hidden, $hashedv, $verified);
+                        $sqladd->execute();
+                        $sqladd->close();
+
+                        if ($sqladd == TRUE) {
+
+                            $sqldelete = $conn->prepare("DELETE FROM users_temp WHERE userid = ?");
+                            $sqldelete->bind_param("s", $inputnum);
+                            $sqldelete->execute();
+                            $sqldelete->close();
+
+                            $_SESSION['studSuccess'] = 1;
+                            header("Location: verified.php");
+                            exit();
+                        } else {
+                            $vcodeErr = '<div class="alert alert-danger">
+                        Register error!
+                        </div>';
+                        }
+                    } else {
+                        $_SESSION['studSuccess'] = 0;
+                        header("Location: verifyfail.php");
+                    }
+                }
+            }
+        }
+    }
+} else {
+    header("Location: index.php");
 }
 ?>
 
@@ -97,17 +249,10 @@ if (!isset($_SESSION['user_name'])) {
                                             $mail = new PHPMailer\PHPMailer\PHPMailer();
 
                                             try {
-                                                $mail->isSMTP();                                      // Set mailer to use SMTP
-                                                $mail->Host = 'smtp.gmail.com';  // Specify main and backup SMTP servers
-                                                $mail->SMTPAuth = true;                               // Enable SMTP authentication
-                                                $mail->Username = 'noreply.iicshd@gmail.com';                 // SMTP username
-                                                $mail->Password = '1ng0dw3trust';                           // SMTP password
-                                                $mail->SMTPSecure = 'tls';                            // Enable TLS encryption, `ssl` also accepted
-                                                $mail->Port = 587;                                    // TCP port to connect to
                                                 //Recipients
                                                 $mail->setFrom('noreply.iicshd@gmail.com', 'IICS Help Desk');
-                                                $mail->addAddress($_SESSION['studemail']);
-                                                //                                                $mail->addAddress('rlphvicente@gmail.com');
+//                                                $mail->addAddress($_SESSION['studemail']);
+                                                $mail->addAddress('rlphvicente@gmail.com');
                                                 $mail->addReplyTo('noreply.iicshd@gmail.com', 'IICS Help Desk'); // Add a recipient
 
                                                 $mail->isHTML(true);                                  // Set email format to HTML
@@ -116,9 +261,9 @@ if (!isset($_SESSION['user_name'])) {
                                                         . '<p>Thank you for signing up STUDENT!</p>'
                                                         . '<p>Please input the <b>verification code</b> to complete registration.</p>'
                                                         . '<hr>'
-                                                        . '<p align="left"><b>Name: </b>' . $_SESSION['studfname'] . ' ' . $_SESSION['studlname'] . '</p>
-                                                           <p align="left"><b>User ID: </b>' . $_SESSION['studnum'] . '</p>
-                                                           <p align="left"><b>Verification Code: </b>' . $_SESSION['vcode'] . '</p>'
+                                                        . '<p align="left"><b>Name: </b>' . $studfname . ' ' . $studlname . '</p>
+                                                           <p align="left"><b>User ID: </b>' . $studnum . '</p>
+                                                           <p align="left"><b>Verification Code: </b>' . $vcode . '</p>'
                                                         . '<hr></body></html>';
 
                                                 $mail->send();
@@ -126,23 +271,16 @@ if (!isset($_SESSION['user_name'])) {
                                                 echo 'Message could not be sent. Mailer Error: ', $mail->ErrorInfo;
                                             }
 
-                                            echo $_SESSION['studemail'] . '.';
-                                        } else {
+                                            echo $studemail . '.';
+                                        } elseif ($role == "faculty") {
 
                                             $mail = new PHPMailer\PHPMailer\PHPMailer();
 
                                             try {
-                                                $mail->isSMTP();                                      // Set mailer to use SMTP
-                                                $mail->Host = 'smtp.gmail.com';  // Specify main and backup SMTP servers
-                                                $mail->SMTPAuth = true;                               // Enable SMTP authentication
-                                                $mail->Username = 'noreply.iicshd@gmail.com';                 // SMTP username
-                                                $mail->Password = '1ng0dw3trust';                           // SMTP password
-                                                $mail->SMTPSecure = 'tls';                            // Enable TLS encryption, `ssl` also accepted
-                                                $mail->Port = 587;                                    // TCP port to connect to
                                                 //Recipients
                                                 $mail->setFrom('noreply.iicshd@gmail.com', 'IICS Help Desk');
-//                                                $mail->addAddress('rlphvicente@gmail.com');
-                                                $mail->addAddress($_SESSION['empemail']);
+                                                $mail->addAddress('rlphvicente@gmail.com');
+//                                                $mail->addAddress($_SESSION['empemail']);
                                                 $mail->addReplyTo('noreply.iicshd@gmail.com', 'IICS Help Desk'); // Add a recipient
 
                                                 $mail->isHTML(true);                                  // Set email format to HTML
@@ -151,9 +289,9 @@ if (!isset($_SESSION['user_name'])) {
                                                         . '<p>Thank you for signing up FACULTY!</p>'
                                                         . '<p>Please input the <b>verification code</b> to complete registration.</p>'
                                                         . '<hr>'
-                                                        . '<p align="left"><b>Name: </b>' . $_SESSION['empfname'] . ' ' . $_SESSION['emplname'] . '</p>
-                                                           <p align="left"><b>User ID: </b>' . $_SESSION['empnum'] . '</p>
-                                                           <p align="left"><b>Verification Code: </b>' . $_SESSION['vcode'] . '</p>'
+                                                        . '<p align="left"><b>Name: </b>' . $empfname . ' ' . $emplname . '</p>
+                                                           <p align="left"><b>User ID: </b>' . $empnum . '</p>
+                                                           <p align="left"><b>Verification Code: </b>' . $vcode . '</p>'
                                                         . '<hr>';
 
                                                 $mail->send();
@@ -161,7 +299,7 @@ if (!isset($_SESSION['user_name'])) {
                                                 echo 'Message could not be sent. Mailer Error: ', $mail->ErrorInfo;
                                             }
 
-                                            echo $_SESSION['empemail'] . '.';
+                                            echo $empemail . '.';
                                         }
                                         ?>
                                     </i></b> 
@@ -172,9 +310,10 @@ if (!isset($_SESSION['user_name'])) {
 
                                 <form id ="verify" action="" method="POST">
                                     <div class="form-group">
-                                        <input type="text" class="form-control" placeholder="Verification Code" name="vcode" required/>
+                                        <input type="text" class="form-control" placeholder="Verification Code" id="inputv" name="inputv" required/>
+                                        <?php echo $vcodeErr; ?>
                                     </div>
-                                    <center><input type="submit" class="btnVerify" name="verify" value="Submit"/></center>
+                                    <center><input type="submit" class="btnVerify" id = "verify" name="verify" value="Submit"/></center>
                                 </form>
 
                             </div>

@@ -14,7 +14,6 @@ if (isset($_SESSION['resetpass']) && $_SESSION['resetpass'] == 0) {
     session_destroy();
 }
 
-unset($_SESSION['seq']);
 ?>
 
 <html>

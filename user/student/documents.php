@@ -210,44 +210,6 @@ if (isset($_POST['receiveRel'])) {
                 <div class="accordion" id="accordionExample">
 
                     <div class="card">
-                        <div class="card-header" id="headingOne">
-                            <h5 class="mb-0">
-                                <button class="btn bg-dark text-white" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-                                    <span class="fas fa-plus-circle"></span> Submit Document
-                                </button>
-                            </h5>
-                        </div>
-
-                        <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
-                            <div class="card-body">
-                                <form action="" method="POST">
-
-                                    <div class="form-group">
-                                        <label for="title">Document Title: <span class="require">*</span></label>
-                                        <input type="text" class="form-control" name="dTitle" required />
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="description">Description: </label>
-                                        <textarea rows="2" class="form-control" name="dDesc" required ></textarea>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <button style="float:right;" type="submit" name="submitDoc" class="btn btn-success">
-                                            Submit
-                                        </button>
-                                        <br>
-                                    </div>
-
-                                </form>
-                            </div>
-                        </div>
-
-
-
-                    </div>
-
-                    <div class="card">
                         <div class="card-header" id="headingTwo">
                             <h5 class="mb-0">
                                 <button class="btn bg-dark text-white" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">

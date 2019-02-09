@@ -19,7 +19,7 @@ if (isset($_POST['login'])) {
     $userid = $_POST["userid"];
     $password = $_POST["password"];
 
-    $checker = $conn->prepare("SELECT * FROM users WHERE userid = ? AND  HIDDEN = 0");
+    $checker = $conn->prepare("SELECT * FROM users WHERE userid = ? AND  HIDDEN = 0 AND VERIFIED = 1");
     $checker->bind_param("s", $userid);
     $checker->execute();
     $result = $checker->get_result();

@@ -19,6 +19,8 @@ if (isset($_SESSION['user_name'])) {
     }
 }
 
+unset($_SESSION['fromMain']);
+
 $studnum = $studfname = $studmname = $studlname = $studsection = $studemail = $studpass = $studconfpass = $studsecq = $studsecans = $studrole = $forgot = $hidden = "";
 $empnum = $empfname = $empmname = $emplname = $empsection = $empemail = $emppass = $empconfpass = $empsecq = $empsecans = $emprole = $forgot = $hidden = "";
 $tab1 = $tab2 = $studnumErr = $empnumErr2 = $emailErr3 = $empnumErr3 = $numErr = $numErr2 = $firstErr = $firstErr2 = $midErr = $midErr2 = $lastErr = $lastErr2 = $emailErr = $emailErr2 = $confirmErr = $confirmErr2 = $passwordErr = $passwordErr2 = "";
@@ -145,12 +147,22 @@ if (isset($_POST['studRegister'])) {
 //        $logper->close();
         $_SESSION['studnum'] = $studnum;
         $_SESSION['studfname'] = $studfname;
+        $_SESSION['studmname'] = $studmname;
         $_SESSION['studlname'] = $studlname;
         $_SESSION['studrole'] = $studrole;
         $_SESSION['vcode'] = $vcode;
         $_SESSION['studemail'] = $studemail;
-        $_SESSION['param'] = "registerSuccess";
-        
+        $_SESSION['studpass'] = $hashedPwd;
+        $_SESSION['studforgot'] = $forgot;
+        $_SESSION['studsection'] = $studsection;
+        $_SESSION['studsecq'] = $studsecq;
+        $_SESSION['studseca'] = $hashedSecAns;
+        $_SESSION['studhidden'] = $hidden;
+        $_SESSION['studverified'] = $verified;
+
+        $studSuccess = TRUE;
+
+        $_SESSION['studSuccess'] = $studSuccess;
         header("Location: success.php");
         exit;
     } else {
@@ -269,11 +281,22 @@ if (isset($_POST['empRegister'])) {
 
         $_SESSION['empnum'] = $empnum;
         $_SESSION['empfname'] = $empfname;
+        $_SESSION['empmname'] = $empmname;
         $_SESSION['emplname'] = $emplname;
-        $_SESSION['vcode'] = $vcode;
         $_SESSION['emprole'] = $emprole;
+        $_SESSION['vcode'] = $vcode;
         $_SESSION['empemail'] = $empemail;
-        $_SESSION['param'] = "registerSuccess2";
+        $_SESSION['emppass'] = $hashedPwd;
+        $_SESSION['empforgot'] = $forgot;
+        $_SESSION['empsection'] = $empsection;
+        $_SESSION['empsecq'] = $empsecq;
+        $_SESSION['empseca'] = $hashedSecAns;
+        $_SESSION['emphidden'] = $hidden;
+        $_SESSION['empverified'] = $verified;
+
+        $studSuccess = FALSE;
+
+        $_SESSION['studSuccess'] = $studSuccess;
         header("Location: success.php");
         exit;
     } else {
