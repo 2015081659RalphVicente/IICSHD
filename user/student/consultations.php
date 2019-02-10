@@ -19,6 +19,39 @@ if (isset($_SESSION['user_name'])) {
 if (!isset($_SESSION['user_name'])) {
     header("location:/iicshd/login.php");
 }
+
+if (isset($_POST['submitCon'])) {
+    $cTitle = clean($_POST["cTitle"]);
+    $cDesc = clean($_POST["cDesc"]);
+    $cProf = $_POST['cProf'];
+    $cStatus = "Requested";
+
+    $submitSql = $conn->prepare("INSERT INTO consultations VALUES ('', ?, ?, ?, ?, NOW(), ?, '0')");
+    $submitSql->bind_param("ssiis", $cTitle, $cDesc, $cProf, $_SESSION['userno'], $cStatus);
+    
+    $submitSql2 = $conn->prepare("INSERT INTO consultlogs VALUES ('', ?, ?, ?, ?, NOW(), ?, '0')");
+    $submitSql2->bind_param("ssiis", $cTitle, $cDesc, $cProf, $_SESSION['userno'], $cStatus);
+
+
+    if ($submitSql == TRUE) {
+
+        $submitSql->execute();
+        $submitSql->close();
+
+        if ($submitSql2 == TRUE) {
+            $submitSql2->execute();
+            $submitSql2->close();
+        }
+
+
+        header("Location: consultations.php");
+        exit;
+    } else {
+        $postFailed = '<div class="alert alert-danger">
+                        Submit Failed!
+                        </div>';
+    }
+}
 ?>
 
 <!doctype html>
@@ -145,132 +178,132 @@ if (!isset($_SESSION['user_name'])) {
 
         <div class="container-fluid">
 
-           
-                <main role="main" class="col-md-12 ml-sm-auto">
-                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                        <h1 class="h2">Consultation</h1>
-                    </div>
 
-                    <div class="accordion" id="accordionExample">
+            <main role="main" class="col-md-12 ml-sm-auto">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Consultation</h1>
+                </div>
 
-                        <div class="card">
-                            <div class="card-header" id="headingOne">
-                                <h5 class="mb-0">
-                                    <button class="btn bg-dark text-white" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-                                        <span class="fas fa-plus-circle"></span> Request for Consultation
-                                    </button>
-                                </h5>
-                            </div>
+                <div class="accordion" id="accordionExample">
 
-                            <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
-                                <div class="card-body">
-                                    <form action="" method="POST">
+                    <div class="card">
+                        <div class="card-header" id="headingOne">
+                            <h5 class="mb-0">
+                                <button class="btn bg-dark text-white" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                    <span class="fas fa-plus-circle"></span> Request for Consultation
+                                </button>
+                            </h5>
+                        </div>
 
-                                        <div class="form-group">
-                                            <label for="title">Subject of Concern: <span class="require">*</span></label>
-                                            <input type="text" class="form-control" name="cTitle" required />
-                                        </div>
+                        <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+                            <div class="card-body">
+                                <form action="" method="POST">
 
-                                        <div class="form-group">
-                                            <label for="description">Description: </label>
-                                            <textarea rows="2" class="form-control" name="cDesc" required ></textarea>
-                                        </div>
+                                    <div class="form-group">
+                                        <label for="title">Subject of Concern: <span class="require">*</span></label>
+                                        <input type="text" class="form-control" name="cTitle" required />
+                                    </div>
 
-                                        <div class="form-group">
-                                            <label for="description">Professor: </label>
-                                            <select name="prof" id="prof" class="form-control">
-                                                <option disabled selected value>Select one: </option>
-                                                <?php
-                                                $prof = mysqli_query($conn, "SELECT userno, fname, mname, lname FROM users WHERE role = 'faculty'");
-                                                if ($prof->num_rows > 0) {
-                                                    while ($row = $prof->fetch_assoc()) {
-                                                        $profname = ($row['fname'] . ' ' . $row['mname'] . ' ' . $row['lname']);
-                                                        $profno = $row['userno'];
-                                                        echo "<option value='" . $profno . "'>" . $profname . "</option>";
-                                                    }
-                                                } else {
-                                                    echo"<option value=''></option>";
+                                    <div class="form-group">
+                                        <label for="description">Description: </label>
+                                        <textarea rows="2" class="form-control" name="cDesc" required ></textarea>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="description">Professor: </label>
+                                        <select name="cProf" id="cProf" class="form-control">
+                                            <option disabled selected value>Select one: </option>
+                                            <?php
+                                            $prof = mysqli_query($conn, "SELECT userno, fname, mname, lname FROM users WHERE role = 'faculty'");
+                                            if ($prof->num_rows > 0) {
+                                                while ($row = $prof->fetch_assoc()) {
+                                                    $profname = ($row['fname'] . ' ' . $row['mname'] . ' ' . $row['lname']);
+                                                    $profno = $row['userno'];
+                                                    echo "<option value='" . $profno . "'>" . $profname . "</option>";
                                                 }
-                                                ?> 
-                                            </select>
-                                        </div>
+                                            } else {
+                                                echo"<option value=''></option>";
+                                            }
+                                            ?> 
+                                        </select>
+                                    </div>
 
-                                        <div class="form-group">
-                                            <button style="float:right;" type="submit" name="submitDoc" class="btn btn-success">
-                                                Submit
-                                            </button>
-                                            <br>
-                                        </div>
+                                    <div class="form-group">
+                                        <button style="float:right;" type="submit" name="submitCon" class="btn btn-success">
+                                            Submit
+                                        </button>
+                                        <br>
+                                    </div>
 
-                                    </form>
-                                </div>
+                                </form>
                             </div>
-
                         </div>
 
                     </div>
 
-                    <br>
+                </div>
 
-                    <div class="table-responsive">
+                <br>
 
-                        <table id="consultation" class="table table-striped table-responsive-lg">
+                <div class="table-responsive">
 
-                            <thead>
-                                <tr>
-                                    <th>Consultation #</th>
-                                    <th>Date Created</th>
-                                    <th>Requested By</th>
-                                    <th>Subject</th>
-                                    <th>Description</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
+                    <table id="consultation" class="table table-striped table-responsive-lg">
 
-                            <tbody>
+                        <thead>
+                            <tr>
+                                <th>Consultation #</th>
+                                <th>Date Created</th>
+                                <th>Requested By</th>
+                                <th>Subject</th>
+                                <th>Description</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
 
-                                <?php
-                                $newsubquery = mysqli_query($conn, "SELECT LPAD(c.conno,4,0), c.condatecreated, u.fname, u.mname, u.lname, c.consub,"
-                                        . "c.condesc, c.constatus, c.conprof FROM consultations c INNER JOIN users u WHERE c.userno = u.userno "
-                                        . "AND c.userno = " . $_SESSION['userno'] . "");
+                        <tbody>
 
-                                if ($newsubquery->num_rows > 0) {
-                                    while ($row = $newsubquery->fetch_assoc()) {
-                                        $docid = $row['LPAD(c.conno,4,0)'];
-                                        $docdatesubmit = $row['condatecreated'];
-                                        $userid = ($row['fname'] . ' ' . $row['mname'] . ' ' . $row['lname']);
-                                        $doctitle = $row['contitle'];
-                                        $docdesc = $row['condesc'];
-                                        $docstatus = $row['constatus'];
+                            <?php
+                            $newsubquery = mysqli_query($conn, "SELECT LPAD(c.conno,4,0), c.condatecreated, u.fname, u.mname, u.lname, c.consub,"
+                                    . "c.condesc, c.constatus, c.conprof FROM consultations c INNER JOIN users u WHERE c.userno = u.userno "
+                                    . "AND c.userno = " . $_SESSION['userno'] . "");
 
-                                        echo '<tr>'
-                                        . '<td>' . $docid . '</td>'
-                                        . '<td>' . $docdatesubmit . '</td>'
-                                        . '<td>' . $userid . '</td>'
-                                        . '<td>' . $doctitle . '</td>'
-                                        . '<td>' . $docdesc . '</td>'
-                                        . '<td>' . $docstatus . '</td>';
-                                    }
+                            if ($newsubquery->num_rows > 0) {
+                                while ($row = $newsubquery->fetch_assoc()) {
+                                    $docid = $row['LPAD(c.conno,4,0)'];
+                                    $docdatesubmit = $row['condatecreated'];
+                                    $userid = ($row['fname'] . ' ' . $row['mname'] . ' ' . $row['lname']);
+                                    $doctitle = $row['consub'];
+                                    $docdesc = $row['condesc'];
+                                    $docstatus = $row['constatus'];
+
+                                    echo '<tr>'
+                                    . '<td>' . $docid . '</td>'
+                                    . '<td>' . $docdatesubmit . '</td>'
+                                    . '<td>' . $userid . '</td>'
+                                    . '<td>' . $doctitle . '</td>'
+                                    . '<td>' . $docdesc . '</td>'
+                                    . '<td>' . $docstatus . '</td>';
                                 }
-                                ?>
+                            }
+                            ?>
 
-                            </tbody>
+                        </tbody>
 
-                            <tfoot>
-                                <tr>
-                                    <th>Consultation #</th>
-                                    <th>Date Created</th>
-                                    <th>Requested By</th>
-                                    <th>Subject</th>
-                                    <th>Description</th>
-                                    <th>Status</th>
-                                </tr>
-                            </tfoot>
-                        </table>
-                    </div>
+                        <tfoot>
+                            <tr>
+                                <th>Consultation #</th>
+                                <th>Date Created</th>
+                                <th>Requested By</th>
+                                <th>Subject</th>
+                                <th>Description</th>
+                                <th>Status</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
 
-                </main>
-            </div>
+            </main>
+        </div>
 
         <!-- Bootstrap core JavaScript
         ================================================== -->
@@ -299,7 +332,7 @@ if (!isset($_SESSION['user_name'])) {
         <!-- Icons -->
         <script src="../../js/feather.min.js"></script>
         <script>
-                        feather.replace()
+            feather.replace()
         </script>
 
         <script>

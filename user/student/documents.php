@@ -20,36 +20,36 @@ if (!isset($_SESSION['user_name'])) {
     header("location:/iicshd/login.php");
 }
 
-if (isset($_POST['submitDoc'])) {
-    $dTitle = clean($_POST["dTitle"]);
-    $dDesc = clean($_POST["dDesc"]);
-    $dStatus = "Submitted";
-
-    $submitSql = $conn->prepare("INSERT INTO documents VALUES ('', NOW(), ?, ?, ?, ?, '0', '0')");
-    $submitSql->bind_param("isss", $_SESSION['userno'], $dTitle, $dDesc, $dStatus);
-    $submitSql2 = $conn->prepare("INSERT INTO doclogs VALUES ('', NOW(), ?, ?, ?, ?, '0', '0')");
-    $submitSql2->bind_param("isss", $_SESSION['userno'], $dTitle, $dDesc, $dStatus);
-
-
-    if ($submitSql == TRUE) {
-
-        $submitSql->execute();
-        $submitSql->close();
-
-        if ($submitSql2 == TRUE) {
-            $submitSql2->execute();
-            $submitSql2->close();
-        }
-
-
-        header("Location: documents.php");
-        exit;
-    } else {
-        $postFailed = '<div class="alert alert-danger">
-                        Submit Failed!
-                        </div>';
-    }
-}
+//if (isset($_POST['submitDoc'])) {
+//    $dTitle = clean($_POST["dTitle"]);
+//    $dDesc = clean($_POST["dDesc"]);
+//    $dStatus = "Submitted";
+//
+//    $submitSql = $conn->prepare("INSERT INTO documents VALUES ('', NOW(), ?, ?, ?, ?, '0', '0')");
+//    $submitSql->bind_param("isss", $_SESSION['userno'], $dTitle, $dDesc, $dStatus);
+//    $submitSql2 = $conn->prepare("INSERT INTO doclogs VALUES ('', NOW(), ?, ?, ?, ?, '0', '0')");
+//    $submitSql2->bind_param("isss", $_SESSION['userno'], $dTitle, $dDesc, $dStatus);
+//
+//
+//    if ($submitSql == TRUE) {
+//
+//        $submitSql->execute();
+//        $submitSql->close();
+//
+//        if ($submitSql2 == TRUE) {
+//            $submitSql2->execute();
+//            $submitSql2->close();
+//        }
+//
+//
+//        header("Location: documents.php");
+//        exit;
+//    } else {
+//        $postFailed = '<div class="alert alert-danger">
+//                        Submit Failed!
+//                        </div>';
+//    }
+//}
 
 if (isset($_POST['receiveRel'])) {
     $recDoc = $_POST['recDoc'];

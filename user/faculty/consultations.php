@@ -19,6 +19,24 @@ if (isset($_SESSION['user_name'])) {
 if (!isset($_SESSION['user_name'])) {
     header("location:/iicshd/login.php");
 }
+
+if (isset($_POST['updatedoc2'])) {
+    $edit_doc_no = $_POST['edit_doc_no2'];
+    $docstatus = $_POST['edit_status2'];
+
+    $editquery = $conn->prepare("UPDATE consultations SET constatus=?, condatemodified=NOW() WHERE conno=?");
+    $editquery->bind_param("si", $docstatus, $edit_doc_no);
+    $editquery->execute();
+    $editquery->close();
+
+    if ($editquery == TRUE) {
+
+        header("location: consultations.php");
+        exit;
+    } else {
+        echo "Update failed.";
+    }
+}
 ?>
 
 <!doctype html>
@@ -51,7 +69,7 @@ if (!isset($_SESSION['user_name'])) {
 
     <body>
 
-<!--NEW NAVBAR-->
+        <!--NEW NAVBAR-->
 
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <a class="navbar-brand">
@@ -132,70 +150,124 @@ if (!isset($_SESSION['user_name'])) {
 
         <div class="container-fluid">
 
-                <main role="main" class="col-md-12 ml-sm-auto">
-                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                        <h1 class="h2">Consultation Requests</h1>
-                    </div>
+            <main role="main" class="col-md-12 ml-sm-auto">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Consultation Requests</h1>
+                </div>
 
-                    <div class="table-responsive">
+                <div class="table-responsive">
 
-                        <table id="consultation" class="table table-striped table-responsive-lg">
+                    <table id="consultation" class="table table-striped table-responsive-lg">
 
-                            <thead>
-                                <tr>
-                                    <th>Consultation #</th>
-                                    <th>Date Created</th>
-                                    <th>Requested By</th>
-                                    <th>Subject</th>
-                                    <th>Description</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
+                        <thead>
+                            <tr>
+                                <th>Edit</th>
+                                <th>Consultation #</th>
+                                <th>Date Requested</th>
+                                <th>Requested By</th>
+                                <th>Subject</th>
+                                <th>Description</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
 
-                            <tbody>
+                        <tbody>
 
-                                <?php
-                                $newsubquery = mysqli_query($conn, "SELECT LPAD(c.conno,4,0), c.condatecreated, u.fname, u.mname, u.lname, c.consub,"
-                                        . "c.condesc, c.constatus, c.conprof FROM consultations c INNER JOIN users u WHERE c.userno = u.userno "
-                                        . "AND c.userno = " . $_SESSION['userno'] . "");
+                            <?php
+                            $newsubquery = mysqli_query($conn, "SELECT LPAD(c.conno,4,0), c.condatecreated, u.fname, u.mname, u.lname, c.consub,"
+                                    . "c.condesc, c.constatus, c.conprof FROM consultations c INNER JOIN users u WHERE c.userno = u.userno "
+                                    . "AND c.conprof = " . $_SESSION['userno'] . "");
 
-                                if ($newsubquery->num_rows > 0) {
-                                    while ($row = $newsubquery->fetch_assoc()) {
-                                        $docid = $row['LPAD(c.conno,4,0)'];
-                                        $docdatesubmit = $row['condatecreated'];
-                                        $userid = ($row['fname'] . ' ' . $row['mname'] . ' ' . $row['lname']);
-                                        $doctitle = $row['contitle'];
-                                        $docdesc = $row['condesc'];
-                                        $docstatus = $row['constatus'];
+                            if ($newsubquery->num_rows > 0) {
+                                while ($row = $newsubquery->fetch_assoc()) {
+                                    $docid = $row['LPAD(c.conno,4,0)'];
+                                    $docdatesubmit = $row['condatecreated'];
+                                    $userid = ($row['fname'] . ' ' . $row['mname'] . ' ' . $row['lname']);
+                                    $doctitle = $row['consub'];
+                                    $docdesc = $row['condesc'];
+                                    $docstatus = $row['constatus'];
 
-                                        echo '<tr>'
-                                        . '<td>' . $docid . '</td>'
-                                        . '<td>' . $docdatesubmit . '</td>'
-                                        . '<td>' . $userid . '</td>'
-                                        . '<td>' . $doctitle . '</td>'
-                                        . '<td>' . $docdesc . '</td>'
-                                        . '<td>' . $docstatus . '</td>';
-                                    }
+                                    echo '<tr>';
+                                    if ($docstatus == 'Accepted') {
+                                        echo '<td> - </td>';
+                                    } elseif ($docstatus == 'Declined') {
+                                        echo '<td> - </td>';
+                                    } else {
+                                        echo
+                                        "<td>" . "<a href='#edit2" . $docid . "'data-toggle='modal'><button type='button' class='btn btn-dark btn-sm' title='Edit'><span class='fas fa-edit' aria-hidden='true'></span></button></a>" . "</td>";
+                                    } echo '<td>' . $docid . '</td>'
+                                    . '<td>' . $docdatesubmit . '</td>'
+                                    . '<td>' . $userid . '</td>'
+                                    . '<td>' . $doctitle . '</td>'
+                                    . '<td>' . $docdesc . '</td>'
+                                    . '<td>' . $docstatus . '</td>';
+                                    ?>
+                                    <?php
+                                    echo '<div id="edit2' . $docid . '" class="modal fade" role="dialog">
+                                                            <form method="post">
+                                                                <div class="modal-dialog modal-lg">
+                                                                    <!-- Modal content-->
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-header">
+
+                                                                            <h4 class="modal-title">Edit Consultation Request #' . $docid . '</h4>
+                                                                        </div>
+
+                                                                        <div class="modal-body">
+                                                                            <div class="row">
+                                                                                <div class="col-sm-12">
+                                                                                    <input type="hidden" name="edit_doc_no2" value="' . $docid . '">
+                                                                                    <p><strong>Subject of Concern: </strong>' . $doctitle . '</p>
+                                                                                    <p><strong>Description: </strong>' . $docdesc . '</p>
+                                                                                    <p><strong>Date Requested: </strong>' . $docdatesubmit . '</p>
+                                                                                    <p><strong>Requested By: </strong>' . $userid . '</p>  
+                                                                                         <strong>Update Status: </strong><select name="edit_status2" id="edit_status2">
+                                                                                    <option value="Accepted"';
+                                    if ($docstatus == 'Accepted') {
+                                        echo "selected";
+                                    } echo' >Accept
+                                                                                    </option>
+                                                                                    <option value="Declined"';
+                                    if ($docstatus == 'Declined') {
+                                        echo "selected";
+                                    } echo'>Decline
+                                                                                    </option>
+                                                                                    </select>
+                                                                                </div>
+                                                                            </div>
+                                                                            <br>
+                                                                            <div class="modal-footer">
+                                                                                <button style="float: right;" type="button" class="btn btn-secondary btn-m" data-dismiss="modal"><span class="fas fa-times"></span> Cancel</button>
+                                                                                <button style="float: right;" type="submit" name="updatedoc2" class="btn btn-success btn-m"><span class="fas fa-clipboard-check" ></span> Save Changes</button>
+                                                                                 
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </form>
+                                                        </div>';
                                 }
-                                ?>
+                            }
+                            ?>
 
-                            </tbody>
+                        </tbody>
 
-                            <tfoot>
-                                <tr>
-                                    <th>Consultation #</th>
-                                    <th>Date Created</th>
-                                    <th>Requested By</th>
-                                    <th>Subject</th>
-                                    <th>Description</th>
-                                    <th>Status</th>
-                                </tr>
-                            </tfoot>
-                        </table>
+                        <tfoot>
+                            <tr>
+                                <th>Edit</th>
+                                <th>Consultation #</th>
+                                <th>Date Requested</th>
+                                <th>Requested By</th>
+                                <th>Subject</th>
+                                <th>Description</th>
+                                <th>Status</th>
+                            </tr>
+                        </tfoot>
+                    </table>
 
-                    </div>
-                </main>
-            </div>
+                </div>
+            </main>
+        </div>
 
         <!-- Bootstrap core JavaScript
         ================================================== -->
@@ -224,7 +296,7 @@ if (!isset($_SESSION['user_name'])) {
         <!-- Icons -->
         <script src="../../js/feather.min.js"></script>
         <script>
-                        feather.replace()
+            feather.replace()
         </script>
 
         <script>
