@@ -38,6 +38,24 @@ if (!isset($_SESSION['user_name'])) {
         <link href="../../css/dashboard.css" rel="stylesheet">
         <link href="../../fa-5.5.0/css/fontawesome.css" rel="stylesheet">
 
+        <style>
+            .header {
+                padding: 10px;
+                text-align: center;
+                background: #2e2e2e;
+                color: white;
+                font-size: 30px;
+            }
+
+            .headerline {
+                padding: 1px;
+                text-align: center;
+                background: #b00f24;
+                color: white;
+                font-size: 2px;
+            }
+        </style>
+
         <!-- Font Awesome JS -->
         <script defer src="../../fa-5.5.0/js/solid.js"></script>
         <script defer src="../../fa-5.5.0/js/fontawesome.js"></script>
@@ -131,6 +149,10 @@ if (!isset($_SESSION['user_name'])) {
                             ?>
                         </button>
                         <div class="dropdown-menu">
+                            <a class="dropdown-item" href="cpanel.php">
+                                <i class="fas fa-sliders-h"></i>
+                                Control Panel
+                            </a>
                             <a class="dropdown-item" href="account.php">
                                 <i class="fas fa-user-cog"></i>
                                 Account
@@ -150,154 +172,154 @@ if (!isset($_SESSION['user_name'])) {
 
         <div class="container-fluid">
 
-                <main role="main" class="col-md-12 ml-sm-auto">
-                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                        <h1 class="h2">Reports</h1>
-                    </div>
+            <main role="main" class="col-md-12 ml-sm-auto">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Reports</h1>
+                </div>
 
-                    <div class="accordion" id="accordionExample">
+                <div class="accordion" id="accordionExample">
 
-                        <div class="card">
-                            <div class="card-header" id="headingOne">
-                                <h5 class="mb-0">
-                                    <button class="btn bg-dark text-white" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-                                        <span class="fas fa-plus-circle"></span> Document Logs
-                                    </button>
-                                </h5>
-                            </div>
+                    <div class="card">
+                        <div class="card-header" id="headingOne">
+                            <h5 class="mb-0">
+                                <button class="btn bg-dark text-white" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                    <span class="fas fa-plus-circle"></span> Document Logs
+                                </button>
+                            </h5>
+                        </div>
 
-                            <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+                        <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+                            <br>
+                            <div class="table-responsive">
+
+                                <table id="docLog" class="table table-striped table-responsive-lg">
+
+                                    <thead>
+                                        <tr>
+                                            <th>Document #</th>
+                                            <th>Date Submitted</th>
+                                            <th>Submitted By</th>
+                                            <th>Title</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+
+                                        <?php
+                                        $newsubquery = mysqli_query($conn, "SELECT LPAD(documents.docno,4,0), documents.docdatesubmit, users.fname, users.mname, users.lname, documents.doctitle,"
+                                                . "documents.docdesc, documents.docstatus FROM documents INNER JOIN users WHERE documents.userno = users.userno AND documents.hidden = '0'");
+
+                                        if ($newsubquery->num_rows > 0) {
+                                            while ($row = $newsubquery->fetch_assoc()) {
+                                                $docid = $row['LPAD(documents.docno,4,0)'];
+                                                $docdatesubmit = $row['docdatesubmit'];
+                                                $userid = ($row['fname'] . ' ' . $row['mname'] . ' ' . $row['lname']);
+                                                $doctitle = $row['doctitle'];
+                                                $docdesc = $row['docdesc'];
+                                                $docstatus = $row['docstatus'];
+
+                                                echo "<tr>"
+                                                . "<td>" . $docid . "</td>"
+                                                . "<td>" . $docdatesubmit . "</td>"
+                                                . "<td>" . $userid . "</td>"
+                                                . "<td>" . $doctitle . "</td>"
+                                                . "<td>" . $docstatus . "</td>";
+                                            }
+                                        }
+                                        ?>
+
+
+                                    </tbody>
+
+                                    <tfoot>
+                                        <tr>
+                                            <th>Document #</th>
+                                            <th>Date Submitted</th>
+                                            <th>Submitted By</th>
+                                            <th>Title</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
                                 <br>
-                                <div class="table-responsive">
-
-                                    <table id="docLog" class="table table-striped table-responsive-lg">
-
-                                        <thead>
-                                            <tr>
-                                                <th>Document #</th>
-                                                <th>Date Submitted</th>
-                                                <th>Submitted By</th>
-                                                <th>Title</th>
-                                                <th>Status</th>
-                                            </tr>
-                                        </thead>
-
-                                        <tbody>
-
-                                            <?php
-                                            $newsubquery = mysqli_query($conn, "SELECT LPAD(documents.docno,4,0), documents.docdatesubmit, users.fname, users.mname, users.lname, documents.doctitle,"
-                                                    . "documents.docdesc, documents.docstatus FROM documents INNER JOIN users WHERE documents.userno = users.userno AND documents.hidden = '0'");
-
-                                            if ($newsubquery->num_rows > 0) {
-                                                while ($row = $newsubquery->fetch_assoc()) {
-                                                    $docid = $row['LPAD(documents.docno,4,0)'];
-                                                    $docdatesubmit = $row['docdatesubmit'];
-                                                    $userid = ($row['fname'] . ' ' . $row['mname'] . ' ' . $row['lname']);
-                                                    $doctitle = $row['doctitle'];
-                                                    $docdesc = $row['docdesc'];
-                                                    $docstatus = $row['docstatus'];
-
-                                                    echo "<tr>"
-                                                    . "<td>" . $docid . "</td>"
-                                                    . "<td>" . $docdatesubmit . "</td>"
-                                                    . "<td>" . $userid . "</td>"
-                                                    . "<td>" . $doctitle . "</td>"
-                                                    . "<td>" . $docstatus . "</td>";
-                                                }
-                                            }
-                                            ?>
-
-
-                                        </tbody>
-
-                                        <tfoot>
-                                            <tr>
-                                                <th>Document #</th>
-                                                <th>Date Submitted</th>
-                                                <th>Submitted By</th>
-                                                <th>Title</th>
-                                                <th>Status</th>
-                                            </tr>
-                                        </tfoot>
-                                    </table>
-                                    <br>
-                                </div>
-                            </div>
-
-                        </div>
-
-                        <div class="card">
-                            <div class="card-header" id="headingTwo">
-                                <h5 class="mb-0">
-                                    <button class="btn bg-dark text-white" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                        <span class="fas fa-plus-circle"></span> Queue Logs
-                                    </button>
-                                </h5>
-                            </div>
-
-
-                            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
-                                <div class="card-body">
-                                    <table id="queueLog" class="table table-striped table-responsive">
-
-                                        <thead>
-                                            <tr>
-                                                <th>Queue #</th>
-                                                <th>Date Queued</th>
-                                                <th>Student Name</th>
-                                                <th>Transaction Type</th>
-                                                <th>Description</th>
-                                                <th>Status</th>
-                                            </tr>
-                                        </thead>
-
-                                        <tbody>
-
-                                            <?php
-                                            $qLogsquery = mysqli_query($conn, "SELECT LPAD(queue.qno,4,0), queue.qtype, queue.qdate, queue.qstatus, queue.qdesc, users.userid, users.fname, users.mname, users.lname FROM queuelogs queue INNER JOIN users ON queue.userno = users.userno");
-
-                                            if ($qLogsquery->num_rows > 0) {
-                                                while ($row = $qLogsquery->fetch_assoc()) {
-                                                    $qno = $row['LPAD(queue.qno,4,0)'];
-                                                    $qdate = $row['qdate'];
-                                                    $userid = ($row['fname'] . ' ' . $row['mname'] . ' ' . $row['lname']);
-                                                    $qtype = $row['qtype'];
-                                                    $qdesc = $row['qdesc'];
-                                                    $qstatus = $row['qstatus'];
-
-                                                    echo "<tr>"
-                                                    . "<td>" . $qno . "</td>"
-                                                    . "<td>" . $qdate . "</td>"
-                                                    . "<td>" . $userid . "</td>"
-                                                    . "<td>" . $qtype . "</td>"
-                                                    . "<td>" . $qdesc . "</td>"
-                                                    . "<td>" . $qstatus . "</td>";
-                                                }
-                                            }
-                                            ?>
-
-                                        </tbody>
-
-                                        <tfoot>
-                                            <tr>
-                                                <th>Queue #</th>
-                                                <th>Date Queued</th>
-                                                <th>Student Name</th>
-                                                <th>Transaction Type</th>
-                                                <th>Description</th>
-                                                <th>Status</th>
-                                            </tr>
-                                        </tfoot>
-                                    </table>
-                                </div>
                             </div>
                         </div>
-
 
                     </div>
-                </main>
+
+                    <div class="card">
+                        <div class="card-header" id="headingTwo">
+                            <h5 class="mb-0">
+                                <button class="btn bg-dark text-white" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                    <span class="fas fa-plus-circle"></span> Queue Logs
+                                </button>
+                            </h5>
+                        </div>
+
+
+                        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+                            <div class="card-body">
+                                <table id="queueLog" class="table table-striped table-responsive">
+
+                                    <thead>
+                                        <tr>
+                                            <th>Queue #</th>
+                                            <th>Date Queued</th>
+                                            <th>Student Name</th>
+                                            <th>Transaction Type</th>
+                                            <th>Description</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+
+                                        <?php
+                                        $qLogsquery = mysqli_query($conn, "SELECT LPAD(queue.qno,4,0), queue.qtype, queue.qdate, queue.qstatus, queue.qdesc, users.userid, users.fname, users.mname, users.lname FROM queuelogs queue INNER JOIN users ON queue.userno = users.userno");
+
+                                        if ($qLogsquery->num_rows > 0) {
+                                            while ($row = $qLogsquery->fetch_assoc()) {
+                                                $qno = $row['LPAD(queue.qno,4,0)'];
+                                                $qdate = $row['qdate'];
+                                                $userid = ($row['fname'] . ' ' . $row['mname'] . ' ' . $row['lname']);
+                                                $qtype = $row['qtype'];
+                                                $qdesc = $row['qdesc'];
+                                                $qstatus = $row['qstatus'];
+
+                                                echo "<tr>"
+                                                . "<td>" . $qno . "</td>"
+                                                . "<td>" . $qdate . "</td>"
+                                                . "<td>" . $userid . "</td>"
+                                                . "<td>" . $qtype . "</td>"
+                                                . "<td>" . $qdesc . "</td>"
+                                                . "<td>" . $qstatus . "</td>";
+                                            }
+                                        }
+                                        ?>
+
+                                    </tbody>
+
+                                    <tfoot>
+                                        <tr>
+                                            <th>Queue #</th>
+                                            <th>Date Queued</th>
+                                            <th>Student Name</th>
+                                            <th>Transaction Type</th>
+                                            <th>Description</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </main>
             <br>
-            </div>
+        </div>
 
         <!-- Bootstrap core JavaScript
         ================================================== -->
@@ -310,7 +332,7 @@ if (!isset($_SESSION['user_name'])) {
         <!-- Icons -->
         <script src="../../js/feather.min.js"></script>
         <script>
-                            feather.replace()
+            feather.replace()
         </script>
 
 
@@ -330,85 +352,85 @@ if (!isset($_SESSION['user_name'])) {
         <script src="../../DataTables/Buttons-1.5.1/js/buttons.print.min.js"></script>
 
         <script>
-                            $(document).ready(function () {
+            $(document).ready(function () {
 <?php
 $thisDate = date("m/d/Y");
 ?>
 
-                                $('#docLog').DataTable({
+                $('#docLog').DataTable({
 
-                                    dom: 'lBfrtip',
-                                    buttons: [
-                                        {extend: 'copy', className: 'btn btn-secondary', text: '<i class="fas fa-copy"></i>', titleAttr: 'Copy', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
-                                        {extend: 'csv', className: 'btn bg-primary', text: '<i class="fas fa-file-alt"></i>', titleAttr: 'CSV', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
-                                        {extend: 'excel', className: 'btn btn-success', text: '<i class="fas fa-file-excel"></i>', titleAttr: 'Excel', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
-                                        {extend: 'pdf', className: 'btn btn-danger', orientation: 'landscape', pageSize: 'LEGAL', text: '<i class="fas fa-file-pdf"></i>', titleAttr: 'PDF', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
-                                        {extend: 'print', className: 'btn btn-dark', text: '<i class="fas fa-print"></i>', titleAttr: 'Print', title: 'Report printed by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'}
-                                    ],
+                    dom: 'lBfrtip',
+                    buttons: [
+                        {extend: 'copy', className: 'btn btn-secondary', text: '<i class="fas fa-copy"></i>', titleAttr: 'Copy', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
+                        {extend: 'csv', className: 'btn bg-primary', text: '<i class="fas fa-file-alt"></i>', titleAttr: 'CSV', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
+                        {extend: 'excel', className: 'btn btn-success', text: '<i class="fas fa-file-excel"></i>', titleAttr: 'Excel', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
+                        {extend: 'pdf', className: 'btn btn-danger', orientation: 'landscape', pageSize: 'LEGAL', text: '<i class="fas fa-file-pdf"></i>', titleAttr: 'PDF', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
+                        {extend: 'print', className: 'btn btn-dark', text: '<i class="fas fa-print"></i>', titleAttr: 'Print', title: 'Report printed by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'}
+                    ],
 
-                                    initComplete: function () {
-                                        this.api().columns([1, 2, 3, 4, 5, 6, 7, 8]).every(function () {
-                                            var column = this;
-                                            var select = $('<select><option value="">Show all</option></select>')
-                                                    .appendTo($(column.footer()).empty())
-                                                    .on('change', function () {
-                                                        var val = $.fn.dataTable.util.escapeRegex(
-                                                                $(this).val()
-                                                                );
-                                                        column
-                                                                .search(val ? '^' + val + '$' : '', true, false)
-                                                                .draw();
-                                                    });
-                                            column.data().unique().sort().each(function (d, j) {
-                                                select.append('<option value="' + d + '">' + d + '</option>')
-                                            });
-                                        });
-                                    }
-
-
-
-                                });
+                    initComplete: function () {
+                        this.api().columns([1, 2, 3, 4, 5, 6, 7, 8]).every(function () {
+                            var column = this;
+                            var select = $('<select><option value="">Show all</option></select>')
+                                    .appendTo($(column.footer()).empty())
+                                    .on('change', function () {
+                                        var val = $.fn.dataTable.util.escapeRegex(
+                                                $(this).val()
+                                                );
+                                        column
+                                                .search(val ? '^' + val + '$' : '', true, false)
+                                                .draw();
+                                    });
+                            column.data().unique().sort().each(function (d, j) {
+                                select.append('<option value="' + d + '">' + d + '</option>')
                             });
+                        });
+                    }
 
-                            $(document).ready(function () {
+
+
+                });
+            });
+
+            $(document).ready(function () {
 <?php
 $thisDate = date("m/d/Y");
 ?>
 
-                                $('#queueLog').DataTable({
+                $('#queueLog').DataTable({
 
-                                    dom: 'lBfrtip',
-                                    buttons: [
-                                        {extend: 'copy', className: 'btn btn-secondary', text: '<i class="fas fa-copy"></i>', titleAttr: 'Copy', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
-                                        {extend: 'csv', className: 'btn bg-primary', text: '<i class="fas fa-file-alt"></i>', titleAttr: 'CSV', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
-                                        {extend: 'excel', className: 'btn btn-success', text: '<i class="fas fa-file-excel"></i>', titleAttr: 'Excel', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
-                                        {extend: 'pdf', className: 'btn btn-danger', orientation: 'landscape', pageSize: 'LEGAL', text: '<i class="fas fa-file-pdf"></i>', titleAttr: 'PDF', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
-                                        {extend: 'print', className: 'btn btn-dark', text: '<i class="fas fa-print"></i>', titleAttr: 'Print', title: 'Report printed by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'}
-                                    ],
+                    dom: 'lBfrtip',
+                    buttons: [
+                        {extend: 'copy', className: 'btn btn-secondary', text: '<i class="fas fa-copy"></i>', titleAttr: 'Copy', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
+                        {extend: 'csv', className: 'btn bg-primary', text: '<i class="fas fa-file-alt"></i>', titleAttr: 'CSV', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
+                        {extend: 'excel', className: 'btn btn-success', text: '<i class="fas fa-file-excel"></i>', titleAttr: 'Excel', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
+                        {extend: 'pdf', className: 'btn btn-danger', orientation: 'landscape', pageSize: 'LEGAL', text: '<i class="fas fa-file-pdf"></i>', titleAttr: 'PDF', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
+                        {extend: 'print', className: 'btn btn-dark', text: '<i class="fas fa-print"></i>', titleAttr: 'Print', title: 'Report printed by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'}
+                    ],
 
-                                    initComplete: function () {
-                                        this.api().columns([1, 2, 3, 4, 5, 6, 7, 8]).every(function () {
-                                            var column = this;
-                                            var select = $('<select><option value="">Show all</option></select>')
-                                                    .appendTo($(column.footer()).empty())
-                                                    .on('change', function () {
-                                                        var val = $.fn.dataTable.util.escapeRegex(
-                                                                $(this).val()
-                                                                );
-                                                        column
-                                                                .search(val ? '^' + val + '$' : '', true, false)
-                                                                .draw();
-                                                    });
-                                            column.data().unique().sort().each(function (d, j) {
-                                                select.append('<option value="' + d + '">' + d + '</option>')
-                                            });
-                                        });
-                                    }
-
-
-
-                                });
+                    initComplete: function () {
+                        this.api().columns([1, 2, 3, 4, 5, 6, 7, 8]).every(function () {
+                            var column = this;
+                            var select = $('<select><option value="">Show all</option></select>')
+                                    .appendTo($(column.footer()).empty())
+                                    .on('change', function () {
+                                        var val = $.fn.dataTable.util.escapeRegex(
+                                                $(this).val()
+                                                );
+                                        column
+                                                .search(val ? '^' + val + '$' : '', true, false)
+                                                .draw();
+                                    });
+                            column.data().unique().sort().each(function (d, j) {
+                                select.append('<option value="' + d + '">' + d + '</option>')
                             });
+                        });
+                    }
+
+
+
+                });
+            });
         </script>
 
     </body>

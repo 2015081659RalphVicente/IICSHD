@@ -57,6 +57,27 @@ if (isset($_POST['toggleOpen'])) {
     }
 }
 
+if (isset($_GET['clear'])) {
+    $clear = $_GET['clear'];
+} else {
+    $clear = '';
+}
+
+if (isset($_POST['toggleClear'])) {
+
+    $clearQuery = $conn->prepare("TRUNCATE TABLE queue");
+    $clearQuery->execute();
+    $clearQuery->close();
+
+    if ($clearQuery == TRUE) {
+        $_GET['clear'] = "success";
+        header("location: queue.php?clear=success");
+        exit;
+    } else {
+        echo "Clear Queue failed.";
+    }
+}
+
 if (isset($_POST['qStart'])) {
     $qqno = $_POST['startQno'];
     $qstatus = "Now";
@@ -211,6 +232,24 @@ if (isset($_POST['qNoShow'])) {
         <link href="../../css/dashboard.css" rel="stylesheet">
         <link href="../../fa-5.5.0/css/fontawesome.css" rel="stylesheet">
 
+        <style>
+            .header {
+                padding: 10px;
+                text-align: center;
+                background: #2e2e2e;
+                color: white;
+                font-size: 30px;
+            }
+
+            .headerline {
+                padding: 1px;
+                text-align: center;
+                background: #b00f24;
+                color: white;
+                font-size: 2px;
+            }
+        </style>
+
         <!-- Font Awesome JS -->
         <script defer src="../../fa-5.5.0/js/solid.js"></script>
         <script defer src="../../fa-5.5.0/js/fontawesome.js"></script>
@@ -225,8 +264,8 @@ if (isset($_POST['qNoShow'])) {
     </head>
 
     <body>
-        
-         <!--NEW NAVBAR-->
+
+        <!--NEW NAVBAR-->
 
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <a class="navbar-brand">
@@ -263,7 +302,7 @@ if (isset($_POST['qNoShow'])) {
                             Queue
                         </a>
                     </li>
-                    
+
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" style="color:white;" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
                             <span data-feather="calendar"></span>
@@ -308,6 +347,10 @@ if (isset($_POST['qNoShow'])) {
                             ?>
                         </button>
                         <div class="dropdown-menu">
+                            <a class="dropdown-item" href="cpanel.php">
+                                <i class="fas fa-sliders-h"></i>
+                                Control Panel
+                            </a>
                             <a class="dropdown-item" href="account.php">
                                 <i class="fas fa-user-cog"></i>
                                 Account
@@ -322,76 +365,85 @@ if (isset($_POST['qNoShow'])) {
                 </ul>
             </div>
         </nav>
-         
+
         <div class="container-fluid">
 
-                <main role="main" class="col-md-12 ml-sm-auto">
-                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                        <h1 class="h2">Queue</h1>
-                    </div>
+            <main role="main" class="col-md-12 ml-sm-auto">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Queue</h1>
+                </div>
 
-                    <?php
-                    $qCheck = mysqli_query($conn, "SELECT * FROM qtoggle WHERE qtogno = '1'");
+                <?php
+                if ($clear == TRUE) {
+                    echo '<div class="alert alert-success"><span class="fas fa-check"></span> Queue cleared successfully!</div>';
+                } else {
+                    echo '';
+                }
+                ?>
 
-                    if ($qCheck->num_rows > 0) {
-                        while ($row = $qCheck->fetch_assoc()) {
-                            $qtoggle = $row['qtoggle'];
+                <?php
+                $qCheck = mysqli_query($conn, "SELECT * FROM qtoggle WHERE qtogno = '1'");
 
-                            if ($qtoggle == '1') {
-                                echo
+                if ($qCheck->num_rows > 0) {
+                    while ($row = $qCheck->fetch_assoc()) {
+                        $qtoggle = $row['qtoggle'];
 
-                                '<div class="card">'
-                                . '<div class="card-header bg-success text-white">'
-                                . '<h5>Status: Open '
-                                . '<div style="float: right;" class="btn-group" role="group">'
-                                . '<form method="post" action="">'
-                                . '<input type="hidden" name="closeQueue" value="0">'
-                                . '<button class="btn btn-danger" type = "submit" name="toggleClose"><span class="fas fa-lock"></span> Close Queue</button>'
-                                . '</form>'
-                                . '</div>'
-                                . '</h5> '
-                                . '</div> '
-                                . '</div>'
-                                . '<br>';
+                        if ($qtoggle == '1') {
+                            echo
 
-                                echo '<div class="row">';
+                            '<div class="card">'
+                            . '<div class="card-header bg-success text-white">'
+                            . '<h5>Status: Open '
+                            . '<div style="float: right;" class="btn-group" role="group">'
+                            . '<form method="post" action="">'
+                            . '<input type="hidden" name="closeQueue" value="0">'
+                            . '<button class="btn btn-danger" type = "submit" name="toggleClose"><span class="fas fa-lock"></span> Close Queue</button> '
+                            . '<button class="btn btn-dark" onclick="alert()" type = "submit" name="toggleClear" title="Clear Queue"><span class="fas fa-trash"></span> Clear</button>'
+                            . '</form>'
+                            . '</div>'
+                            . '</h5> '
+                            . '</div> '
+                            . '</div>'
+                            . '<br>';
 
-                                $qQuery = mysqli_query($conn, "SELECT users.userno, queue.qdesc, LPAD(queue.qno,4,0), queue.qtype, queue.qdate, queue.qstatus, users.userid, users.fname, users.mname, users.lname FROM queue INNER JOIN users ON queue.userno = users.userno AND queue.qstatus = 'Now' LIMIT 1");
+                            echo '<div class="row">';
+
+                            $qQuery = mysqli_query($conn, "SELECT users.userno, queue.qdesc, LPAD(queue.qno,4,0), queue.qtype, queue.qdate, queue.qstatus, users.userid, users.fname, users.mname, users.lname FROM queue INNER JOIN users ON queue.userno = users.userno AND queue.qstatus = 'Now' LIMIT 1");
 
 
 
-                                echo '<div class = "col-6 col-lg-6">
+                            echo '<div class = "col-6 col-lg-6">
                                 <div class = "card">
                                 <div class = "card-header bg-info text-white">
                                 <center><h5>Now Serving</h5></center>
                                 </div>
                                 <div class = "card-body">';
-                                if ($qQuery->num_rows > 0) {
-                                    while ($row = $qQuery->fetch_assoc()) {
-                                        $qno = $row['LPAD(queue.qno,4,0)'];
-                                        $userno = $row['userno'];
-                                        $qdate = $row['qdate'];
-                                        $userid = $row['userid'];
-                                        $username = ($row['fname'] . ' ' . $row['mname'] . ' ' . $row['lname']);
-                                        $qtype = $row['qtype'];
-                                        $qstatus = $row['qstatus'];
-                                        $qdesc = $row['qdesc'];
-                                        echo' <div style = "align: center;">
+                            if ($qQuery->num_rows > 0) {
+                                while ($row = $qQuery->fetch_assoc()) {
+                                    $qno = $row['LPAD(queue.qno,4,0)'];
+                                    $userno = $row['userno'];
+                                    $qdate = $row['qdate'];
+                                    $userid = $row['userid'];
+                                    $username = ($row['fname'] . ' ' . $row['mname'] . ' ' . $row['lname']);
+                                    $qtype = $row['qtype'];
+                                    $qstatus = $row['qstatus'];
+                                    $qdesc = $row['qdesc'];
+                                    echo' <div style = "align: center;">
                                             
                                 <center><h1>' . $qno . '</h1></center>
                                 <hr>
                                 <p><b>Student Number:</b> ' . $userid . '</p>
                                 <p><b>Student Name:</b> ' . $username . '</p>
                                 <p><b>Transaction Type:</b> ' . $qtype . '</p>';
-                                        if ($qtype == 'Other') {
-                                            echo '<p><b>Description:</b> ' . $qdesc . '</p>'
-                                            . '</div><hr>';
-                                        } else {
-                                            echo '</div>'
-                                            . '<hr>';
-                                        }
+                                    if ($qtype == 'Other') {
+                                        echo '<p><b>Description:</b> ' . $qdesc . '</p>'
+                                        . '</div><hr>';
+                                    } else {
+                                        echo '</div>'
+                                        . '<hr>';
+                                    }
 
-                                        echo'<div class="row">
+                                    echo'<div class="row">
 
                             <div class="col-sm-4">
                                 <form action="" method="post">
@@ -445,20 +497,20 @@ if (isset($_POST['qNoShow'])) {
             </div>
             <br>
         </div>';
-                                    }
-                                } else {
-                                    echo '<center><h3>Empty</h3></center>'
-                                    . '<hr> ';
+                                }
+                            } else {
+                                echo '<center><h3>Empty</h3></center>'
+                                . '<hr> ';
 
-                                    $qNextWait = mysqli_query($conn, "SELECT qno, LPAD(qno,4,0) FROM queue WHERE qstatus = 'Waiting' ORDER BY qno ASC LIMIT 1");
+                                $qNextWait = mysqli_query($conn, "SELECT qno, LPAD(qno,4,0) FROM queue WHERE qstatus = 'Waiting' ORDER BY qno ASC LIMIT 1");
 
-                                    if ($qNextWait->num_rows > 0) {
-                                        while ($row = $qNextWait->fetch_assoc()) {
-                                            $qno = $row['LPAD(qno,4,0)'];
-                                            $qqno = $row['qno'];
+                                if ($qNextWait->num_rows > 0) {
+                                    while ($row = $qNextWait->fetch_assoc()) {
+                                        $qno = $row['LPAD(qno,4,0)'];
+                                        $qqno = $row['qno'];
 
-                                            echo
-                                            '<div class="col-sm-12">
+                                        echo
+                                        '<div class="col-sm-12">
                                                     <form action="" method="post">
                                                         <div class="card">
                                                             <div class="card-header">
@@ -472,14 +524,14 @@ if (isset($_POST['qNoShow'])) {
                                                     </form>
                                                 </div>
                                                 </div></div></div>';
-                                        }
-                                    } else {
-                                        echo '</div></div></div>';
                                     }
+                                } else {
+                                    echo '</div></div></div>';
                                 }
+                            }
 
 
-                                echo '        
+                            echo '        
         <div class="col-2 col-sm-2">
             <div class="card">
                 <div class="card-header  bg-orange text-white">
@@ -487,146 +539,163 @@ if (isset($_POST['qNoShow'])) {
                 </div>
                 <div class="card-body">';
 
-                                $qWaiting = mysqli_query($conn, "SELECT LPAD(qno,4,0) FROM queue WHERE qstatus = 'Waiting' LIMIT 5");
-                                if ($qWaiting->num_rows > 0) {
-                                    while ($row = $qWaiting->fetch_assoc()) {
-                                        $qno = $row['LPAD(qno,4,0)'];
-                                        echo '<center><h2>' . $qno . '</h2></center><hr>';
-                                    }
-                                } else {
-                                    echo '<center><h4>Empty</h4></center>';
+                            $qWaiting = mysqli_query($conn, "SELECT LPAD(qno,4,0) FROM queue WHERE qstatus = 'Waiting' LIMIT 5");
+                            if ($qWaiting->num_rows > 0) {
+                                while ($row = $qWaiting->fetch_assoc()) {
+                                    $qno = $row['LPAD(qno,4,0)'];
+                                    echo '<center><h2>' . $qno . '</h2></center><hr>';
                                 }
+                            } else {
+                                echo '<center><h4>Empty</h4></center>';
+                            }
 
-                                echo'  </div>
+                            echo'  </div>
             </div>
         </div>';
 
 
-                                echo '<div class="col-2 col-sm-2">
+                            echo '<div class="col-2 col-sm-2">
             <div class="card">
                 <div class="card-header  bg-dark text-white">
                     <center><h5>No-Show</h5></center>
                 </div>
                 <div class="card-body">';
 
-                                $qNoShow = mysqli_query($conn, "SELECT LPAD(qno,4,0) FROM queue WHERE qstatus = 'No-Show' ORDER BY qno DESC LIMIT 5");
-                                if ($qNoShow->num_rows > 0) {
-                                    while ($row = $qNoShow->fetch_assoc()) {
-                                        $qno = $row['LPAD(qno,4,0)'];
-                                        echo '<center><h2>' . $qno . '</h2></center><hr>';
-                                    }
-                                } else {
-                                    echo '<center><h4>Empty</h4></center>';
+                            $qNoShow = mysqli_query($conn, "SELECT LPAD(qno,4,0) FROM queue WHERE qstatus = 'No-Show' ORDER BY qno DESC LIMIT 5");
+                            if ($qNoShow->num_rows > 0) {
+                                while ($row = $qNoShow->fetch_assoc()) {
+                                    $qno = $row['LPAD(qno,4,0)'];
+                                    echo '<center><h2>' . $qno . '</h2></center><hr>';
                                 }
+                            } else {
+                                echo '<center><h4>Empty</h4></center>';
+                            }
 
-                                echo'  </div>
+                            echo'  </div>
             </div>
         </div>';
 
 
-                                echo '<div class="col-2 col-sm-2">
+                            echo '<div class="col-2 col-sm-2">
             <div class="card">
                 <div class="card-header  bg-success text-white">
                     <center><h5>Done</h5></center>
                 </div>
                 <div class="card-body">';
 
-                                $qDone = mysqli_query($conn, "SELECT LPAD(qno,4,0) FROM queue WHERE qstatus = 'Done' ORDER BY qno DESC LIMIT 5");
-                                if ($qDone->num_rows > 0) {
-                                    while ($row = $qDone->fetch_assoc()) {
-                                        $qno = $row['LPAD(qno,4,0)'];
-                                        echo '<center><h2>' . $qno . '</h2></center><hr>';
-                                    }
-                                } else {
-                                    echo '<center><h4>Empty</h4></center>';
+                            $qDone = mysqli_query($conn, "SELECT LPAD(qno,4,0) FROM queue WHERE qstatus = 'Done' ORDER BY qno DESC LIMIT 5");
+                            if ($qDone->num_rows > 0) {
+                                while ($row = $qDone->fetch_assoc()) {
+                                    $qno = $row['LPAD(qno,4,0)'];
+                                    echo '<center><h2>' . $qno . '</h2></center><hr>';
                                 }
+                            } else {
+                                echo '<center><h4>Empty</h4></center>';
+                            }
 
-                                echo'  </div>
+                            echo'  </div>
             </div>
             <br>
         </div>';
-                            } else {
-                                echo
-                                '<div class="card">'
-                                . '<div class="card-header bg-dark text-white">'
-                                . '<h5>Status: Closed '
-                                . '<div style="float: right;" class="btn-group" role="group">'
-                                . '<form method="post" action="">'
-                                . '<input type="hidden" name="openQueue" value="1">'
-                                . '<button class="btn btn-success" type = "submit" name="toggleOpen"><span class="fas fa-unlock"></span> Open Queue</button>'
-                                . '</form>'
-                                . '</div>'
-                                . '</h5> '
-                                . '</div> '
-                                . '</div>';
-                            }
+                        } else {
+                            echo
+                            '<div class="card">'
+                            . '<div class="card-header bg-dark text-white">'
+                            . '<h5>Status: Closed '
+                            . '<div style="float: right;" class="btn-group" role="group">'
+                            . '<form method="post" action="">'
+                            . '<input type="hidden" name="openQueue" value="1">'
+                            . '<button class="btn btn-success" type = "submit" name="toggleOpen"><span class="fas fa-unlock"></span> Open Queue</button>'
+                            . '</form>'
+                            . '</div>'
+                            . '</h5> '
+                            . '</div> '
+                            . '</div>';
                         }
                     }
-                    ?>
+                }
+                ?>
 
-            <br>
+                <br>
+                </div>
+                </div>
+                <br>
+
+            </main>
         </div>
-
     </div>
 
-</main>
-</div>
-</div>
+    <div class="container-fluid headerline">
+        &nbsp;
+    </div>
+    <div class="container-fluid header">
+        <div align="center" style="font-size: 11px; color:white;">
+            IICS Help Desk © 2019
+        </div>
+    </div>
 
-<audio id="audio" src="../../include/ring.mp3" ></audio>
 
-<!-- Bootstrap core JavaScript
-================================================== -->
-<!-- Placed at the end of the document so the pages load faster -->
-<script src="../../js/jquery-3.3.1.js" ></script>
-<script>window.jQuery || document.write('<script src="../../js/jquery-3.3.1.js"><\/script>')</script>
-<script src="../../js/popper.js"></script>
-<script src="../../js/bootstrap.min.js"></script>
+    <audio id="audio" src="../../include/ring.mp3" ></audio>
 
-<!-- Icons -->
-<script src="../../js/feather.min.js"></script>
-<script>
-                        feather.replace()
-</script>
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
 
-<!-- Graphs -->
-<script src="../../js/Chart.min.js"></script>
-<script>
-                        var ctx = document.getElementById("myChart");
-                        var myChart = new Chart(ctx, {
-                            type: 'line',
-                            data: {
-                                labels: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-                                datasets: [{
-                                        data: [15339, 21345, 18483, 24003, 23489, 24092, 12034],
-                                        lineTension: 0,
-                                        backgroundColor: 'transparent',
-                                        borderColor: '#007bff',
-                                        borderWidth: 4,
-                                        pointBackgroundColor: '#007bff'
-                                    }]
-                            },
-                            options: {
-                                scales: {
-                                    yAxes: [{
-                                            ticks: {
-                                                beginAtZero: false
-                                            }
-                                        }]
-                                },
-                                legend: {
-                                    display: false,
-                                }
+    <script>
+        function alert() {
+            alert("Are you sure you want to clear the queue?");
+        }
+    </script>
+
+    <script src="../../js/jquery-3.3.1.js" ></script>
+    <script>window.jQuery || document.write('<script src="../../js/jquery-3.3.1.js"><\/script>')</script>
+    <script src="../../js/popper.js"></script>
+    <script src="../../js/bootstrap.min.js"></script>
+
+    <!-- Icons -->
+    <script src="../../js/feather.min.js"></script>
+    <script>
+        feather.replace()
+    </script>
+
+    <!-- Graphs -->
+    <script src="../../js/Chart.min.js"></script>
+    <script>
+        var ctx = document.getElementById("myChart");
+        var myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+                datasets: [{
+                        data: [15339, 21345, 18483, 24003, 23489, 24092, 12034],
+                        lineTension: 0,
+                        backgroundColor: 'transparent',
+                        borderColor: '#007bff',
+                        borderWidth: 4,
+                        pointBackgroundColor: '#007bff'
+                    }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                            ticks: {
+                                beginAtZero: false
                             }
-                        });
-</script>
+                        }]
+                },
+                legend: {
+                    display: false,
+                }
+            }
+        });
+    </script>
 
-<script>
-    function play() {
-        var audio = document.getElementById("audio");
-        audio.play();
-    }
-</script>
+    <script>
+        function play() {
+            var audio = document.getElementById("audio");
+            audio.play();
+        }
+    </script>
 
 </body>
 </html>

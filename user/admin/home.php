@@ -28,7 +28,7 @@ if (isset($_POST['postAnnouncement'])) {
     $pTitle = clean($_POST["pTitle"]);
     $pDesc = clean($_POST["pDesc"]);
 
-    $announceSql = $conn->prepare("INSERT INTO announcements VALUES ('', ?, ?, NOW(), ?, '0')");
+    $announceSql = $conn->prepare("INSERT INTO announcements VALUES ('', ?, ?, NOW(), ?, '0', '0')");
     $announceSql->bind_param("ssi", $pTitle, $pDesc, $_SESSION['userno']);
 
     if ($announceSql == TRUE) {
@@ -166,6 +166,24 @@ if (isset($_POST['deletepost'])) {
         <script defer src="../../fa-5.5.0/js/solid.js"></script>
         <script defer src="../../fa-5.5.0/js/fontawesome.js"></script>
 
+        <style>
+            .header {
+                padding: 10px;
+                text-align: center;
+                background: #2e2e2e;
+                color: white;
+                font-size: 30px;
+            }
+
+            .headerline {
+                padding: 1px;
+                text-align: center;
+                background: #b00f24;
+                color: white;
+                font-size: 2px;
+            }
+        </style>
+
 
         <!-- DataTable-->
         <link rel="stylesheet" href="../../DataTables/DataTables-1.10.16/css/dataTables.bootstrap4.min.css">
@@ -259,6 +277,10 @@ if (isset($_POST['deletepost'])) {
                             ?>
                         </button>
                         <div class="dropdown-menu">
+                            <a class="dropdown-item" href="cpanel.php">
+                                <i class="fas fa-sliders-h"></i>
+                                Control Panel
+                            </a>
                             <a class="dropdown-item" href="account.php">
                                 <i class="fas fa-user-cog"></i>
                                 Account
@@ -461,6 +483,16 @@ if (isset($_POST['deletepost'])) {
             </main>
 
         </div>
+
+        <div class="container-fluid headerline">
+            &nbsp;
+        </div>
+        <div class="container-fluid header">
+            <div align="center" style="font-size: 11px; color:white;">
+                IICS Help Desk © 2019
+            </div>
+        </div>
+
 
 
 

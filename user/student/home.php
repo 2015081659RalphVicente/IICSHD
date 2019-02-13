@@ -19,6 +19,52 @@ if (isset($_SESSION['user_name'])) {
 if (!isset($_SESSION['user_name'])) {
     header("location:/iicshd/login.php");
 }
+
+if (isset($_GET['pin'])) {
+    $pin = $_GET['pin'];
+} else {
+    $pin = '';
+}
+if (isset($_GET['unpin'])) {
+    $unpin = $_GET['unpin'];
+} else {
+    $unpin = '';
+}
+
+
+if (isset($_POST['pinPost'])) {
+    $annno = $_POST['pin_annno'];
+
+    $editquery = $conn->prepare("UPDATE announcements SET pin='1' WHERE annno=?");
+    $editquery->bind_param("i", $annno);
+    $editquery->execute();
+    $editquery->close();
+
+    if ($editquery == TRUE) {
+
+        header("location: home.php?pin=success");
+        exit;
+    } else {
+        echo "Pin failed.";
+    }
+}
+
+if (isset($_POST['unpinPost'])) {
+    $annno = $_POST['unpin_annno'];
+
+    $editquery = $conn->prepare("UPDATE announcements SET pin='0' WHERE annno=?");
+    $editquery->bind_param("i", $annno);
+    $editquery->execute();
+    $editquery->close();
+
+    if ($editquery == TRUE) {
+
+        header("location: home.php?unpin=success");
+        exit;
+    } else {
+        echo "Unpin failed.";
+    }
+}
 ?>
 
 <!doctype html>
@@ -36,6 +82,24 @@ if (!isset($_SESSION['user_name'])) {
         <link href="../../css/bootstrap.min.css" rel="stylesheet">
         <link href="../../css/dashboard.css" rel="stylesheet">
         <link href="../../fa-5.5.0/css/fontawesome.css" rel="stylesheet">
+
+        <style>
+            .header {
+                padding: 10px;
+                text-align: center;
+                background: #2e2e2e;
+                color: white;
+                font-size: 30px;
+            }
+
+            .headerline {
+                padding: 1px;
+                text-align: center;
+                background: #b00f24;
+                color: white;
+                font-size: 2px;
+            }
+        </style>
 
         <!-- Font Awesome JS -->
         <script defer src="../../fa-5.5.0/js/solid.js"></script>
@@ -88,7 +152,7 @@ if (!isset($_SESSION['user_name'])) {
                             Consultation
                         </a>
                     </li>
-                    
+
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" style="color:white;" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
                             <span data-feather="calendar"></span>
@@ -141,43 +205,193 @@ if (!isset($_SESSION['user_name'])) {
 
         <div class="container-fluid">
 
-            
-                <main role="main" class="col-md-12 ml-sm-auto">
-                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                        <h1 class="h2">Home</h1>
-                    </div>
 
-                    <?php
-                    $announceSelect = "SELECT announcements.annno, announcements.anntitle, announcements.anndesc, announcements.anndate, announcements.userno, users.fname, users.mname, users.lname FROM announcements LEFT JOIN users ON users.userno = announcements.userno WHERE announcements.hidden = '0' ORDER BY announcements.annno DESC";
-                    $result = $conn->query($announceSelect);
+            <main role="main" class="col-md-12 ml-sm-auto">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Home</h1>
+                </div>
 
-                    if ($result->num_rows > 0) {
-                        while ($row = $result->fetch_assoc()) {
-                            $annno = $row['annno'];
-                            $anntitle = $row['anntitle'];
-                            $anndesc = $row['anndesc'];
-                            $anndate = $row['anndate'];
-                            $usercreated = ($row['fname'] . ' ' . $row['mname'] . ' ' . $row['lname']);
+                <?php
+                if ($pin == TRUE) {
+                    echo '<div class="alert alert-success"><span class="fas fa-check"></span> Pin successful!</div>';
+                } else {
+                    echo '';
+                }
 
-                            echo '<div class="card">
-                                        <div class="card-header bg-dark text-white">
-                                            <h6>
-                                            </h6>
+                if ($unpin == TRUE) {
+                    echo '<div class="alert alert-success"><span class="fas fa-check"></span> Unpin successful!</div>';
+                } else {
+                    echo '';
+                }
+                ?>
+
+
+                <div class="accordion" id="accordionExample">
+
+                    <div class="card">
+                        <div class="card-header" id="headingOne">
+                            <h5 class="mb-0">
+                                <button class="btn bg-dark text-white" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                    <span class="fas fa-plus-circle"></span> Pinned Announcements
+                                </button>
+                            </h5>
+                        </div>
+
+                        <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+                            <div class="card-body">
+                                <?php
+                                $announcePin = "SELECT announcements.annno, announcements.anntitle, announcements.anndesc, announcements.anndate, announcements.userno, users.fname, users.mname, users.lname FROM announcements LEFT JOIN users ON users.userno = announcements.userno WHERE announcements.hidden = '0' AND announcements.pin = '1' ORDER BY announcements.annno DESC";
+                                $result2 = $conn->query($announcePin);
+
+                                if ($result2->num_rows > 0) {
+                                    while ($row = $result2->fetch_assoc()) {
+                                        $annno = $row['annno'];
+                                        $anntitle = $row['anntitle'];
+                                        $anndesc = $row['anndesc'];
+                                        $anndate = $row['anndate'];
+                                        $usercreated = ($row['fname'] . ' ' . $row['mname'] . ' ' . $row['lname']);
+
+                                        echo '<div class="card">
+                                        <div class="card-header text-white">
+                                            <a href="#book' . $annno . '" data-toggle="modal"><button type="button" class="btn btn-dark btn-sm" style="float:right;" title="Unpin Announcement"><i class="fas fa-thumbtack"></i></button></a>
                                         </div>
                                         <div class="card-body">
                                             <h5 class="card-title">' . $anntitle . '</h5>
-                                            <p class="card-text" style="font-size: 12px;">' . $anndate . ' by ' . $usercreated . '</p>
+                                            <p class="card-text" style="font-size: 12px;">Posted on ' . $anndate . ' by ' . $usercreated . '</p>
                                             <p class="card-text" style="font-size: 15px;">' . $anndesc . '</p>
                                         </div>
                                   </div><br>';
-                        }
-                    } else {
-                        echo "<h5>There are no announcements yet.</h5>";
-                    }
-                    ?>
+                                        echo
+                                        '<div id="book' . $annno . '" class="modal fade" role="dialog">
+                                                            <form method="post">
+                                                                <div class="modal-dialog modal-lg">
+                                                                    <!-- Modal content-->
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-header">
 
-                </main>
+                                                                            <h4 class="modal-title">Unpin Annoucement</h4>
+                                                                        </div>
+
+                                                                        <div class="modal-body">
+                                                                            <div class="row">
+                                                                                <div class="col-sm-12">
+                                                                                    <input type="hidden" name="unpin_annno" value="' . $annno . '">
+                                                                                    <h6>Are you sure you want to unpin this announcement?</h6>
+                                                                                    <div class="card">
+                                                                                        <div class="card-header bg-light text-white">
+
+                                                                                        </div>
+                                                                                        <div class="card-body bg-light">
+                                                                                            <h5 class="card-title">' . $anntitle . '</h5>
+                                                                                            <p class="card-text" style="font-size: 12px;">Posted on ' . $anndate . ' by ' . $usercreated . '</p>
+                                                                                            <p class="card-text" style="font-size: 15px;">' . $anndesc . '</p>
+                                                                                        </div>
+                                                                                  </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <br>
+                                                                            <div class="modal-footer">
+                                                                                <button style="float: right;" type="button" class="btn btn-secondary btn-m" data-dismiss="modal"><span class="fas fa-times"></span> Cancel</button>
+                                                                                <button style="float: right;" type="submit" name="unpinPost" class="btn btn-success btn-m"><span class="fas fa-clipboard-check" ></span> Unpin</button>
+                                                                                
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </form>
+                                                        </div>';
+                                    }
+                                } else {
+                                    echo "<h5>You haven't pinned any announcements yet. Click the <i class='fas fa-thumbtack'></i> button to pin an announcement.</h5>";
+                                }
+                                ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <br>
+
+
+                <?php
+                $announceSelect = "SELECT announcements.annno, announcements.anntitle, announcements.anndesc, announcements.anndate, announcements.userno, users.fname, users.mname, users.lname FROM announcements LEFT JOIN users ON users.userno = announcements.userno WHERE announcements.hidden = '0' ORDER BY announcements.annno DESC";
+                $result = $conn->query($announceSelect);
+
+                if ($result->num_rows > 0) {
+                    while ($row = $result->fetch_assoc()) {
+                        $annno = $row['annno'];
+                        $anntitle = $row['anntitle'];
+                        $anndesc = $row['anndesc'];
+                        $anndate = $row['anndate'];
+                        $usercreated = ($row['fname'] . ' ' . $row['mname'] . ' ' . $row['lname']);
+
+                        echo '<div class="card">
+                                        <div class="card-header bg-dark text-white">
+                                            <a href="#book' . $annno . '" data-toggle="modal"><button type="button" class="btn btn-light btn-sm" style="float:right;" title="Pin Announcement"><i class="fas fa-thumbtack"></i></button></a>
+                                        </div>
+                                        <div class="card-body">
+                                            <h5 class="card-title">' . $anntitle . '</h5>
+                                            <p class="card-text" style="font-size: 12px;">Posted on ' . $anndate . ' by ' . $usercreated . '</p>
+                                            <p class="card-text" style="font-size: 15px;">' . $anndesc . '</p>
+                                        </div>
+                                  </div><br>';
+                        echo
+                        '<div id="book' . $annno . '" class="modal fade" role="dialog">
+                                                            <form method="post">
+                                                                <div class="modal-dialog modal-lg">
+                                                                    <!-- Modal content-->
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-header">
+
+                                                                            <h4 class="modal-title">Pin Annoucement</h4>
+                                                                        </div>
+
+                                                                        <div class="modal-body">
+                                                                            <div class="row">
+                                                                                <div class="col-sm-12">
+                                                                                    <input type="hidden" name="pin_annno" value="' . $annno . '">
+                                                                                    <h6>Are you sure you want to pin this announcement?</h6>
+                                                                                    <div class="card">
+                                                                                        <div class="card-header bg-light text-white">
+
+                                                                                        </div>
+                                                                                        <div class="card-body bg-light">
+                                                                                            <h5 class="card-title">' . $anntitle . '</h5>
+                                                                                            <p class="card-text" style="font-size: 12px;">Posted on ' . $anndate . ' by ' . $usercreated . '</p>
+                                                                                            <p class="card-text" style="font-size: 15px;">' . $anndesc . '</p>
+                                                                                        </div>
+                                                                                  </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <br>
+                                                                            <div class="modal-footer">
+                                                                                <button style="float: right;" type="button" class="btn btn-secondary btn-m" data-dismiss="modal"><span class="fas fa-times"></span> Cancel</button>
+                                                                                <button style="float: right;" type="submit" name="pinPost" class="btn btn-success btn-m"><span class="fas fa-thumbtack" ></span> Pin</button>
+                                                                                
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </form>
+                                                        </div>';
+                    }
+                } else {
+                    echo "<h5>There are no announcements yet.</h5>";
+                }
+                ?>
+
+
+            </main>
+        </div>
+
+        <div class="container-fluid headerline">
+            &nbsp;
+        </div>
+        <div class="container-fluid header">
+            <div align="center" style="font-size: 11px; color:white;">
+                IICS Help Desk © 2019
             </div>
+        </div>
 
         <!-- Bootstrap core JavaScript
         ================================================== -->
@@ -190,39 +404,39 @@ if (!isset($_SESSION['user_name'])) {
         <!-- Icons -->
         <script src="../../js/feather.min.js"></script>
         <script>
-                            feather.replace()
+            feather.replace()
         </script>
 
         <!-- Graphs -->
         <script src="../../js/Chart.min.js"></script>
         <script>
-                            var ctx = document.getElementById("myChart");
-                            var myChart = new Chart(ctx, {
-                                type: 'line',
-                                data: {
-                                    labels: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-                                    datasets: [{
-                                            data: [15339, 21345, 18483, 24003, 23489, 24092, 12034],
-                                            lineTension: 0,
-                                            backgroundColor: 'transparent',
-                                            borderColor: '#007bff',
-                                            borderWidth: 4,
-                                            pointBackgroundColor: '#007bff'
-                                        }]
-                                },
-                                options: {
-                                    scales: {
-                                        yAxes: [{
-                                                ticks: {
-                                                    beginAtZero: false
-                                                }
-                                            }]
-                                    },
-                                    legend: {
-                                        display: false,
-                                    }
+            var ctx = document.getElementById("myChart");
+            var myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+                    datasets: [{
+                            data: [15339, 21345, 18483, 24003, 23489, 24092, 12034],
+                            lineTension: 0,
+                            backgroundColor: 'transparent',
+                            borderColor: '#007bff',
+                            borderWidth: 4,
+                            pointBackgroundColor: '#007bff'
+                        }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                                ticks: {
+                                    beginAtZero: false
                                 }
-                            });
+                            }]
+                    },
+                    legend: {
+                        display: false,
+                    }
+                }
+            });
         </script>
     </body>
 </html>

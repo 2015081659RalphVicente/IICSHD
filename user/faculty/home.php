@@ -20,12 +20,28 @@ if (!isset($_SESSION['user_name'])) {
     header("location:/iicshd/login.php");
 }
 
+if (isset($_GET['post'])) {
+    $post = $_GET['post'];
+} else {
+    $post = '';
+}
+if (isset($_GET['edit'])) {
+    $edit = $_GET['edit'];
+} else {
+    $edit = '';
+}
+if (isset($_GET['delete'])) {
+    $delete = $_GET['delete'];
+} else {
+    $delete = '';
+}
+
 //create announcement
 if (isset($_POST['postAnnouncement'])) {
     $pTitle = clean($_POST["pTitle"]);
     $pDesc = clean($_POST["pDesc"]);
 
-    $announceSql = $conn->prepare("INSERT INTO announcements VALUES ('', ?, ?, NOW(), ?, '0')");
+    $announceSql = $conn->prepare("INSERT INTO announcements VALUES ('', ?, ?, NOW(), ?, '0','0')");
     $announceSql->bind_param("ssi", $pTitle, $pDesc, $_SESSION['userno']);
 
     if ($announceSql == TRUE) {
@@ -33,7 +49,8 @@ if (isset($_POST['postAnnouncement'])) {
         $announceSql->execute();
         $announceSql->close();
 
-        header("Location: home.php");
+        $_GET['post'] = 'success';
+        header("Location: home.php?post=success");
         exit;
     } else {
         $postFailed = '<div class="alert alert-danger">
@@ -83,8 +100,8 @@ if (isset($_POST['editpost'])) {
 //    $elogadd->close();
 
     if ($editquery == TRUE) {
-
-        header("location: home.php");
+        $_GET['edit'] = 'success';
+        header("location: home.php?edit=success");
         exit;
     } else {
         echo "Update failed.";
@@ -131,7 +148,8 @@ if (isset($_POST['deletepost'])) {
 
         $deletequery->execute();
 
-        header("location: home.php");
+        $_GET['delete'] = 'success';
+        header("location: home.php?delete=success");
         exit;
     } else {
 //            $_SESSION['tabedit'] = '5';
@@ -157,6 +175,24 @@ if (isset($_POST['deletepost'])) {
         <link href="../../css/bootstrap.min.css" rel="stylesheet">
         <link href="../../css/dashboard.css" rel="stylesheet">
         <link href="../../fa-5.5.0/css/fontawesome.css" rel="stylesheet">
+
+        <style>
+            .header {
+                padding: 10px;
+                text-align: center;
+                background: #2e2e2e;
+                color: white;
+                font-size: 30px;
+            }
+
+            .headerline {
+                padding: 1px;
+                text-align: center;
+                background: #b00f24;
+                color: white;
+                font-size: 2px;
+            }
+        </style>
 
         <!-- Font Awesome JS -->
         <script defer src="../../fa-5.5.0/js/solid.js"></script>
@@ -245,78 +281,99 @@ if (isset($_POST['deletepost'])) {
 
         <div class="container-fluid">
 
-                <main role="main" class="col-md-12 ml-sm-auto">
-                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                        <h1 class="h2">Home</h1>
-                    </div>
-                    <div class="accordion" id="accordionExample">
+            <main role="main" class="col-md-12 ml-sm-auto">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Home</h1>
+                </div>
 
-                        <div class="card">
-                            <div class="card-header" id="headingOne">
-                                <h5 class="mb-0">
-                                    <button class="btn bg-dark text-white" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-                                        <span class="fas fa-plus-circle"></span> Post Announcement
-                                    </button>
-                                </h5>
-                            </div>
+                <?php
+                if ($post == TRUE) {
+                    echo '<div class="alert alert-success"><span class="fas fa-check"></span> Announcement posted!</div>';
+                } else {
+                    echo '';
+                }
 
-                            <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
-                                <div class="card-body">
-                                    <form action="" method="POST">
+                if ($edit == TRUE) {
+                    echo '<div class="alert alert-success"><span class="fas fa-check"></span> Post successfully edited!</div>';
+                } else {
+                    echo '';
+                }
 
-                                        <div class="form-group">
-                                            <label for="title">Title <span class="require">*</span></label>
-                                            <input type="text" class="form-control" name="pTitle" />
-                                        </div>
+                if ($delete == TRUE) {
+                    echo '<div class="alert alert-success"><span class="fas fa-check"></span> Post successfully deleted!</div>';
+                } else {
+                    echo '';
+                }
+                ?>
 
-                                        <div class="form-group">
-                                            <label for="description">Description</label>
-                                            <textarea rows="2" class="form-control" name="pDesc" ></textarea>
-                                        </div>
+                <div class="accordion" id="accordionExample">
 
-                                        <div class="form-group">
-                                            <button style="float:right;" name = "postAnnouncement" type="submit" class="btn btn-success">
-                                                Post
-                                            </button>
-                                            <br>
-                                        </div>
-
-                                    </form>
-                                </div>
-                            </div>
+                    <div class="card">
+                        <div class="card-header" id="headingOne">
+                            <h5 class="mb-0">
+                                <button class="btn bg-dark text-white" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                    <span class="fas fa-plus-circle"></span> Post Announcement
+                                </button>
+                            </h5>
                         </div>
 
-                        <div class="card">
-                            <div class="card-header" id="headingTwo">
-                                <h5 class="mb-0">
-                                    <button class="btn bg-dark text-white" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                        <span class="fas fa-plus-circle"></span> My Announcements
-                                    </button>
-                                </h5>
+                        <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+                            <div class="card-body">
+                                <form action="" method="POST">
+
+                                    <div class="form-group">
+                                        <label for="title">Title <span class="require">*</span></label>
+                                        <input type="text" class="form-control" name="pTitle" />
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="description">Description</label>
+                                        <textarea rows="2" class="form-control" name="pDesc" ></textarea>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <button style="float:right;" name = "postAnnouncement" type="submit" class="btn btn-success">
+                                            Post
+                                        </button>
+                                        <br>
+                                    </div>
+
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header" id="headingTwo">
+                            <h5 class="mb-0">
+                                <button class="btn bg-dark text-white" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                    <span class="fas fa-plus-circle"></span> My Announcements
+                                </button>
+                            </h5>
+                        </div>
+
+
+                        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+
+                            <div class="alert alert-warning alert-dismissible" role="alert">
+                                <p style="font-size: 15px;"><strong>Note: </strong>You can manage each post by clicking the <span class="fas fa-edit"></span> button. 
                             </div>
 
+                            <div class="card-body">
+                                <div class="row">
+                                    <?php
+                                    $announceSelect = "SELECT announcements.annno, announcements.anntitle, announcements.anndesc, announcements.anndate, announcements.userno, users.fname, users.mname, users.lname FROM announcements LEFT JOIN users ON users.userno = announcements.userno WHERE announcements.hidden = '0' AND announcements.userno = '" . $_SESSION['userno'] . "' ORDER BY announcements.annno DESC";
+                                    $result = $conn->query($announceSelect);
 
-                            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+                                    if ($result->num_rows > 0) {
+                                        while ($row = $result->fetch_assoc()) {
+                                            $annno = $row['annno'];
+                                            $anntitle = $row['anntitle'];
+                                            $anndesc = $row['anndesc'];
+                                            $anndate = $row['anndate'];
+                                            $usercreated = ($row['fname'] . ' ' . $row['mname'] . ' ' . $row['lname']);
 
-                                <div class="alert alert-warning alert-dismissible" role="alert">
-                                    <p style="font-size: 15px;"><strong>Note: </strong>You can manage each post by clicking the <span class="fas fa-edit"></span> button. 
-                                </div>
-
-                                <div class="card-body">
-                                    <div class="row">
-                                        <?php
-                                        $announceSelect = "SELECT announcements.annno, announcements.anntitle, announcements.anndesc, announcements.anndate, announcements.userno, users.fname, users.mname, users.lname FROM announcements LEFT JOIN users ON users.userno = announcements.userno WHERE announcements.hidden = '0' AND announcements.userno = '" . $_SESSION['userno'] . "' ORDER BY announcements.annno DESC";
-                                        $result = $conn->query($announceSelect);
-
-                                        if ($result->num_rows > 0) {
-                                            while ($row = $result->fetch_assoc()) {
-                                                $annno = $row['annno'];
-                                                $anntitle = $row['anntitle'];
-                                                $anndesc = $row['anndesc'];
-                                                $anndate = $row['anndate'];
-                                                $usercreated = ($row['fname'] . ' ' . $row['mname'] . ' ' . $row['lname']);
-
-                                                echo '                           
+                                            echo '                           
                                                         <div class="col-md-4">
                                                             <div class="card">
                                                                 <div class="card-header bg-dark text-white">
@@ -336,7 +393,7 @@ if (isset($_POST['deletepost'])) {
                                                         </div>
                                                         <br>';
 
-                                                echo '<div id="edit' . $annno . '" class="modal fade" role="dialog">
+                                            echo '<div id="edit' . $annno . '" class="modal fade" role="dialog">
                                                         <form method="post">
                                                             <div class="modal-dialog modal-lg">
                                                                 <!-- Modal content-->
@@ -372,32 +429,32 @@ if (isset($_POST['deletepost'])) {
                                                             </div>
                                                         </form>
                                                     </div>';
-                                            }
-                                        } else {
-                                            echo "<h5>You haven't made any announcements yet.</h5>";
                                         }
-                                        ?>
-                                    </div>
+                                    } else {
+                                        echo "<h5>You haven't made any announcements yet.</h5>";
+                                    }
+                                    ?>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <br>
+                <br>
 
-                    <?php
-                    $announceSelect = "SELECT announcements.annno, announcements.anntitle, announcements.anndesc, announcements.anndate, announcements.userno, users.fname, users.mname, users.lname FROM announcements LEFT JOIN users ON users.userno = announcements.userno WHERE announcements.hidden = '0' ORDER BY announcements.annno DESC";
-                    $result = $conn->query($announceSelect);
+                <?php
+                $announceSelect = "SELECT announcements.annno, announcements.anntitle, announcements.anndesc, announcements.anndate, announcements.userno, users.fname, users.mname, users.lname FROM announcements LEFT JOIN users ON users.userno = announcements.userno WHERE announcements.hidden = '0' ORDER BY announcements.annno DESC";
+                $result = $conn->query($announceSelect);
 
-                    if ($result->num_rows > 0) {
-                        while ($row = $result->fetch_assoc()) {
-                            $annno = $row['annno'];
-                            $anntitle = $row['anntitle'];
-                            $anndesc = $row['anndesc'];
-                            $anndate = $row['anndate'];
-                            $usercreated = ($row['fname'] . ' ' . $row['mname'] . ' ' . $row['lname']);
+                if ($result->num_rows > 0) {
+                    while ($row = $result->fetch_assoc()) {
+                        $annno = $row['annno'];
+                        $anntitle = $row['anntitle'];
+                        $anndesc = $row['anndesc'];
+                        $anndate = $row['anndate'];
+                        $usercreated = ($row['fname'] . ' ' . $row['mname'] . ' ' . $row['lname']);
 
-                            echo '<div class="card">
+                        echo '<div class="card">
                                         <div class="card-header bg-dark text-white">
                                             <h6>
                                             </h6>
@@ -408,16 +465,25 @@ if (isset($_POST['deletepost'])) {
                                             <p class="card-text" style="font-size: 15px;">' . $anndesc . '</p>
                                         </div>
                                   </div><br>';
-                        }
-                    } else {
-                        echo "<h5>There are no announcements yet.</h5>";
                     }
-                    ?>
+                } else {
+                    echo "<h5>There are no announcements yet.</h5>";
+                }
+                ?>
 
-                    <br>
+                <br>
 
-                </main>
+            </main>
+        </div>
+
+        <div class="container-fluid headerline">
+            &nbsp;
+        </div>
+        <div class="container-fluid header">
+            <div align="center" style="font-size: 11px; color:white;">
+                IICS Help Desk © 2019
             </div>
+        </div>
 
         <!-- Bootstrap core JavaScript
         ================================================== -->
@@ -430,39 +496,39 @@ if (isset($_POST['deletepost'])) {
         <!-- Icons -->
         <script src="../../js/feather.min.js"></script>
         <script>
-                            feather.replace()
+            feather.replace()
         </script>
 
         <!-- Graphs -->
         <script src="../../js/Chart.min.js"></script>
         <script>
-                            var ctx = document.getElementById("myChart");
-                            var myChart = new Chart(ctx, {
-                                type: 'line',
-                                data: {
-                                    labels: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-                                    datasets: [{
-                                            data: [15339, 21345, 18483, 24003, 23489, 24092, 12034],
-                                            lineTension: 0,
-                                            backgroundColor: 'transparent',
-                                            borderColor: '#007bff',
-                                            borderWidth: 4,
-                                            pointBackgroundColor: '#007bff'
-                                        }]
-                                },
-                                options: {
-                                    scales: {
-                                        yAxes: [{
-                                                ticks: {
-                                                    beginAtZero: false
-                                                }
-                                            }]
-                                    },
-                                    legend: {
-                                        display: false,
-                                    }
+            var ctx = document.getElementById("myChart");
+            var myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+                    datasets: [{
+                            data: [15339, 21345, 18483, 24003, 23489, 24092, 12034],
+                            lineTension: 0,
+                            backgroundColor: 'transparent',
+                            borderColor: '#007bff',
+                            borderWidth: 4,
+                            pointBackgroundColor: '#007bff'
+                        }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                                ticks: {
+                                    beginAtZero: false
                                 }
-                            });
+                            }]
+                    },
+                    legend: {
+                        display: false,
+                    }
+                }
+            });
         </script>
 
         <script>

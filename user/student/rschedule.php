@@ -37,6 +37,24 @@ if (!isset($_SESSION['user_name'])) {
         <link href="../../css/dashboard.css" rel="stylesheet">
         <link href="../../fa-5.5.0/css/fontawesome.css" rel="stylesheet">
 
+        <style>
+            .header {
+                padding: 10px;
+                text-align: center;
+                background: #2e2e2e;
+                color: white;
+                font-size: 30px;
+            }
+
+            .headerline {
+                padding: 1px;
+                text-align: center;
+                background: #b00f24;
+                color: white;
+                font-size: 2px;
+            }
+        </style>
+
         <!-- Font Awesome JS -->
         <script defer src="../../fa-5.5.0/js/solid.js"></script>
         <script defer src="../../fa-5.5.0/js/fontawesome.js"></script>
@@ -158,23 +176,32 @@ if (!isset($_SESSION['user_name'])) {
             </main>
         </div>
 
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="../../js/jquery-3.3.1.js" ></script>
-    <script>window.jQuery || document.write('<script src="../../js/jquery-3.3.1.js"><\/script>')</script>
-    <script src="../../js/popper.js"></script>
-    <script src="../../js/bootstrap.min.js"></script>
+        <div class="container-fluid headerline">
+            &nbsp;
+        </div>
+        <div class="container-fluid header">
+            <div align="center" style="font-size: 11px; color:white;">
+                IICS Help Desk © 2019
+            </div>
+        </div>
 
-    <!-- Icons -->
-    <script src="../../js/feather.min.js"></script>
-    <script>
+        <!-- Bootstrap core JavaScript
+        ================================================== -->
+        <!-- Placed at the end of the document so the pages load faster -->
+        <script src="../../js/jquery-3.3.1.js" ></script>
+        <script>window.jQuery || document.write('<script src="../../js/jquery-3.3.1.js"><\/script>')</script>
+        <script src="../../js/popper.js"></script>
+        <script src="../../js/bootstrap.min.js"></script>
+
+        <!-- Icons -->
+        <script src="../../js/feather.min.js"></script>
+        <script>
                             feather.replace()
-    </script>
+        </script>
 
-    <!-- Graphs -->
-    <script src="../../js/Chart.min.js"></script>
-    <script>
+        <!-- Graphs -->
+        <script src="../../js/Chart.min.js"></script>
+        <script>
                             var ctx = document.getElementById("myChart");
                             var myChart = new Chart(ctx, {
                                 type: 'line',
@@ -202,6 +229,6 @@ if (!isset($_SESSION['user_name'])) {
                                     }
                                 }
                             });
-    </script>
-</body>
+        </script>
+    </body>
 </html>

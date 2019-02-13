@@ -37,6 +37,24 @@ if (!isset($_SESSION['user_name'])) {
         <link href="../../css/dashboard.css" rel="stylesheet">
         <link href="../../fa-5.5.0/css/fontawesome.css" rel="stylesheet">
 
+        <style>
+            .header {
+                padding: 10px;
+                text-align: center;
+                background: #2e2e2e;
+                color: white;
+                font-size: 30px;
+            }
+
+            .headerline {
+                padding: 1px;
+                text-align: center;
+                background: #b00f24;
+                color: white;
+                font-size: 2px;
+            }
+        </style>
+
         <!-- Font Awesome JS -->
         <script defer src="../../fa-5.5.0/js/solid.js"></script>
         <script defer src="../../fa-5.5.0/js/fontawesome.js"></script>
@@ -155,6 +173,15 @@ if (!isset($_SESSION['user_name'])) {
                         onload="document.getElementById('spinner').style.display = 'none';" src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR_cJHDOPjyS8zN08dGwOXz2Fsd8BOYsWUmTv3jpw4PLvdVLVSgm-bA5ltzN49A1HkCoAjGcYKePdnZ/pubhtml?widget=true&amp;headers=false"></iframe>
 
             </main>
+        </div>
+
+        <div class="container-fluid headerline">
+            &nbsp;
+        </div>
+        <div class="container-fluid header">
+            <div align="center" style="font-size: 11px; color:white;">
+                IICS Help Desk © 2019
+            </div>
         </div>
 
         <!-- Bootstrap core JavaScript

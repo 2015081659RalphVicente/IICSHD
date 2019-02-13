@@ -38,6 +38,24 @@ if (!isset($_SESSION['user_name'])) {
         <link href="../../css/dashboard.css" rel="stylesheet">
         <link href="../../fa-5.5.0/css/fontawesome.css" rel="stylesheet">
 
+        <style>
+            .header {
+                padding: 10px;
+                text-align: center;
+                background: #2e2e2e;
+                color: white;
+                font-size: 30px;
+            }
+
+            .headerline {
+                padding: 1px;
+                text-align: center;
+                background: #b00f24;
+                color: white;
+                font-size: 2px;
+            }
+        </style>
+
         <!-- Font Awesome JS -->
         <script defer src="../../fa-5.5.0/js/solid.js"></script>
         <script defer src="../../fa-5.5.0/js/fontawesome.js"></script>
@@ -127,6 +145,10 @@ if (!isset($_SESSION['user_name'])) {
                             ?>
                         </button>
                         <div class="dropdown-menu">
+                            <a class="dropdown-item" href="cpanel.php">
+                                <i class="fas fa-sliders-h"></i>
+                                Control Panel
+                            </a>
                             <a class="dropdown-item" href="account.php">
                                 <i class="fas fa-user-cog"></i>
                                 Account
@@ -292,6 +314,16 @@ if (!isset($_SESSION['user_name'])) {
             </main>
         </div>
 
+        <div class="container-fluid headerline">
+            &nbsp;
+        </div>
+        <div class="container-fluid header">
+            <div align="center" style="font-size: 11px; color:white;">
+                IICS Help Desk © 2019
+            </div>
+        </div>
+
+
         <!-- Bootstrap core JavaScript
         ================================================== -->
         <!-- Placed at the end of the document so the pages load faster -->
@@ -303,39 +335,39 @@ if (!isset($_SESSION['user_name'])) {
         <!-- Icons -->
         <script src="../../js/feather.min.js"></script>
         <script>
-                            feather.replace()
+            feather.replace()
         </script>
 
         <!-- Graphs -->
         <script src="../../js/Chart.min.js"></script>
         <script>
-                            var ctx = document.getElementById("myChart");
-                            var myChart = new Chart(ctx, {
-                                type: 'line',
-                                data: {
-                                    labels: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-                                    datasets: [{
-                                            data: [15339, 21345, 18483, 24003, 23489, 24092, 12034],
-                                            lineTension: 0,
-                                            backgroundColor: 'transparent',
-                                            borderColor: '#007bff',
-                                            borderWidth: 4,
-                                            pointBackgroundColor: '#007bff'
-                                        }]
-                                },
-                                options: {
-                                    scales: {
-                                        yAxes: [{
-                                                ticks: {
-                                                    beginAtZero: false
-                                                }
-                                            }]
-                                    },
-                                    legend: {
-                                        display: false,
-                                    }
+            var ctx = document.getElementById("myChart");
+            var myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+                    datasets: [{
+                            data: [15339, 21345, 18483, 24003, 23489, 24092, 12034],
+                            lineTension: 0,
+                            backgroundColor: 'transparent',
+                            borderColor: '#007bff',
+                            borderWidth: 4,
+                            pointBackgroundColor: '#007bff'
+                        }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                                ticks: {
+                                    beginAtZero: false
                                 }
-                            });
+                            }]
+                    },
+                    legend: {
+                        display: false,
+                    }
+                }
+            });
         </script>
     </body>
 </html>

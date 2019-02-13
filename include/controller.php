@@ -11,6 +11,8 @@ $date_time = date("Y-m-d h:i:sa");
 
 //initial variables
 $userid = $password = $email = $success = $fail = $passwordErr = $registerSuccess = $usernameErr = $usernameErr2 = $seq = $answerErr = "";
+$confirmErr = $resetpasswordErr = "";
+$updateBool = true;
 
 //login
 if (isset($_POST['login'])) {
@@ -52,16 +54,31 @@ if (isset($_POST['login'])) {
 
 
                 if ($_SESSION['role'] == "admin") {
-                    header("location:/iicshd/user/admin/home.php");
-                    exit();
+                    if ($_SESSION['resetpass'] == 1) {
+                        header("location:/iicshd/reset.php");
+                        exit();
+                    } else {
+                        header("location:/iicshd/user/admin/home.php");
+                        exit();
+                    }
                 }
                 if ($_SESSION['role'] == "student") {
-                    header("location:/iicshd/user/student/home.php");
-                    exit();
+                    if ($_SESSION['resetpass'] == 1) {
+                        header("location:/iicshd/reset.php");
+                        exit();
+                    } else {
+                        header("location:/iicshd/user/student/home.php");
+                        exit();
+                    }
                 }
                 if ($_SESSION['role'] == "faculty") {
-                    header("location:/iicshd/user/faculty/home.php");
-                    exit();
+                    if ($_SESSION['resetpass'] == 1) {
+                        header("location:/iicshd/reset.php");
+                        exit();
+                    } else {
+                        header("location:/iicshd/user/faculty/home.php");
+                        exit();
+                    }
                 }
             }
         }
@@ -75,6 +92,7 @@ if (isset($_POST['login'])) {
 
 if (isset($_POST['forgotPass'])) {
     $email = $_POST['email'];
+
     $_SESSION['requser'] = $email;
     //$checker = "SELECT * FROM personnel WHERE BINARY USERNAME = '$username' AND  HIDDEN = 0";
     $checker = $conn->prepare("SELECT * FROM users WHERE email = ? AND  hidden = 0");
@@ -156,6 +174,69 @@ if (isset($_POST['submitAnswer'])) {
             $answerErr = '<div class="alert alert-danger">
                         <strong>Security Answer</strong> incorrect.
                         </div>';
+        }
+    }
+}
+
+if (isset($_POST["resetlogin"])) {
+    //   $newUsername = clean($_POST["newUsername"]);
+    $newPassword = clean($_POST["newPassword"]);
+    $confirm = clean($_POST["confirm"]);
+    $newToken = 0;
+
+    if (!preg_match("/(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/", $newPassword)) {
+        $resetpasswordErr = '<div class="alert alert-warning">
+                       Your password must be atleast 8 characters long and must be a combination of uppercase letters, lowercase letters and numbers.
+                        </div>';
+        $updateBool = FALSE;
+    }
+
+    if (strlen($newPassword) < 8) {
+        $pwdShort = '<div class="alert alert-warning">
+                        Your password must be atleast 8 characters long and must be a combination of uppercase letters, lowercase letters and numbers.
+                        </div>';
+        $updateBool = FALSE;
+    }
+    if ($newPassword != $confirm) {
+        $confirmErr = '<div class="alert alert-warning">
+                        Password does not match the confirm password.
+                        </div>';
+        $updateBool = FALSE;
+    } else {
+        if ($updateBool == TRUE) {
+            $hashedPwd = password_hash($newPassword, PASSWORD_DEFAULT);
+            
+            $sqlupdate = "UPDATE users SET users.password= '$hashedPwd', users.forgotpass='0' WHERE users.userno= '".$_SESSION['userno']."'";
+            $sql = "SELECT * FROM users WHERE userno ='".$_SESSION['userno']."'";
+            if ($sqlupdate == TRUE) {
+                $updateresul = mysqli_query($conn, $sqlupdate);
+                $result = mysqli_query($conn, $sql);
+
+                if ($result->num_rows > 0) {
+                    while ($row = $result->fetch_assoc()) {
+                        $name = ($row['fname'] . ' ' . $row['mname'] . ' ' . $row['lname']);
+                        $role = $row['role'];
+                    }
+                }
+                
+                $_SESSION['user_name'] = $name;
+                $_SESSION['first_time'] = $newToken;
+                $_SESSION['last_time'] = time();
+
+                    if ($_SESSION['role'] == "admin") {
+                        header("location:/iicshd/user/admin/home.php");
+                        exit();
+                    } elseif ($_SESSION['role'] == "student") {
+                        header("location:/iicshd/user/student/home.php");
+                        exit();
+                    } elseif ($_SESSION['role'] == "faculty") {
+                        header("location:/iicshd/user/faculty/home.php");
+                        exit();
+                    }
+                    
+            } else {
+                echo "Error updating record: " . $connect->error;
+            }
         }
     }
 }

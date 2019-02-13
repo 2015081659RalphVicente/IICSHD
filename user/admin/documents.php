@@ -75,6 +75,24 @@ if (isset($_POST['updatedoc2'])) {
         <link href="../../css/dashboard.css" rel="stylesheet">
         <link href="../../fa-5.5.0/css/fontawesome.css" rel="stylesheet">
 
+        <style>
+            .header {
+                padding: 10px;
+                text-align: center;
+                background: #2e2e2e;
+                color: white;
+                font-size: 30px;
+            }
+
+            .headerline {
+                padding: 1px;
+                text-align: center;
+                background: #b00f24;
+                color: white;
+                font-size: 2px;
+            }
+        </style>
+
         <!-- Font Awesome JS -->
         <script defer src="../../fa-5.5.0/js/solid.js"></script>
         <script defer src="../../fa-5.5.0/js/fontawesome.js"></script>
@@ -87,8 +105,8 @@ if (isset($_POST['updatedoc2'])) {
     </head>
 
     <body>
-        
- <!--NEW NAVBAR-->
+
+        <!--NEW NAVBAR-->
 
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <a class="navbar-brand">
@@ -170,7 +188,11 @@ if (isset($_POST['updatedoc2'])) {
                             ?>
                         </button>
                         <div class="dropdown-menu">
-                            <a class="dropdown-item href="account.php">
+                            <a class="dropdown-item" href="cpanel.php">
+                                <i class="fas fa-sliders-h"></i>
+                                Control Panel
+                            </a>
+                            <a class="dropdown-item" href="account.php">
                                 <i class="fas fa-user-cog"></i>
                                 Account
                             </a>
@@ -189,64 +211,64 @@ if (isset($_POST['updatedoc2'])) {
 
         <div class="container-fluid">
 
-                <main role="main" class="col-md-12 ml-sm-auto">
-                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                        <h1 class="h2">Documents</h1>
-                    </div>
+            <main role="main" class="col-md-12 ml-sm-auto">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Documents</h1>
+                </div>
 
-                    <div class="accordion" id="accordionExample">
+                <div class="accordion" id="accordionExample">
 
-                        <div class="card">
-                            <div class="card-header" id="headingOne">
-                                <h5 class="mb-0">
-                                    <button class="btn bg-dark text-white" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-                                        <span class="fas fa-plus-circle"></span> New Submissions
-                                    </button>
-                                </h5>
-                            </div>
+                    <div class="card">
+                        <div class="card-header" id="headingOne">
+                            <h5 class="mb-0">
+                                <button class="btn bg-dark text-white" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                    <span class="fas fa-plus-circle"></span> New Submissions
+                                </button>
+                            </h5>
+                        </div>
 
-                            <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
-                                <br>
-                                <div class="table-responsive">
+                        <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+                            <br>
+                            <div class="table-responsive">
 
-                                    <table id="data_table" class="table table-striped table-responsive-lg">
+                                <table id="data_table" class="table table-striped table-responsive-lg">
 
-                                        <thead>
-                                            <tr>
-                                                <th>Edit</th>
-                                                <th>Document #</th>
-                                                <th>Date Submitted</th>
-                                                <th>Submitted By</th>
-                                                <th>Title</th>
-                                                <th>Status</th>
-                                            </tr>
-                                        </thead>
+                                    <thead>
+                                        <tr>
+                                            <th>Edit</th>
+                                            <th>Document #</th>
+                                            <th>Date Submitted</th>
+                                            <th>Submitted By</th>
+                                            <th>Title</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
 
-                                        <tbody>
+                                    <tbody>
 
-                                            <?php
-                                            $newsubquery = mysqli_query($conn, "SELECT LPAD(documents.docno,4,0), documents.docdatesubmit, users.fname, users.mname, users.lname, documents.doctitle,"
-                                                    . "documents.docdesc, documents.docstatus FROM documents INNER JOIN users WHERE documents.userno = users.userno AND documents.docstatus = 'Submitted' AND documents.hidden = '0'");
+                                        <?php
+                                        $newsubquery = mysqli_query($conn, "SELECT LPAD(documents.docno,4,0), documents.docdatesubmit, users.fname, users.mname, users.lname, documents.doctitle,"
+                                                . "documents.docdesc, documents.docstatus FROM documents INNER JOIN users WHERE documents.userno = users.userno AND documents.docstatus = 'Submitted' AND documents.hidden = '0'");
 
-                                            if ($newsubquery->num_rows > 0) {
-                                                while ($row = $newsubquery->fetch_assoc()) {
-                                                    $docid = $row['LPAD(documents.docno,4,0)'];
-                                                    $docdatesubmit = $row['docdatesubmit'];
-                                                    $userid = ($row['fname'] . ' ' . $row['mname'] . ' ' . $row['lname']);
-                                                    $doctitle = $row['doctitle'];
-                                                    $docdesc = $row['docdesc'];
-                                                    $docstatus = $row['docstatus'];
+                                        if ($newsubquery->num_rows > 0) {
+                                            while ($row = $newsubquery->fetch_assoc()) {
+                                                $docid = $row['LPAD(documents.docno,4,0)'];
+                                                $docdatesubmit = $row['docdatesubmit'];
+                                                $userid = ($row['fname'] . ' ' . $row['mname'] . ' ' . $row['lname']);
+                                                $doctitle = $row['doctitle'];
+                                                $docdesc = $row['docdesc'];
+                                                $docstatus = $row['docstatus'];
 
-                                                    echo "<tr>"
-                                                    . "<td>" . "<a href='#edit" . $docid . "'data-toggle='modal'><button type='button' class='btn btn-dark btn-sm' title='Edit'><span class='fas fa-edit' aria-hidden='true'></span></button></a>" . "</td>"
-                                                    . "<td>" . $docid . "</td>"
-                                                    . "<td>" . $docdatesubmit . "</td>"
-                                                    . "<td>" . $userid . "</td>"
-                                                    . "<td>" . $doctitle . "</td>"
-                                                    . "<td>" . $docstatus . "</td>";
-                                                    ?>
-                                                    <?php
-                                                    echo '<div id="edit' . $docid . '" class="modal fade" role="dialog">
+                                                echo "<tr>"
+                                                . "<td>" . "<a href='#edit" . $docid . "'data-toggle='modal'><button type='button' class='btn btn-dark btn-sm' title='Edit'><span class='fas fa-edit' aria-hidden='true'></span></button></a>" . "</td>"
+                                                . "<td>" . $docid . "</td>"
+                                                . "<td>" . $docdatesubmit . "</td>"
+                                                . "<td>" . $userid . "</td>"
+                                                . "<td>" . $doctitle . "</td>"
+                                                . "<td>" . $docstatus . "</td>";
+                                                ?>
+                                                <?php
+                                                echo '<div id="edit' . $docid . '" class="modal fade" role="dialog">
                                                             <form method="post">
                                                                 <div class="modal-dialog modal-lg">
                                                                     <!-- Modal content-->
@@ -267,14 +289,14 @@ if (isset($_POST['updatedoc2'])) {
                                                                                     <p><strong>Submitted By: </strong>' . $userid . '</p> 
                                                                                     <strong>Update Status: </strong><select name="edit_status" id="edit_status">
                                                                                     <option value="Received by Office"';
-                                                    if ($docstatus == 'Received by Office') {
-                                                        echo "selected";
-                                                    } echo' >Received by Office
+                                                if ($docstatus == 'Received by Office') {
+                                                    echo "selected";
+                                                } echo' >Received by Office
                                                                                     </option>
                                                                                     <option value="Not Received"';
-                                                    if ($docstatus == 'Not Received') {
-                                                        echo "selected";
-                                                    } echo'>Not Received
+                                                if ($docstatus == 'Not Received') {
+                                                    echo "selected";
+                                                } echo'>Not Received
                                                                                     </option>
                                                                                     </select>
                                                                                 </div>
@@ -290,155 +312,155 @@ if (isset($_POST['updatedoc2'])) {
                                                                 </div>
                                                             </form>
                                                         </div>';
-                                                }
                                             }
-                                            ?>
+                                        }
+                                        ?>
 
-                                        </tbody>
+                                    </tbody>
 
-                                        <tfoot>
-                                            <tr>
-                                                <th>Edit</th>
-                                                <th>Document #</th>
-                                                <th>Date Submitted</th>
-                                                <th>Submitted By</th>
-                                                <th>Title</th>
-                                                <th>Status</th>
-                                            </tr>
-                                        </tfoot>
-                                    </table>
-                                    <br>
-                                </div>
-                            </div>
-
-                        </div>
-
-                        <div class="card">
-                            <div class="card-header" id="headingTwo">
-                                <h5 class="mb-0">
-                                    <button class="btn bg-dark text-white" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                        <span class="fas fa-plus-circle"></span> Archived Documents
-                                    </button>
-                                </h5>
-                            </div>
-
-
-                            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
-                                <div class="card-body">
-                                    <table id="archive" class="table table-striped table-responsive">
-
-                                        <thead>
-                                            <tr>
-                                                <th>Document #</th>
-                                                <th>Date Submitted</th>
-                                                <th>Date Modified</th>
-                                                <th>Submitted By</th>
-                                                <th>Title</th>
-                                                <th>Status</th>
-                                            </tr>
-                                        </thead>
-
-                                        <tbody>
-
-                                            <?php
-                                            $newsubquery = mysqli_query($conn, "SELECT LPAD(documents.docno,4,0), documents.docdatechange, documents.docdatesubmit, users.fname, users.mname, users.lname, documents.doctitle,"
-                                                    . "documents.docdesc, documents.docstatus FROM documents INNER JOIN users WHERE documents.userno = users.userno AND documents.docstatus = 'Received by Student'");
-
-                                            if ($newsubquery->num_rows > 0) {
-                                                while ($row = $newsubquery->fetch_assoc()) {
-                                                    $docid = $row['LPAD(documents.docno,4,0)'];
-                                                    $docdatesubmit = $row['docdatesubmit'];
-                                                    $userid = ($row['fname'] . ' ' . $row['mname'] . ' ' . $row['lname']);
-                                                    $doctitle = $row['doctitle'];
-                                                    $docdesc = $row['docdesc'];
-                                                    $docstatus = $row['docstatus'];
-                                                    $docdatechange = $row['docdatechange'];
-
-                                                    echo "<tr>"
-                                                    . "<td>" . $docid . "</td>"
-                                                    . "<td>" . $docdatesubmit . "</td>"
-                                                    . "<td>" . $docdatechange . "</td>"
-                                                    . "<td>" . $userid . "</td>"
-                                                    . "<td>" . $doctitle . "</td>"
-                                                    . "<td>" . $docstatus . "</td>";
-                                                }
-                                            }
-                                            ?>
-
-                                        </tbody>
-
-                                        <tfoot>
-                                            <tr>
-                                                <th>Document #</th>
-                                                <th>Date Submitted</th>
-                                                <th>Date Modified</th>
-                                                <th>Submitted By</th>
-                                                <th>Title</th>
-                                                <th>Status</th>
-                                            </tr>
-                                        </tfoot>
-                                    </table>
-                                </div>
+                                    <tfoot>
+                                        <tr>
+                                            <th>Edit</th>
+                                            <th>Document #</th>
+                                            <th>Date Submitted</th>
+                                            <th>Submitted By</th>
+                                            <th>Title</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                                <br>
                             </div>
                         </div>
-
 
                     </div>
 
-                    <br>
+                    <div class="card">
+                        <div class="card-header" id="headingTwo">
+                            <h5 class="mb-0">
+                                <button class="btn bg-dark text-white" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                    <span class="fas fa-plus-circle"></span> Archived Documents
+                                </button>
+                            </h5>
+                        </div>
 
-                    <h5>Tracking</h5>
-                    <hr>
 
-                    <div class="table-responsive">
+                        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+                            <div class="card-body">
+                                <table id="archive" class="table table-striped table-responsive">
 
-                        <table id="received" class="table table-striped table-responsive-lg">
+                                    <thead>
+                                        <tr>
+                                            <th>Document #</th>
+                                            <th>Date Submitted</th>
+                                            <th>Date Modified</th>
+                                            <th>Submitted By</th>
+                                            <th>Title</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
 
-                            <thead>
-                                <tr>
-                                    <th>Edit</th>
-                                    <th>Document #</th>
-                                    <th>Date Submitted</th>
-                                    <th>Date Modified</th>
-                                    <th>Submitted By</th>
-                                    <th>Title</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
+                                    <tbody>
 
-                            <tbody>
-
-                                <?php
-                                $newsubquery = mysqli_query($conn, "SELECT LPAD(documents.docno,4,0), documents.docdatechange, documents.docdatesubmit, users.fname, users.mname, users.lname, documents.doctitle, documents.docdesc, documents.docstatus FROM documents INNER JOIN users "
-                                        . "ON documents.userno = users.userno WHERE documents.hidden = '0' AND documents.docstatus != 'Submitted' AND documents.docstatus != 'Received by Student' ORDER BY documents.docno DESC");
-
-                                if ($newsubquery->num_rows > 0) {
-                                    while ($row = $newsubquery->fetch_assoc()) {
-                                        $docid = $row['LPAD(documents.docno,4,0)'];
-                                        $docdatesubmit = $row['docdatesubmit'];
-                                        $userid = ($row['fname'] . ' ' . $row['mname'] . ' ' . $row['lname']);
-                                        $doctitle = $row['doctitle'];
-                                        $docdesc = $row['docdesc'];
-                                        $docstatus = $row['docstatus'];
-                                        $docdatechange = $row['docdatechange'];
-                                        $doceditedby = ($row['fname'] . ' ' . $row['mname'] . ' ' . $row['lname']);
-
-                                        echo "<tr>";
-                                        if ($docstatus == 'Received by Student') {
-                                            echo '<td> - </td>';
-                                        } else {
-                                            echo
-                                            "<td>" . "<a href='#edit2" . $docid . "'data-toggle='modal'><button type='button' class='btn btn-dark btn-sm' title='Edit'><span class='fas fa-edit' aria-hidden='true'></span></button></a>" . "</td>";
-                                        } echo
-                                        "<td>" . $docid . "</td>"
-                                        . "<td>" . $docdatesubmit . "</td>"
-                                        . "<td>" . $docdatechange . "</td>"
-                                        . "<td>" . $userid . "</td>"
-                                        . "<td>" . $doctitle . "</td>"
-                                        . "<td>" . $docstatus . "</td>";
-                                        ?>
                                         <?php
-                                        echo '<div id="edit2' . $docid . '" class="modal fade" role="dialog">
+                                        $newsubquery = mysqli_query($conn, "SELECT LPAD(documents.docno,4,0), documents.docdatechange, documents.docdatesubmit, users.fname, users.mname, users.lname, documents.doctitle,"
+                                                . "documents.docdesc, documents.docstatus FROM documents INNER JOIN users WHERE documents.userno = users.userno AND documents.docstatus = 'Received by Student'");
+
+                                        if ($newsubquery->num_rows > 0) {
+                                            while ($row = $newsubquery->fetch_assoc()) {
+                                                $docid = $row['LPAD(documents.docno,4,0)'];
+                                                $docdatesubmit = $row['docdatesubmit'];
+                                                $userid = ($row['fname'] . ' ' . $row['mname'] . ' ' . $row['lname']);
+                                                $doctitle = $row['doctitle'];
+                                                $docdesc = $row['docdesc'];
+                                                $docstatus = $row['docstatus'];
+                                                $docdatechange = $row['docdatechange'];
+
+                                                echo "<tr>"
+                                                . "<td>" . $docid . "</td>"
+                                                . "<td>" . $docdatesubmit . "</td>"
+                                                . "<td>" . $docdatechange . "</td>"
+                                                . "<td>" . $userid . "</td>"
+                                                . "<td>" . $doctitle . "</td>"
+                                                . "<td>" . $docstatus . "</td>";
+                                            }
+                                        }
+                                        ?>
+
+                                    </tbody>
+
+                                    <tfoot>
+                                        <tr>
+                                            <th>Document #</th>
+                                            <th>Date Submitted</th>
+                                            <th>Date Modified</th>
+                                            <th>Submitted By</th>
+                                            <th>Title</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+
+                <br>
+
+                <h5>Tracking</h5>
+                <hr>
+
+                <div class="table-responsive">
+
+                    <table id="received" class="table table-striped table-responsive-lg">
+
+                        <thead>
+                            <tr>
+                                <th>Edit</th>
+                                <th>Document #</th>
+                                <th>Date Submitted</th>
+                                <th>Date Modified</th>
+                                <th>Submitted By</th>
+                                <th>Title</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            <?php
+                            $newsubquery = mysqli_query($conn, "SELECT LPAD(documents.docno,4,0), documents.docdatechange, documents.docdatesubmit, users.fname, users.mname, users.lname, documents.doctitle, documents.docdesc, documents.docstatus FROM documents INNER JOIN users "
+                                    . "ON documents.userno = users.userno WHERE documents.hidden = '0' AND documents.docstatus != 'Submitted' AND documents.docstatus != 'Received by Student' ORDER BY documents.docno DESC");
+
+                            if ($newsubquery->num_rows > 0) {
+                                while ($row = $newsubquery->fetch_assoc()) {
+                                    $docid = $row['LPAD(documents.docno,4,0)'];
+                                    $docdatesubmit = $row['docdatesubmit'];
+                                    $userid = ($row['fname'] . ' ' . $row['mname'] . ' ' . $row['lname']);
+                                    $doctitle = $row['doctitle'];
+                                    $docdesc = $row['docdesc'];
+                                    $docstatus = $row['docstatus'];
+                                    $docdatechange = $row['docdatechange'];
+                                    $doceditedby = ($row['fname'] . ' ' . $row['mname'] . ' ' . $row['lname']);
+
+                                    echo "<tr>";
+                                    if ($docstatus == 'Received by Student') {
+                                        echo '<td> - </td>';
+                                    } else {
+                                        echo
+                                        "<td>" . "<a href='#edit2" . $docid . "'data-toggle='modal'><button type='button' class='btn btn-dark btn-sm' title='Edit'><span class='fas fa-edit' aria-hidden='true'></span></button></a>" . "</td>";
+                                    } echo
+                                    "<td>" . $docid . "</td>"
+                                    . "<td>" . $docdatesubmit . "</td>"
+                                    . "<td>" . $docdatechange . "</td>"
+                                    . "<td>" . $userid . "</td>"
+                                    . "<td>" . $doctitle . "</td>"
+                                    . "<td>" . $docstatus . "</td>";
+                                    ?>
+                                    <?php
+                                    echo '<div id="edit2' . $docid . '" class="modal fade" role="dialog">
                                                             <form method="post">
                                                                 <div class="modal-dialog modal-lg">
                                                                     <!-- Modal content-->
@@ -458,24 +480,24 @@ if (isset($_POST['updatedoc2'])) {
                                                                                     <p><strong>Submitted By: </strong>' . $userid . '</p>  
                                                                                          <strong>Update Status: </strong><select name="edit_status2" id="edit_status2">
                                                                                     <option value="Received by Office"';
-                                        if ($docstatus == 'Received by Office') {
-                                            echo "selected";
-                                        } echo' >Received by Office
+                                    if ($docstatus == 'Received by Office') {
+                                        echo "selected";
+                                    } echo' >Received by Office
                                                                                     </option>
                                                                                     <option value="On-Process"';
-                                        if ($docstatus == 'On-Process') {
-                                            echo "selected";
-                                        } echo'>On-Process
+                                    if ($docstatus == 'On-Process') {
+                                        echo "selected";
+                                    } echo'>On-Process
                                                                                     </option>
                                                                                     <option value="Processed"';
-                                        if ($docstatus == 'Processed') {
-                                            echo "selected";
-                                        } echo'>Processed
+                                    if ($docstatus == 'Processed') {
+                                        echo "selected";
+                                    } echo'>Processed
                                                                                     </option>
                                                                                     <option value="Released"';
-                                        if ($docstatus == 'Released') {
-                                            echo "selected";
-                                        } echo'>Released
+                                    if ($docstatus == 'Released') {
+                                        echo "selected";
+                                    } echo'>Released
                                                                                     </option>
                                                                                     </select>
                                                                                 </div>
@@ -491,31 +513,41 @@ if (isset($_POST['updatedoc2'])) {
                                                                 </div>
                                                             </form>
                                                         </div>';
-                                    }
                                 }
-                                ?>
+                            }
+                            ?>
 
-                            </tbody>
+                        </tbody>
 
-                            <tfoot>
-                                <tr>
-                                    <th>Edit</th>
-                                    <th>Document #</th>
-                                    <th>Date Submitted</th>
-                                    <th>Date Modified</th>
-                                    <th>Submitted By</th>
-                                    <th>Title</th>
-                                    <th>Status</th>
-                                </tr>
-                            </tfoot>
-                        </table>
-                        <br>
-                    </div>
+                        <tfoot>
+                            <tr>
+                                <th>Edit</th>
+                                <th>Document #</th>
+                                <th>Date Submitted</th>
+                                <th>Date Modified</th>
+                                <th>Submitted By</th>
+                                <th>Title</th>
+                                <th>Status</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                    <br>
+                </div>
 
-            <br>
+                <br>
             </main>
         </div>
     </div>
+
+    <div class="container-fluid headerline">
+        &nbsp;
+    </div>
+    <div class="container-fluid header">
+        <div align="center" style="font-size: 11px; color:white;">
+            IICS Help Desk © 2019
+        </div>
+    </div>
+
 
     <!-- Bootstrap core JavaScript
     ================================================== -->
@@ -528,7 +560,7 @@ if (isset($_POST['updatedoc2'])) {
     <!-- Icons -->
     <script src="../../js/feather.min.js"></script>
     <script>
-                        feather.replace()
+        feather.replace()
     </script>
 
 
@@ -548,96 +580,96 @@ if (isset($_POST['updatedoc2'])) {
     <script src="../../DataTables/Buttons-1.5.1/js/buttons.print.min.js"></script>
 
     <script>
-                        $(document).ready(function () {
+        $(document).ready(function () {
 <?php
 $thisDate = date("m/d/Y");
 ?>
 
-                            $('#data_table').DataTable({
+            $('#data_table').DataTable({
 
-                                initComplete: function () {
-                                    this.api().columns([1, 2, 3, 4, 5, 6, 7, 8]).every(function () {
-                                        var column = this;
-                                        var select = $('<select><option value="">Show all</option></select>')
-                                                .appendTo($(column.footer()).empty())
-                                                .on('change', function () {
-                                                    var val = $.fn.dataTable.util.escapeRegex(
-                                                            $(this).val()
-                                                            );
-                                                    column
-                                                            .search(val ? '^' + val + '$' : '', true, false)
-                                                            .draw();
-                                                });
-                                        column.data().unique().sort().each(function (d, j) {
-                                            select.append('<option value="' + d + '">' + d + '</option>')
-                                        });
-                                    });
-                                }
-
-
-
-                            });
+                initComplete: function () {
+                    this.api().columns([1, 2, 3, 4, 5, 6, 7, 8]).every(function () {
+                        var column = this;
+                        var select = $('<select><option value="">Show all</option></select>')
+                                .appendTo($(column.footer()).empty())
+                                .on('change', function () {
+                                    var val = $.fn.dataTable.util.escapeRegex(
+                                            $(this).val()
+                                            );
+                                    column
+                                            .search(val ? '^' + val + '$' : '', true, false)
+                                            .draw();
+                                });
+                        column.data().unique().sort().each(function (d, j) {
+                            select.append('<option value="' + d + '">' + d + '</option>')
                         });
-                        $(document).ready(function () {
+                    });
+                }
+
+
+
+            });
+        });
+        $(document).ready(function () {
 <?php
 $thisDate = date("m/d/Y");
 ?>
 
-                            $('#archive').DataTable({
+            $('#archive').DataTable({
 
-                                initComplete: function () {
-                                    this.api().columns().every(function () {
-                                        var column = this;
-                                        var select = $('<select><option value="">Show all</option></select>')
-                                                .appendTo($(column.footer()).empty())
-                                                .on('change', function () {
-                                                    var val = $.fn.dataTable.util.escapeRegex(
-                                                            $(this).val()
-                                                            );
-                                                    column
-                                                            .search(val ? '^' + val + '$' : '', true, false)
-                                                            .draw();
-                                                });
-                                        column.data().unique().sort().each(function (d, j) {
-                                            select.append('<option value="' + d + '">' + d + '</option>')
-                                        });
-                                    });
-                                }
-
-
-
-                            });
+                initComplete: function () {
+                    this.api().columns().every(function () {
+                        var column = this;
+                        var select = $('<select><option value="">Show all</option></select>')
+                                .appendTo($(column.footer()).empty())
+                                .on('change', function () {
+                                    var val = $.fn.dataTable.util.escapeRegex(
+                                            $(this).val()
+                                            );
+                                    column
+                                            .search(val ? '^' + val + '$' : '', true, false)
+                                            .draw();
+                                });
+                        column.data().unique().sort().each(function (d, j) {
+                            select.append('<option value="' + d + '">' + d + '</option>')
                         });
-                        $(document).ready(function () {
+                    });
+                }
+
+
+
+            });
+        });
+        $(document).ready(function () {
 <?php
 $thisDate = date("m/d/Y");
 ?>
 
-                            $('#received').DataTable({
+            $('#received').DataTable({
 
-                                initComplete: function () {
-                                    this.api().columns([1, 2, 3, 4, 5, 6, 7, 8]).every(function () {
-                                        var column = this;
-                                        var select = $('<select><option value="">Show all</option></select>')
-                                                .appendTo($(column.footer()).empty())
-                                                .on('change', function () {
-                                                    var val = $.fn.dataTable.util.escapeRegex(
-                                                            $(this).val()
-                                                            );
-                                                    column
-                                                            .search(val ? '^' + val + '$' : '', true, false)
-                                                            .draw();
-                                                });
-                                        column.data().unique().sort().each(function (d, j) {
-                                            select.append('<option value="' + d + '">' + d + '</option>')
-                                        });
-                                    });
-                                }
-
-
-
-                            });
+                initComplete: function () {
+                    this.api().columns([1, 2, 3, 4, 5, 6, 7, 8]).every(function () {
+                        var column = this;
+                        var select = $('<select><option value="">Show all</option></select>')
+                                .appendTo($(column.footer()).empty())
+                                .on('change', function () {
+                                    var val = $.fn.dataTable.util.escapeRegex(
+                                            $(this).val()
+                                            );
+                                    column
+                                            .search(val ? '^' + val + '$' : '', true, false)
+                                            .draw();
+                                });
+                        column.data().unique().sort().each(function (d, j) {
+                            select.append('<option value="' + d + '">' + d + '</option>')
                         });
+                    });
+                }
+
+
+
+            });
+        });
     </script>
 
     <script>

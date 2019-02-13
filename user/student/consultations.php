@@ -28,7 +28,7 @@ if (isset($_POST['submitCon'])) {
 
     $submitSql = $conn->prepare("INSERT INTO consultations VALUES ('', ?, ?, ?, ?, NOW(), ?, '0')");
     $submitSql->bind_param("ssiis", $cTitle, $cDesc, $cProf, $_SESSION['userno'], $cStatus);
-    
+
     $submitSql2 = $conn->prepare("INSERT INTO consultlogs VALUES ('', ?, ?, ?, ?, NOW(), ?, '0')");
     $submitSql2->bind_param("ssiis", $cTitle, $cDesc, $cProf, $_SESSION['userno'], $cStatus);
 
@@ -73,6 +73,24 @@ if (isset($_POST['submitCon'])) {
         <!-- Font Awesome JS -->
         <script defer src="../../fa-5.5.0/js/solid.js"></script>
         <script defer src="../../fa-5.5.0/js/fontawesome.js"></script>
+
+        <style>
+            .header {
+                padding: 10px;
+                text-align: center;
+                background: #2e2e2e;
+                color: white;
+                font-size: 30px;
+            }
+
+            .headerline {
+                padding: 1px;
+                text-align: center;
+                background: #b00f24;
+                color: white;
+                font-size: 2px;
+            }
+        </style>
 
         <!-- DataTable-->
         <link rel="stylesheet" href="../../DataTables/DataTables-1.10.16/css/dataTables.bootstrap4.min.css">
@@ -303,6 +321,17 @@ if (isset($_POST['submitCon'])) {
                 </div>
 
             </main>
+        </div>
+        
+        <br>
+
+        <div class="container-fluid headerline">
+            &nbsp;
+        </div>
+        <div class="container-fluid header">
+            <div align="center" style="font-size: 11px; color:white;">
+                IICS Help Desk © 2019
+            </div>
         </div>
 
         <!-- Bootstrap core JavaScript

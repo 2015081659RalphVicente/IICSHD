@@ -19,6 +19,70 @@ if (isset($_SESSION['user_name'])) {
 if (!isset($_SESSION['user_name'])) {
     header("location:/iicshd/login.php");
 }
+
+$oldPassErr = $confirmErr = $passwordErr = "";
+$studsection = $_SESSION['section'];
+
+if (isset($_GET['status'])) {
+    $changePw = $_GET['status'];
+} else {
+    $changePw = '';
+}
+
+if (isset($_POST['updatePass'])) {
+    $oldPass = $_POST['oldPass'];
+    $newPass = $_POST['newPass'];
+    $confirm = $_POST['confirm'];
+    $edit_pno = $_POST['edit_pno'];
+    $sql = "SELECT * FROM users WHERE userno = '{$_SESSION['userno']}'";
+    $result = mysqli_query($conn, $sql);
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $hashedOldPwdCheck = password_verify($oldPass, $row['password']);
+
+
+            if ($hashedOldPwdCheck == FALSE) {
+                $oldPassErr = '<div class="alert alert-warning">
+                        Wrong password.
+                        </div>';
+            } elseif ($hashedOldPwdCheck == TRUE) {
+                if ($newPass != $confirm) {
+                    $confirmErr = '<div class="alert alert-warning">
+                        Password does not match the confirm password.
+                        </div>';
+                }
+
+                if (!preg_match("/(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/", $newPass)) {
+                    $passwordErr = '<div class="alert alert-warning">
+                        Password must be atleast 8 characters long and must be a combination of uppercase letters, lowercase letters and numbers.
+                        </div>';
+                } else {
+                    $hashedPwd = password_hash($newPass, PASSWORD_DEFAULT);
+                    if ($stmt = $conn->prepare("UPDATE users SET PASSWORD =? WHERE USERNO= ? ")) {
+                        $stmt->bind_param("si", $hashedPwd, $edit_pno);
+                        $stmt->execute();
+                        $stmt->close();
+
+
+//                        $passval = 'Password changed.';
+//
+//                        $passaction = "Change Password";
+//                        $logpass = $conn->prepare("INSERT INTO updatelogs VALUES ('',?,?,NOW(),?)");
+//                        $logpass->bind_param("sss", $passaction, $_SESSION['user_name'], $passval);
+//                        $logpass->execute();
+//                        $logpass->close();
+//                        $_SESSION['param'] = "updatePass";
+                        $_GET['status'] = 'success';
+
+                        header("Location: account.php?status=success");
+                    } else {
+                        echo "Error updating record: " . $conn->error;
+                    }
+                }
+            }
+        }
+    }
+}
 ?>
 
 <!doctype html>
@@ -36,6 +100,24 @@ if (!isset($_SESSION['user_name'])) {
         <link href="../../css/bootstrap.min.css" rel="stylesheet">
         <link href="../../css/dashboard.css" rel="stylesheet">
         <link href="../../fa-5.5.0/css/fontawesome.css" rel="stylesheet">
+
+        <style>
+            .header {
+                padding: 10px;
+                text-align: center;
+                background: #2e2e2e;
+                color: white;
+                font-size: 30px;
+            }
+
+            .headerline {
+                padding: 1px;
+                text-align: center;
+                background: #b00f24;
+                color: white;
+                font-size: 2px;
+            }
+        </style>
 
         <!-- Font Awesome JS -->
         <script defer src="../../fa-5.5.0/js/solid.js"></script>
@@ -125,105 +207,145 @@ if (!isset($_SESSION['user_name'])) {
 
             <main role="main" class="col-md-12 ml-sm-auto">
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2">Account</h1>
+                    <h1 class="h2">Account Details</h1>
+                </div>
+                <?php
+                if ($changePw == TRUE) {
+                    echo '<div class="alert alert-success"><span class="fas fa-check"></span> Password changed successfully!</div>';
+                } else {
+                    echo '';
+                }
+                ?>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h5>
+                            <span class="fas fa-user"></span>
+                            User Information
+                        </h5>
+                    </div>
+
+                    <div class="card-body">
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <td><h6><label for="id">User ID: &nbsp;</label></h6></td>
+                                    <td><input class="form-control" type="text" name="userid" disabled placeholder="<?php echo $_SESSION['userid']; ?>"><br></td>
+                                </tr>
+                                <tr>
+                                    <td><h6><label for="name">Name: &nbsp;</label></h6></td>
+                                    <td><input class="form-control" type="text" name="name" disabled placeholder="<?php echo $_SESSION['user_name']; ?>"><br></td>
+                                </tr>
+                                <tr>
+                                    <td><h6><label for="email">Email: &nbsp;</label></h6></td>
+                                    <td><input class="form-control" type="text" name="email" disabled placeholder="<?php echo $_SESSION['email']; ?>"><br></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
                 </div>
 
-                <form class="form" action="##" method="post" id="registrationForm">
-                    <div class="form-group">
+                <br>
 
-                        <div class="col-xs-6">
-                            <label for="first_name"><h4>First name</h4></label>
-                            <input type="text" class="form-control" name="first_name" id="first_name" placeholder="first name" title="enter your first name if any.">
-                        </div>
-                    </div>
-                    <div class="form-group">
-
-                        <div class="col-xs-6">
-                            <label for="last_name"><h4>Last name</h4></label>
-                            <input type="text" class="form-control" name="last_name" id="last_name" placeholder="last name" title="enter your last name if any.">
-                        </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h5>
+                            <span class="fas fa-lock"></span>
+                            Account Security
+                        </h5>
                     </div>
 
-                    <div class="form-group">
-
-                        <div class="col-xs-6">
-                            <label for="email"><h4>Email</h4></label>
-                            <input type="email" class="form-control" name="email" id="email" placeholder="you@email.com" title="enter your email.">
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-
-                        <div class="col-xs-6">
-                            <label for="password"><h4>Password</h4></label>
-                            <input type="password" class="form-control" name="password" id="password" placeholder="password" title="enter your password.">
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-
-                        <div class="col-xs-6">
-                            <label for="password2"><h4>Verify</h4></label>
-                            <input type="password" class="form-control" name="password2" id="password2" placeholder="password2" title="enter your password2.">
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <div class="col-xs-12">
+                    <form action="" method="POST">
+                        <div class="card-body">
+                            <div class="card-title">
+                                <h5>Change Password</h5>
+                            </div>
+                            <input type="hidden" name="edit_pno" value="<?php echo $_SESSION['userno']; ?>">
+                            <hr>
+                            <table>
+                                <tbody>
+                                    <tr>
+                                        <td><h6><label for="oldpw">Current Password: &nbsp;</label></h6></td>
+                                        <td><input type="password" class="form-control" id="oldPw" required name="oldPass"><?php echo $oldPassErr; ?><br></td>
+                                    </tr>
+                                    <tr>
+                                        <td><h6><label for="newPw">New Password: &nbsp;</label></h6></td>
+                                        <td><input type="password" class="form-control" required id="newPw" name="newPass"><?php echo $passwordErr; ?><br></td>
+                                    </tr>
+                                    <tr>
+                                        <td><h6><label for="confnewpass">Confirm New Password: &nbsp;</label></h6></td>
+                                        <td><input type="password" class="form-control" required id="confirmNew" name="confirm"><?php echo $confirmErr; ?><br></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="btn-div">
+                                <button type="submit" name = "updatePass" class="btn btn-success float-right">Update</button><br>
+                            </div>
                             <br>
-                            <button class="btn btn-lg btn-success" type="submit"><i class="glyphicon glyphicon-ok-sign"></i> Save</button>
-                            <button class="btn btn-lg" type="reset"><i class="glyphicon glyphicon-repeat"></i> Reset</button>
                         </div>
-                    </div>
-                </form>
+                    </form>
 
-            </main>
+                </div>
+
+                <br>
+
+            </main>               
         </div>
 
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="../../js/jquery-3.3.1.js" ></script>
-    <script>window.jQuery || document.write('<script src="../../js/jquery-3.3.1.js"><\/script>')</script>
-    <script src="../../js/popper.js"></script>
-    <script src="../../js/bootstrap.min.js"></script>
+        <div class="container-fluid headerline">
+            &nbsp;
+        </div>
+        <div class="container-fluid header">
+            <div align="center" style="font-size: 11px; color:white;">
+                IICS Help Desk © 2019
+            </div>
+        </div>
 
-    <!-- Icons -->
-    <script src="../../js/feather.min.js"></script>
-    <script>
-                            feather.replace()
-    </script>
+        <!-- Bootstrap core JavaScript
+        ================================================== -->
+        <!-- Placed at the end of the document so the pages load faster -->
+        <script src="../../js/jquery-3.3.1.js" ></script>
+        <script>window.jQuery || document.write('<script src="../../js/jquery-3.3.1.js"><\/script>')</script>
+        <script src="../../js/popper.js"></script>
+        <script src="../../js/bootstrap.min.js"></script>
 
-    <!-- Graphs -->
-    <script src="../../js/Chart.min.js"></script>
-    <script>
-                            var ctx = document.getElementById("myChart");
-                            var myChart = new Chart(ctx, {
-                                type: 'line',
-                                data: {
-                                    labels: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-                                    datasets: [{
-                                            data: [15339, 21345, 18483, 24003, 23489, 24092, 12034],
-                                            lineTension: 0,
-                                            backgroundColor: 'transparent',
-                                            borderColor: '#007bff',
-                                            borderWidth: 4,
-                                            pointBackgroundColor: '#007bff'
-                                        }]
-                                },
-                                options: {
-                                    scales: {
-                                        yAxes: [{
-                                                ticks: {
-                                                    beginAtZero: false
-                                                }
-                                            }]
-                                    },
-                                    legend: {
-                                        display: false,
-                                    }
+        <!-- Icons -->
+        <script src="../../js/feather.min.js"></script>
+        <script>
+            feather.replace()
+        </script>
+
+        <!-- Graphs -->
+        <script src="../../js/Chart.min.js"></script>
+        <script>
+            var ctx = document.getElementById("myChart");
+            var myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+                    datasets: [{
+                            data: [15339, 21345, 18483, 24003, 23489, 24092, 12034],
+                            lineTension: 0,
+                            backgroundColor: 'transparent',
+                            borderColor: '#007bff',
+                            borderWidth: 4,
+                            pointBackgroundColor: '#007bff'
+                        }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                                ticks: {
+                                    beginAtZero: false
                                 }
-                            });
-    </script>
-</body>
+                            }]
+                    },
+                    legend: {
+                        display: false,
+                    }
+                }
+            });
+        </script>
+    </body>
 </html>
