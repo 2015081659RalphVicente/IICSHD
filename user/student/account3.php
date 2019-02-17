@@ -20,44 +20,92 @@ if (!isset($_SESSION['user_name'])) {
     header("location:/iicshd/login.php");
 }
 
-if (isset($_POST['submitCon'])) {
-    $cTitle = clean($_POST["cTitle"]);
-    $cDesc = clean($_POST["cDesc"]);
-    $cProf = $_POST['cProf'];
-    $cStatus = "Requested";
+$oldPassErr = $confirmErr = $passwordErr = "";
 
-    $submitSql = $conn->prepare("INSERT INTO consultations VALUES ('', ?, ?, ?, ?, NOW(), ?, '0')");
-    $submitSql->bind_param("ssiis", $cTitle, $cDesc, $cProf, $_SESSION['userno'], $cStatus);
+if (isset($_GET['status'])) {
+    $changePw = $_GET['status'];
+} else {
+    $changePw = '';
+}
 
-    $submitSql2 = $conn->prepare("INSERT INTO consultlogs VALUES ('', ?, ?, ?, ?, NOW(), ?, '0')");
-    $submitSql2->bind_param("ssiis", $cTitle, $cDesc, $cProf, $_SESSION['userno'], $cStatus);
+if (isset($_GET['status1'])) {
+    $changeSec = $_GET['status1'];
+} else {
+    $changeSec = '';
+}
 
+if (isset($_POST['updateSec'])) {
+    $edit_pno = $_POST['edit_pno'];
+    $studsection = clean($_POST["studsection"]);
 
-    if ($submitSql == TRUE) {
+    $sql = "SELECT * FROM users WHERE userno = '{$_SESSION['userno']}'";
+    $result = mysqli_query($conn, $sql);
 
-        $submitSql->execute();
-        $submitSql->close();
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $stmt = $conn->prepare("UPDATE users SET section =? WHERE USERNO= ?");
+            $stmt->bind_param("si", $studsection, $edit_pno);
+            $stmt->execute();
+            $stmt->close();
 
-        if ($submitSql2 == TRUE) {
-            $submitSql2->execute();
-            $submitSql2->close();
+            $_GET['status1'] = 'success';
+            header("Location: account.php?status1=success");
         }
+    }
+}
 
-        $passval = 'Consultation Request (' . $cTitle . ') sent to ' . $cProf . '.';
+if (isset($_POST['updatePass'])) {
+    $oldPass = $_POST['oldPass'];
+    $newPass = $_POST['newPass'];
+    $confirm = $_POST['confirm'];
+    $edit_pno = $_POST['edit_pno'];
+    $sql = "SELECT * FROM users WHERE userno = '{$_SESSION['userno']}'";
+    $result = mysqli_query($conn, $sql);
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $hashedOldPwdCheck = password_verify($oldPass, $row['password']);
 
-        $passaction = "Consultation Request";
-        $logpass = $conn->prepare("INSERT INTO updatelogs VALUES ('',?,?,NOW(),?)");
-        $logpass->bind_param("sss", $passaction, $_SESSION['user_name'], $passval);
-        $logpass->execute();
-        $logpass->close();
 
-
-        header("Location: consultations.php");
-        exit;
-    } else {
-        $postFailed = '<div class="alert alert-danger">
-                        Submit Failed!
+            if ($hashedOldPwdCheck == FALSE) {
+                $oldPassErr = '<div class="alert alert-warning">
+                        Wrong password.
                         </div>';
+            } elseif ($hashedOldPwdCheck == TRUE) {
+                if ($newPass != $confirm) {
+                    $confirmErr = '<div class="alert alert-warning">
+                        Password does not match the confirm password.
+                        </div>';
+                }
+
+                if (!preg_match("/(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/", $newPass)) {
+                    $passwordErr = '<div class="alert alert-warning">
+                        Password must be atleast 8 characters long and must be a combination of uppercase letters, lowercase letters and numbers.
+                        </div>';
+                } else {
+                    $hashedPwd = password_hash($newPass, PASSWORD_DEFAULT);
+                    if ($stmt = $conn->prepare("UPDATE users SET PASSWORD =? WHERE USERNO= ? ")) {
+                        $stmt->bind_param("si", $hashedPwd, $edit_pno);
+                        $stmt->execute();
+                        $stmt->close();
+
+
+//                        $passval = 'Password changed.';
+//
+//                        $passaction = "Change Password";
+//                        $logpass = $conn->prepare("INSERT INTO updatelogs VALUES ('',?,?,NOW(),?)");
+//                        $logpass->bind_param("sss", $passaction, $_SESSION['user_name'], $passval);
+//                        $logpass->execute();
+//                        $logpass->close();
+//                        $_SESSION['param'] = "updatePass";
+                        $_GET['status'] = 'success';
+
+                        header("Location: account.php?status=success");
+                    } else {
+                        echo "Error updating record: " . $conn->error;
+                    }
+                }
+            }
+        }
     }
 }
 ?>
@@ -78,10 +126,6 @@ if (isset($_POST['submitCon'])) {
         <link href="../../css/dashboard.css" rel="stylesheet">
         <link href="../../fa-5.5.0/css/fontawesome.css" rel="stylesheet">
 
-        <!-- Font Awesome JS -->
-        <script defer src="../../fa-5.5.0/js/solid.js"></script>
-        <script defer src="../../fa-5.5.0/js/fontawesome.js"></script>
-
         <style>
             .header {
                 padding: 10px;
@@ -99,6 +143,10 @@ if (isset($_POST['submitCon'])) {
                 font-size: 2px;
             }
         </style>
+
+        <!-- Font Awesome JS -->
+        <script defer src="../../fa-5.5.0/js/solid.js"></script>
+        <script defer src="../../fa-5.5.0/js/fontawesome.js"></script>
 
         <!-- DataTable-->
         <link rel="stylesheet" href="../../DataTables/DataTables-1.10.16/css/dataTables.bootstrap4.min.css">
@@ -133,7 +181,7 @@ if (isset($_POST['submitCon'])) {
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link"  style="color:white;"href="documents.php">
+                        <a class="nav-link" style="color:white;" href="documents.php">
                             <span data-feather="file-text"></span>
                             Documents
                         </a>
@@ -146,7 +194,7 @@ if (isset($_POST['submitCon'])) {
                         </a>
                     </li>
 
-                    <li class="nav-item active">
+                    <li class="nav-item">
                         <a class="nav-link" style="color:white;" href="consultations.php">
                             <span data-feather="info"></span>
                             Consultation
@@ -186,7 +234,7 @@ if (isset($_POST['submitCon'])) {
                             ?>
                         </button>
                         <div class="dropdown-menu">
-                            <a class="dropdown-item" href="account.php">
+                            <a class="dropdown-item active" href="account.php">
                                 <i class="fas fa-user-cog"></i>
                                 Account
                             </a>
@@ -201,137 +249,94 @@ if (isset($_POST['submitCon'])) {
             </div>
         </nav>
 
-
         <div class="container-fluid">
-
 
             <main role="main" class="col-md-12 ml-sm-auto">
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2">Consultation</h1>
+                    <h1 class="h2">Account Settings</h1>
                 </div>
 
-                <div class="accordion" id="accordionExample">
+                <div class="row">
 
-                    <div class="card">
-                        <div class="card-header" id="headingOne">
-                            <h5 class="mb-0">
-                                <button class="btn bg-dark text-white" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-                                    <span class="fas fa-plus-circle"></span> Request for Consultation
-                                </button>
-                            </h5>
+                    <div class="col-sm-2">
+                        <div class="card">
+                            <ul class="list-group list-group-flush">
+                                <a href="account.php"><li class="list-group-item">User Information <span style="float:right;" class="fas fa-caret-right"></span></li></a>
+                                <a href="account2.php"><li class="list-group-item">Security <span style="float:right;" class="fas fa-caret-right"></span></li></a>
+                                <a href="account3.php"><li class="list-group-item active">Activity Logs <span style="float:right;" class="fas fa-caret-right"></span></li></a>
+                            </ul>
                         </div>
+                    </div>
 
-                        <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
-                            <div class="card-body">
-                                <form action="" method="POST">
 
-                                    <div class="form-group">
-                                        <label for="title">Subject of Concern: <span class="require">*</span></label>
-                                        <input type="text" class="form-control" name="cTitle" required />
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="description">Description: </label>
-                                        <textarea rows="2" class="form-control" name="cDesc" required ></textarea>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="description">Professor: </label>
-                                        <select name="cProf" id="cProf" class="form-control">
-                                            <option disabled selected value>Select one: </option>
-                                            <?php
-                                            $prof = mysqli_query($conn, "SELECT userno, fname, mname, lname FROM users WHERE role = 'faculty'");
-                                            if ($prof->num_rows > 0) {
-                                                while ($row = $prof->fetch_assoc()) {
-                                                    $profname = ($row['fname'] . ' ' . $row['mname'] . ' ' . $row['lname']);
-                                                    $profno = $row['userno'];
-                                                    echo "<option value='" . $profno . "'>" . $profname . "</option>";
-                                                }
-                                            } else {
-                                                echo"<option value=''></option>";
-                                            }
-                                            ?> 
-                                        </select>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <button style="float:right;" type="submit" name="submitCon" class="btn btn-success">
-                                            Submit
-                                        </button>
-                                        <br>
-                                    </div>
-
-                                </form>
+                    <div class='col-sm-10'>
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>
+                                    <span class="fas fa-user"></span>
+                                    Activity Logs
+                                </h5>
                             </div>
+
+                            <div class="card-body">
+
+                                <table id="data_table" class="table table-striped table-responsive-lg">
+
+                                    <thead>
+                                        <tr>
+                                            <th>Timestamp</th>
+                                            <th>User</th>
+                                            <th>Action</th>
+                                            <th>Remarks</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+
+                                        <?php
+                                        $exelogs = mysqli_query($conn, "SELECT * FROM updatelogs WHERE ULOGUSER = '" . $_SESSION['user_name'] . "'");
+
+                                        if ($exelogs->num_rows > 0) {
+                                            while ($row = $exelogs->fetch_assoc()) {
+                                                $ulogno = $row['ULOGNO'];
+                                                $ulogact = $row['ULOGACT'];
+                                                $uloguser = $row['ULOGUSER'];
+                                                $ulogtime = $row['ULOGTIME'];
+                                                $ulognew = $row['ULOGNEW'];
+
+                                                echo "<tr>"
+                                                . "<td>" . $ulogtime . "</td>"
+                                                . "<td>" . $uloguser . "</td>"
+                                                . "<td>" . $ulogact . "</td>"
+                                                . "<td>" . $ulognew . "</td>"
+                                                ;
+                                            }
+                                        }
+                                        ?>  
+
+                                    </tbody>
+
+                                    <tfoot>
+                                        <tr>
+                                            <th>Timestamp</th>
+                                            <th>User</th>
+                                            <th>Action</th>
+                                            <th>Remarks</th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+
+                            </div>
+
                         </div>
 
                     </div>
-
                 </div>
 
                 <br>
 
-                <div class="table-responsive">
-
-                    <table id="consultation" class="table table-striped table-responsive-lg">
-
-                        <thead>
-                            <tr>
-                                <th>Consultation #</th>
-                                <th>Date Created</th>
-                                <th>Requested By</th>
-                                <th>Subject</th>
-                                <th>Description</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-
-                            <?php
-                            $newsubquery = mysqli_query($conn, "SELECT LPAD(c.conno,4,0), c.condatecreated, u.fname, u.mname, u.lname, c.consub,"
-                                    . "c.condesc, c.constatus, c.conprof FROM consultations c INNER JOIN users u WHERE c.userno = u.userno "
-                                    . "AND c.userno = " . $_SESSION['userno'] . "");
-
-                            if ($newsubquery->num_rows > 0) {
-                                while ($row = $newsubquery->fetch_assoc()) {
-                                    $docid = $row['LPAD(c.conno,4,0)'];
-                                    $docdatesubmit = $row['condatecreated'];
-                                    $userid = ($row['fname'] . ' ' . $row['mname'] . ' ' . $row['lname']);
-                                    $doctitle = $row['consub'];
-                                    $docdesc = $row['condesc'];
-                                    $docstatus = $row['constatus'];
-
-                                    echo '<tr>'
-                                    . '<td>' . $docid . '</td>'
-                                    . '<td>' . $docdatesubmit . '</td>'
-                                    . '<td>' . $userid . '</td>'
-                                    . '<td>' . $doctitle . '</td>'
-                                    . '<td>' . $docdesc . '</td>'
-                                    . '<td>' . $docstatus . '</td>';
-                                }
-                            }
-                            ?>
-
-                        </tbody>
-
-                        <tfoot>
-                            <tr>
-                                <th>Consultation #</th>
-                                <th>Date Created</th>
-                                <th>Requested By</th>
-                                <th>Subject</th>
-                                <th>Description</th>
-                                <th>Status</th>
-                            </tr>
-                        </tfoot>
-                    </table>
-                </div>
-
-            </main>
+            </main>               
         </div>
-
-        <br>
 
         <div class="container-fluid headerline">
             &nbsp;
@@ -350,6 +355,12 @@ if (isset($_POST['submitCon'])) {
         <script src="../../js/popper.js"></script>
         <script src="../../js/bootstrap.min.js"></script>
 
+        <!-- Icons -->
+        <script src="../../js/feather.min.js"></script>
+        <script>
+            feather.replace()
+        </script>
+
         <!-- DataTable js -->
         <script src="../../DataTables/DataTables-1.10.16/js/jquery.dataTables.min.js"></script>
         <script src="../../DataTables/DataTables-1.10.16/js/dataTables.bootstrap4.min.js"></script>
@@ -365,20 +376,14 @@ if (isset($_POST['submitCon'])) {
         <script src="../../DataTables/Buttons-1.5.1/js/buttons.html5.min.js"></script>
         <script src="../../DataTables/Buttons-1.5.1/js/buttons.print.min.js"></script>
 
-
-        <!-- Icons -->
-        <script src="../../js/feather.min.js"></script>
-        <script>
-            feather.replace()
-        </script>
-
         <script>
             $(document).ready(function () {
 <?php
 $thisDate = date("m/d/Y");
 ?>
 
-                $('#consultation').DataTable({
+                $('#data_table').DataTable({
+                    "bLengthChange": true,
                     dom: 'lBfrtip',
                     buttons: [
                         {extend: 'copy', className: 'btn btn-secondary', text: '<i class="fas fa-copy"></i>', titleAttr: 'Copy', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
@@ -388,7 +393,7 @@ $thisDate = date("m/d/Y");
                         {extend: 'print', className: 'btn btn-dark', text: '<i class="fas fa-print"></i>', titleAttr: 'Print', title: 'Report printed by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'}
                     ],
                     initComplete: function () {
-                        this.api().columns([1, 2, 3, 4, 5, 6, 7, 8]).every(function () {
+                        this.api().columns().every(function () {
                             var column = this;
                             var select = $('<select><option value="">Show all</option></select>')
                                     .appendTo($(column.footer()).empty())
@@ -396,10 +401,12 @@ $thisDate = date("m/d/Y");
                                         var val = $.fn.dataTable.util.escapeRegex(
                                                 $(this).val()
                                                 );
+
                                         column
                                                 .search(val ? '^' + val + '$' : '', true, false)
                                                 .draw();
                                     });
+
                             column.data().unique().sort().each(function (d, j) {
                                 select.append('<option value="' + d + '">' + d + '</option>')
                             });
@@ -410,7 +417,6 @@ $thisDate = date("m/d/Y");
 
                 });
             });
-
         </script>
 
     </body>

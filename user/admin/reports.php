@@ -321,6 +321,15 @@ if (!isset($_SESSION['user_name'])) {
             <br>
         </div>
 
+        <div class="container-fluid headerline">
+            &nbsp;
+        </div>
+        <div class="container-fluid header">
+            <div align="center" style="font-size: 11px; color:white;">
+                IICS Help Desk © 2019
+            </div>
+        </div>
+
         <!-- Bootstrap core JavaScript
         ================================================== -->
         <!-- Placed at the end of the document so the pages load faster -->

@@ -32,6 +32,14 @@ if (isset($_POST['updatedoc'])) {
 
     if ($editquery == TRUE) {
 
+        $passval = 'Document No. ' . $edit_doc_no . ' changed status to ' . $docstatus . '';
+
+        $passaction = "Update Document Status";
+        $logpass = $conn->prepare("INSERT INTO updatelogs VALUES ('',?,?,NOW(),?)");
+        $logpass->bind_param("sss", $passaction, $_SESSION['user_name'], $passval);
+        $logpass->execute();
+        $logpass->close();
+
         header("location: documents.php");
         exit;
     } else {
@@ -50,6 +58,14 @@ if (isset($_POST['updatedoc2'])) {
     $editquery->close();
 
     if ($editquery == TRUE) {
+
+        $passval = 'Document No. ' . $edit_doc_no . ' changed status to ' . $docstatus . '';
+
+        $passaction = "Update Document Status";
+        $logpass = $conn->prepare("INSERT INTO updatelogs VALUES ('',?,?,NOW(),?)");
+        $logpass->bind_param("sss", $passaction, $_SESSION['user_name'], $passval);
+        $logpass->execute();
+        $logpass->close();
 
         header("location: documents.php");
         exit;

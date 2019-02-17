@@ -433,9 +433,18 @@ if (isset($_SESSION['tab'])) {
                                     <div class="form-group">
                                         <select required class="form-control" name="studsecq">
                                             <option class="hidden" value="" selected disabled>Security Question: *</option>
-                                            <option value="1">What is your mother's maiden name?</option>
-                                            <option value="2">What was your favorite childhood movie?</option>
-                                            <option value="3">What is the name of your first pet?</option>
+                                            <?php
+                                            $sql = "SELECT * FROM secq";
+                                            $result = mysqli_query($conn, $sql);
+                                            if ($result->num_rows > 0) {
+                                                while ($row = $result->fetch_assoc()) {
+                                                    $secqno = $row['secqno'];
+                                                    $secq = $row['secq'];
+
+                                                    echo "<option value='" . $secqno . "'> " . $secq . "</option>";
+                                                }
+                                            }
+                                            ?>
                                         </select>
                                     </div>
                                     <div class="form-group">
@@ -514,9 +523,18 @@ if (isset($_SESSION['tab'])) {
                                     <div class="form-group">
                                         <select class="form-control" name="empsecq" required>
                                             <option class="hidden" value="" selected disabled>Security Question: *</option>
-                                            <option value="1">What is your mother's maiden name?</option>
-                                            <option value="2">What was your favorite childhood movie?</option>
-                                            <option value="3">What is the name of your first pet?</option>
+                                            <?php
+                                            $sql2 = "SELECT * FROM secq";
+                                            $result2 = mysqli_query($conn, $sql2);
+                                            if ($result2->num_rows > 0) {
+                                                while ($row = $result2->fetch_assoc()) {
+                                                    $secqno = $row['secqno'];
+                                                    $secq = $row['secq'];
+
+                                                    echo "<option value='" . $secqno . "'> " . $secq . "</option>";
+                                                }
+                                            }
+                                            ?>
                                         </select>
                                     </div>
                                     <div class="form-group">

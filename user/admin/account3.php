@@ -1,7 +1,6 @@
 
 <?php
 include '../../include/controller.php';
-include '../../include/upload.php';
 
 if (isset($_SESSION['user_name']) && $_SESSION['role'] == "faculty") {
     header("location:/iicshd/user/faculty/home.php");
@@ -19,69 +18,11 @@ if (isset($_SESSION['user_name'])) {
 }
 
 if (!isset($_SESSION['user_name'])) {
-    header("location:/iicshd/index.php");
-}
-
-$secqErr = $_FILES['fileToUpload'] = '';
-
-if (isset($_GET['addSecQ'])) {
-    $addSecQ = $_GET['addSecQ'];
-} else {
-    $addSecQ = '';
-}
-
-if (isset($_GET['upload'])) {
-    $upload = $_GET['upload'];
-} else {
-    $upload = '';
-}
-
-if (isset($_GET['uploadfail'])) {
-    $uploadfail = $_GET['uploadfail'];
-} else {
-    $uploadfail = '';
-}
-
-if (isset($_POST['addnewsecq'])) {
-    $newsecq = $_POST['newsecq'];
-
-    $bool = TRUE;
-
-    $secqcheck = $conn->prepare("SELECT secqno FROM secq WHERE secq=? ");
-    $secqcheck->bind_param("s", $newsecq);
-    $secqcheck->execute();
-
-    $secqcheckresult = $secqcheck->get_result();
-
-    if ($secqcheckresult->num_rows > 0) {
-        $secqErr = '<div class="alert alert-warning">
-                        <strong>Security Question</strong> already exists!
-         </div>';
-        $bool = FALSE;
-    }
-
-    if ($bool == TRUE) {
-
-        $addnewsec = $conn->prepare("INSERT INTO secq VALUES ('', ?)");
-        $addnewsec->bind_param("s", $newsecq);
-
-        $addnewsec->execute();
-        $addnewsec->close();
-
-        $passval = 'Added security question successfully.';
-
-        $passaction = "Add Security Question";
-        $logpass = $conn->prepare("INSERT INTO updatelogs VALUES ('',?,?,NOW(),?)");
-        $logpass->bind_param("sss", $passaction, $_SESSION['user_name'], $passval);
-        $logpass->execute();
-        $logpass->close();
-
-        $_GET['addSecQ'] = 'success';
-        echo '<script>window.location.href="cpanel.php?addSecQ=success"</script>';
-    }
+    header("location:/iicshd/login.php");
 }
 ?>
 
+<!doctype html>
 <html lang="en">
     <head>
         <meta charset="utf-8">
@@ -96,10 +37,6 @@ if (isset($_POST['addnewsecq'])) {
         <link href="../../css/bootstrap.min.css" rel="stylesheet">
         <link href="../../css/dashboard.css" rel="stylesheet">
         <link href="../../fa-5.5.0/css/fontawesome.css" rel="stylesheet">
-
-        <!-- Font Awesome JS -->
-        <script defer src="../../fa-5.5.0/js/solid.js"></script>
-        <script defer src="../../fa-5.5.0/js/fontawesome.js"></script>
 
         <style>
             .header {
@@ -117,14 +54,21 @@ if (isset($_POST['addnewsecq'])) {
                 color: white;
                 font-size: 2px;
             }
+
+            td{
+                text-align:left;
+            }
         </style>
 
+
+        <!-- Font Awesome JS -->
+        <script defer src="../../fa-5.5.0/js/solid.js"></script>
+        <script defer src="../../fa-5.5.0/js/fontawesome.js"></script>
 
         <!-- DataTable-->
         <link rel="stylesheet" href="../../DataTables/DataTables-1.10.16/css/dataTables.bootstrap4.min.css">
         <link rel="stylesheet" href="../../DataTables/Responsive-2.2.1/css/responsive.bootstrap4.min.css">
         <link rel="stylesheet" href="../../DataTables/Buttons-1.5.1/css/buttons.dataTables.min.css">
-
     </head>
 
     <body>
@@ -147,7 +91,7 @@ if (isset($_POST['addnewsecq'])) {
                 <ul class="navbar-nav mr-auto">
 
                     <li class="nav-item">
-                        <a class="nav-link"  style="color:white;" href="home.php">
+                        <a class="nav-link" style="color:white;" href="home.php">
                             <span data-feather="home"></span>
                             Home <span class="sr-only">(current)</span>
                         </a>
@@ -199,7 +143,6 @@ if (isset($_POST['addnewsecq'])) {
                         </a>
                     </li>
 
-
                 </ul>
 
                 <ul class="navbar-nav px-3">
@@ -212,11 +155,11 @@ if (isset($_POST['addnewsecq'])) {
                             ?>
                         </button>
                         <div class="dropdown-menu">
-                            <a class="dropdown-item active" href="cpanel.php">
+                            <a class="dropdown-item" href="cpanel.php">
                                 <i class="fas fa-sliders-h"></i>
                                 Control Panel
                             </a>
-                            <a class="dropdown-item" href="account.php">
+                            <a class="dropdown-item active" href="account.php">
                                 <i class="fas fa-user-cog"></i>
                                 Account
                             </a>
@@ -231,103 +174,96 @@ if (isset($_POST['addnewsecq'])) {
             </div>
         </nav>
 
-
         <div class="container-fluid">
 
-
             <main role="main" class="col-md-12 ml-sm-auto">
-
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2">Control Panel</h1>
+                    <h1 class="h2">Account Settings</h1>
                 </div>
-
-                <?php
-                if ($addSecQ == TRUE) {
-                    echo '<div class="alert alert-success"><span class="fas fa-check"></span> Security question added successfully!</div>';
-                } else {
-                    echo '';
-                }
-
-                if ($upload == TRUE) {
-                    echo '<div class="alert alert-success"><span class="fas fa-check"></span> Document uploaded successfully!</div>';
-                } else {
-                    echo '';
-                }
-
-                if ($uploadfail == TRUE) {
-                    echo '<div class="alert alert-danger"><span class="fas fa-times"></span> <b>Document upload failed! </b><br>'
-                    . 'It may be caused by any of the following reasons: <br>'
-                    . '<ul>'
-                    . '<li>The file already exists.</li>'
-                    . '<li>The file is too large. The maximum file size is 20MB.</li>'
-                    . '<li>Only .pdf, .docx and .doc files are allowed.</li>'
-                    . '</ul>'
-                    . '</div>';
-                } else {
-                    echo '';
-                }
-                ?>
 
                 <div class="row">
 
                     <div class="col-sm-2">
                         <div class="card">
                             <ul class="list-group list-group-flush">
-                                <a href="cpanel.php"><li class="list-group-item active">General <span style="float:right;" class="fas fa-caret-right"></span></li></a>
-                                <a href="cpanel2.php"><li class="list-group-item">User Accounts <span style="float:right;" class="fas fa-caret-right"></span></li></a>
-                                <a href="cpanel3.php"><li class="list-group-item">Queue Settings <span style="float:right;" class="fas fa-caret-right"></span></li></a>
+                                <a href="account.php"><li class="list-group-item">User Information <span style="float:right;" class="fas fa-caret-right"></span></li></a>
+                                <a href="account2.php"><li class="list-group-item">Security <span style="float:right;" class="fas fa-caret-right"></span></li></a>
+                                <a href="account3.php"><li class="list-group-item active">Activity Logs <span style="float:right;" class="fas fa-caret-right"></span></li></a>
+                                <a href="account4.php"><li class="list-group-item">Archives <span style="float:right;" class="fas fa-caret-right"></span></li></a>
                             </ul>
                         </div>
                     </div>
 
-                    <div class="col-sm-10">
+
+                    <div class='col-sm-10'>
                         <div class="card">
-                            <h4 class="card-header">General Settings</h4>
+                            <div class="card-header">
+                                <h5>
+                                    <span class="fas fa-user"></span>
+                                    Activity Logs
+                                </h5>
+                            </div>
+
                             <div class="card-body">
 
-                                <h5 class="card-title">Registration - Add Security Question</h5>
-                                <hr>
-                                <form action="" method="POST">
-                                    <div class="alert alert-secondary"><span class="fas fa-exclamation-circle"></span>
-                                        Security questions are mandatory each time a user creates an account. 
-                                        This provides users an extra security layer and serves as an authenticator should they forget their password.
-                                    </div>
-                                    <label for="oldPw" class="control-label">New Security Question:</label>
-                                    <input type="text" class="form-control" id="newsecq" required name="newsecq">
-                                    <?php echo $secqErr; ?>
-                                    <br>
-                                    <button type="submit" name = "addnewsecq" class="btn btn-success float-right">Add</button>
-                                </form>
+                                <table id="data_table" class="table table-striped table-responsive-lg">
 
-                                <br>
+                                    <thead>
+                                        <tr>
+                                            <th>Timestamp</th>
+                                            <th>User</th>
+                                            <th>Action</th>
+                                            <th>Remarks</th>
+                                        </tr>
+                                    </thead>
 
-                                <h5 class="card-title">Document Templates</h5>
-                                <hr>
-                                <form action="" method="post" enctype="multipart/form-data">
-                                    <div class="alert alert-secondary"><span class="fas fa-exclamation-circle"></span>
-                                        File Upload Rules:
-                                        <ul>
-                                            <li>The maximum file size is 20MB.</li>
-                                            <li>Only .pdf, .docx and .doc files are allowed.</li>
-                                        </ul>
-                                    </div>
-                                    <label for="newfile">Upload New Document Template: </label>
+                                    <tbody>
 
-                                    <input type="file" id="fileToUpload" name="fileToUpload" class="form-control" accept=".pdf, .docx, .doc">
-                                    <br>
-                                    <button type="submit" name = "uploadFile" class="btn btn-success float-right">Upload</button>
-                                </form>
+                                        <?php
+                                        $exelogs = mysqli_query($conn, "SELECT * FROM updatelogs WHERE ULOGUSER = '" . $_SESSION['user_name'] . "'");
+
+                                        if ($exelogs->num_rows > 0) {
+                                            while ($row = $exelogs->fetch_assoc()) {
+                                                $ulogno = $row['ULOGNO'];
+                                                $ulogact = $row['ULOGACT'];
+                                                $uloguser = $row['ULOGUSER'];
+                                                $ulogtime = $row['ULOGTIME'];
+                                                $ulognew = $row['ULOGNEW'];
+
+                                                echo "<tr>"
+                                                . "<td>" . $ulogtime . "</td>"
+                                                . "<td>" . $uloguser . "</td>"
+                                                . "<td>" . $ulogact . "</td>"
+                                                . "<td>" . $ulognew . "</td>"
+                                                ;
+                                            }
+                                        }
+                                        ?>  
+
+                                    </tbody>
+
+                                    <tfoot>
+                                        <tr>
+                                            <th>Timestamp</th>
+                                            <th>User</th>
+                                            <th>Action</th>
+                                            <th>Remarks</th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+
                             </div>
+
                         </div>
+
                     </div>
-
-
                 </div>
+
                 <br>
 
-            </main>
-
+            </main>               
         </div>
+
 
         <div class="container-fluid headerline">
             &nbsp;
@@ -339,7 +275,6 @@ if (isset($_POST['addnewsecq'])) {
         </div>
 
 
-
         <!-- Bootstrap core JavaScript
         ================================================== -->
         <!-- Placed at the end of the document so the pages load faster -->
@@ -347,6 +282,12 @@ if (isset($_POST['addnewsecq'])) {
         <script>window.jQuery || document.write('<script src="../../js/jquery-3.3.1.js"><\/script>')</script>
         <script src="../../js/popper.js"></script>
         <script src="../../js/bootstrap.min.js"></script>
+
+        <!-- Icons -->
+        <script src="../../js/feather.min.js"></script>
+        <script>
+            feather.replace()
+        </script>
 
         <!-- DataTable js -->
         <script src="../../DataTables/DataTables-1.10.16/js/jquery.dataTables.min.js"></script>
@@ -362,11 +303,6 @@ if (isset($_POST['addnewsecq'])) {
         <script src="../../DataTables/pdfmake-0.1.32/vfs_fonts.js"></script>
         <script src="../../DataTables/Buttons-1.5.1/js/buttons.html5.min.js"></script>
         <script src="../../DataTables/Buttons-1.5.1/js/buttons.print.min.js"></script>
-        <!-- Icons -->
-        <script src="../../js/feather.min.js"></script>
-        <script>
-            feather.replace()
-        </script>
 
         <script>
             $(document).ready(function () {
@@ -374,9 +310,17 @@ if (isset($_POST['addnewsecq'])) {
 $thisDate = date("m/d/Y");
 ?>
 
-                $('#myannouncements').DataTable({
-                    "bLengthChange": false,
-                    pageLength: 5,
+                $('#data_table').DataTable({
+                    "bLengthChange": true,
+
+                    dom: 'lBfrtip',
+                    buttons: [
+                        {extend: 'copy', className: 'btn btn-secondary', text: '<i class="fas fa-copy"></i>', titleAttr: 'Copy', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
+                        {extend: 'csv', className: 'btn bg-primary', text: '<i class="fas fa-file-alt"></i>', titleAttr: 'CSV', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
+                        {extend: 'excel', className: 'btn btn-success', text: '<i class="fas fa-file-excel"></i>', titleAttr: 'Excel', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
+                        {extend: 'pdf', className: 'btn btn-danger', orientation: 'landscape', pageSize: 'LEGAL', text: '<i class="fas fa-file-pdf"></i>', titleAttr: 'PDF', title: 'Report Generated by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'},
+                        {extend: 'print', className: 'btn btn-dark', text: '<i class="fas fa-print"></i>', titleAttr: 'Print', title: 'Report printed by: <?php echo $_SESSION['user_name'] . " on " . $thisDate; ?>'}
+                    ],
                     initComplete: function () {
                         this.api().columns().every(function () {
                             var column = this;
@@ -402,15 +346,8 @@ $thisDate = date("m/d/Y");
 
                 });
             });
-
         </script>
 
-        <script>
-            $('.collapse').on('shown.bs.collapse', function () {
-                $(this).parent().find(".fa-plus-circle").removeClass("fa-plus-circle").addClass("fa-minus-circle");
-            }).on('hidden.bs.collapse', function () {
-                $(this).parent().find(".fa-minus-circle").removeClass("fa-minus-circle").addClass("fa-plus-circle");
-            });
-        </script>
+
     </body>
 </html>

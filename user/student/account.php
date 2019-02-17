@@ -53,61 +53,6 @@ if (isset($_POST['updateSec'])) {
         }
     }
 }
-
-if (isset($_POST['updatePass'])) {
-    $oldPass = $_POST['oldPass'];
-    $newPass = $_POST['newPass'];
-    $confirm = $_POST['confirm'];
-    $edit_pno = $_POST['edit_pno'];
-    $sql = "SELECT * FROM users WHERE userno = '{$_SESSION['userno']}'";
-    $result = mysqli_query($conn, $sql);
-    if ($result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()) {
-            $hashedOldPwdCheck = password_verify($oldPass, $row['password']);
-
-
-            if ($hashedOldPwdCheck == FALSE) {
-                $oldPassErr = '<div class="alert alert-warning">
-                        Wrong password.
-                        </div>';
-            } elseif ($hashedOldPwdCheck == TRUE) {
-                if ($newPass != $confirm) {
-                    $confirmErr = '<div class="alert alert-warning">
-                        Password does not match the confirm password.
-                        </div>';
-                }
-
-                if (!preg_match("/(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/", $newPass)) {
-                    $passwordErr = '<div class="alert alert-warning">
-                        Password must be atleast 8 characters long and must be a combination of uppercase letters, lowercase letters and numbers.
-                        </div>';
-                } else {
-                    $hashedPwd = password_hash($newPass, PASSWORD_DEFAULT);
-                    if ($stmt = $conn->prepare("UPDATE users SET PASSWORD =? WHERE USERNO= ? ")) {
-                        $stmt->bind_param("si", $hashedPwd, $edit_pno);
-                        $stmt->execute();
-                        $stmt->close();
-
-
-//                        $passval = 'Password changed.';
-//
-//                        $passaction = "Change Password";
-//                        $logpass = $conn->prepare("INSERT INTO updatelogs VALUES ('',?,?,NOW(),?)");
-//                        $logpass->bind_param("sss", $passaction, $_SESSION['user_name'], $passval);
-//                        $logpass->execute();
-//                        $logpass->close();
-//                        $_SESSION['param'] = "updatePass";
-                        $_GET['status'] = 'success';
-
-                        header("Location: account.php?status=success");
-                    } else {
-                        echo "Error updating record: " . $conn->error;
-                    }
-                }
-            }
-        }
-    }
-}
 ?>
 
 <!doctype html>
@@ -251,12 +196,6 @@ if (isset($_POST['updatePass'])) {
                     <h1 class="h2">Account Details</h1>
                 </div>
                 <?php
-                if ($changePw == TRUE) {
-                    echo '<div class="alert alert-success"><span class="fas fa-check"></span> Password changed successfully!</div>';
-                } else {
-                    echo '';
-                }
-
                 if ($changeSec == TRUE) {
                     echo '<div class="alert alert-success"><span class="fas fa-check"></span> Section changed successfully!</div>';
                 } else {
@@ -264,114 +203,89 @@ if (isset($_POST['updatePass'])) {
                 }
                 ?>
 
-                <div class="card">
-                    <div class="card-header">
-                        <h5>
-                            <span class="fas fa-user"></span>
-                            User Information
-                        </h5>
+                <div class='row'>
+
+                    <div class="col-sm-2">
+                        <div class="card">
+                            <ul class="list-group list-group-flush">
+                                <a href="account.php"><li class="list-group-item active">User Information <span style="float:right;" class="fas fa-caret-right"></span></li></a>
+                                <a href="account2.php"><li class="list-group-item">Security <span style="float:right;" class="fas fa-caret-right"></span></li></a>
+                                <a href="account3.php"><li class="list-group-item">Activity Logs <span style="float:right;" class="fas fa-caret-right"></span></li></a>
+                            </ul>
+                        </div>
                     </div>
 
-                    <form action ="" method="POST">
-                        <div class="card-body">
-                            <input type="hidden" name="edit_pno" value="<?php echo $_SESSION['userno']; ?>">
-                            <table>
-                                <tbody>
-                                    <tr>
-                                        <td><h6><label for="id">User ID: &nbsp;</label></h6></td>
-                                        <td><input size="40" class="form-control" type="text" name="userid" disabled placeholder="<?php echo $_SESSION['userid']; ?>"><br></td>
-                                    </tr>
-                                    <tr>
-                                        <td><h6><label for="name">Name: &nbsp;</label></h6></td>
-                                        <td><input class="form-control" type="text" name="name" disabled placeholder="<?php echo $_SESSION['user_name']; ?>"><br></td>
-                                    </tr>
-                                    <tr>
-                                        <td><h6><label for="email">Email: &nbsp;</label></h6></td>
-                                        <td><input class="form-control" type="text" name="email" disabled placeholder="<?php echo $_SESSION['email']; ?>"><br></td>
-                                    </tr>
-                                    <tr>
-                                        <td><h6><label for="section">Section: &nbsp;</label></h6></td>
-                                        <td>
-                                            <select required class="form-control" name="studsection">
-                                                <option class="hidden" value="" selected disabled><?php echo $_SESSION['section']; ?></option>
-                                                <option disabled>──────── 1st Year ────────</option>
-                                                <option value="1ITA">1ITA</option>
-                                                <option value="1ITB">1ITB</option>
-                                                <option value="1ITC">1ITC</option>
-                                                <option value="1ITD">1ITD</option>
-                                                <option value="1ITE">1ITE</option>
-                                                <option value="1ITF">1ITF</option>
-                                                <option value="1ITG">1ITG</option>
-                                                <option disabled>──────── 2nd Year ────────</option>
-                                                <option value="2ITA">2ITA</option>
-                                                <option value="2ITB">2ITB</option>
-                                                <option disabled>──────── 3rd Year ────────</option>
-                                                <option value="3ITA">3ITA</option>
-                                                <option value="3ITB">3ITB</option>
-                                                <option disabled>──────── 4th Year ────────</option>
-                                                <option value="4ITA">4ITA</option>
-                                                <option value="4ITB">4ITB</option>
-                                                <option value="4ITC">4ITC</option>
-                                                <option value="4ITD">4ITD</option>
-                                                <option value="4ITE">4ITE</option>
-                                                <option value="4ITF">4ITF</option>
-                                                <option value="4ITG">4ITG</option>
-                                                <option value="4ITH">4ITH</option>
-                                                <option value="4ITI">4ITI</option>
-                                            </select>
-                                            <br>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            <div class="btn-div">
-                                <button type="submit" name = "updateSec" class="btn btn-success float-right">Save Changes</button><br>
+
+                    <div class='col-sm-10'>
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>
+                                    <span class="fas fa-user"></span>
+                                    User Information
+                                </h5>
                             </div>
-                            <br>
+
+                            <form action ="" method="POST">
+                                <div class="card-body">
+                                    <input type="hidden" name="edit_pno" value="<?php echo $_SESSION['userno']; ?>">
+                                    <table>
+                                        <tbody>
+                                            <tr>
+                                                <td><h6><label for="id">User ID: &nbsp;</label></h6></td>
+                                                <td><input size="40" class="form-control" type="text" name="userid" disabled placeholder="<?php echo $_SESSION['userid']; ?>"><br></td>
+                                            </tr>
+                                            <tr>
+                                                <td><h6><label for="name">Name: &nbsp;</label></h6></td>
+                                                <td><input class="form-control" type="text" name="name" disabled placeholder="<?php echo $_SESSION['user_name']; ?>"><br></td>
+                                            </tr>
+                                            <tr>
+                                                <td><h6><label for="email">Email: &nbsp;</label></h6></td>
+                                                <td><input class="form-control" type="text" name="email" disabled placeholder="<?php echo $_SESSION['email']; ?>"><br></td>
+                                            </tr>
+                                            <tr>
+                                                <td><h6><label for="section">Section: &nbsp;</label></h6></td>
+                                                <td>
+                                                    <select required class="form-control" name="studsection">
+                                                        <option class="hidden" value="" selected disabled><?php echo $_SESSION['section']; ?></option>
+                                                        <option disabled>──────── 1st Year ────────</option>
+                                                        <option value="1ITA">1ITA</option>
+                                                        <option value="1ITB">1ITB</option>
+                                                        <option value="1ITC">1ITC</option>
+                                                        <option value="1ITD">1ITD</option>
+                                                        <option value="1ITE">1ITE</option>
+                                                        <option value="1ITF">1ITF</option>
+                                                        <option value="1ITG">1ITG</option>
+                                                        <option disabled>──────── 2nd Year ────────</option>
+                                                        <option value="2ITA">2ITA</option>
+                                                        <option value="2ITB">2ITB</option>
+                                                        <option disabled>──────── 3rd Year ────────</option>
+                                                        <option value="3ITA">3ITA</option>
+                                                        <option value="3ITB">3ITB</option>
+                                                        <option disabled>──────── 4th Year ────────</option>
+                                                        <option value="4ITA">4ITA</option>
+                                                        <option value="4ITB">4ITB</option>
+                                                        <option value="4ITC">4ITC</option>
+                                                        <option value="4ITD">4ITD</option>
+                                                        <option value="4ITE">4ITE</option>
+                                                        <option value="4ITF">4ITF</option>
+                                                        <option value="4ITG">4ITG</option>
+                                                        <option value="4ITH">4ITH</option>
+                                                        <option value="4ITI">4ITI</option>
+                                                    </select>
+                                                    <br>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <div class="btn-div">
+                                        <button type="submit" name = "updateSec" class="btn btn-success float-right">Save Changes</button><br>
+                                    </div>
+                                    <br>
+                                </div>
+                            </form>
+
                         </div>
-                    </form>
-
-                </div>
-
-                <br>
-
-                <div class="card">
-                    <div class="card-header">
-                        <h5>
-                            <span class="fas fa-lock"></span>
-                            Account Security
-                        </h5>
                     </div>
-
-                    <form action="" method="POST">
-                        <div class="card-body">
-                            <div class="card-title">
-                                <h5>Change Password</h5>
-                            </div>
-                            <input type="hidden" name="edit_pno" value="<?php echo $_SESSION['userno']; ?>">
-                            <hr>
-                            <table>
-                                <tbody>
-                                    <tr>
-                                        <td><h6><label for="oldpw">Current Password: &nbsp;</label></h6></td>
-                                        <td><input type="password" class="form-control" id="oldPw" required name="oldPass"><?php echo $oldPassErr; ?><br></td>
-                                    </tr>
-                                    <tr>
-                                        <td><h6><label for="newPw">New Password: &nbsp;</label></h6></td>
-                                        <td><input type="password" class="form-control" required id="newPw" name="newPass"><?php echo $passwordErr; ?><br></td>
-                                    </tr>
-                                    <tr>
-                                        <td><h6><label for="confnewpass">Confirm New Password: &nbsp;</label></h6></td>
-                                        <td><input type="password" class="form-control" required id="confirmNew" name="confirm"><?php echo $confirmErr; ?><br></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            <div class="btn-div">
-                                <button type="submit" name = "updatePass" class="btn btn-success float-right">Update</button><br>
-                            </div>
-                            <br>
-                        </div>
-                    </form>
 
                 </div>
 

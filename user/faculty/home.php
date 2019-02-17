@@ -49,6 +49,15 @@ if (isset($_POST['postAnnouncement'])) {
         $announceSql->execute();
         $announceSql->close();
 
+        $passval = 'Announcement posted successfully.';
+
+        $passaction = "Post Announcement";
+        $logpass = $conn->prepare("INSERT INTO updatelogs VALUES ('',?,?,NOW(),?)");
+        $logpass->bind_param("sss", $passaction, $_SESSION['user_name'], $passval);
+        $logpass->execute();
+        $logpass->close();
+
+
         $_GET['post'] = 'success';
         header("Location: home.php?post=success");
         exit;
@@ -146,7 +155,18 @@ if (isset($_POST['deletepost'])) {
 //            $elogadd->close();
 //
 
+
+
         $deletequery->execute();
+        $deletequery->close();
+
+        $passval = 'Announcement deleted successfully.';
+
+        $passaction = "Delete Announcement";
+        $logpass = $conn->prepare("INSERT INTO updatelogs VALUES ('',?,?,NOW(),?)");
+        $logpass->bind_param("sss", $passaction, $_SESSION['user_name'], $passval);
+        $logpass->execute();
+        $logpass->close();
 
         $_GET['delete'] = 'success';
         header("location: home.php?delete=success");
@@ -405,7 +425,7 @@ if (isset($_POST['deletepost'])) {
 
                                                                     <div class="modal-body">
                                                                         <div class="alert alert-danger alert-dismissible" role="alert">
-                                                                            <p style="font-size: 15px;"><strong>Note: </strong>Deleting a post will send it to your <a href="account.php">archives</a> for tracking purposes. 
+                                                                            <p style="font-size: 15px;"><strong>Note: </strong>Deleting a post will send it to your <a href="account4.php">archives</a> for tracking purposes. 
                                                                         </div>
                                                                         <div class="row">
                                                                             <div class="col-sm-12">

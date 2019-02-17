@@ -21,7 +21,21 @@ if (!isset($_SESSION['user_name'])) {
     header("location:/iicshd/index.php");
 }
 
-$postFailed = "";
+if (isset($_GET['post'])) {
+    $post = $_GET['post'];
+} else {
+    $post = '';
+}
+if (isset($_GET['edit'])) {
+    $edit = $_GET['edit'];
+} else {
+    $edit = '';
+}
+if (isset($_GET['delete'])) {
+    $delete = $_GET['delete'];
+} else {
+    $delete = '';
+}
 
 //create announcement
 if (isset($_POST['postAnnouncement'])) {
@@ -36,7 +50,16 @@ if (isset($_POST['postAnnouncement'])) {
         $announceSql->execute();
         $announceSql->close();
 
-        header("Location: home.php");
+        $passval = 'Announcement posted successfully.';
+
+        $passaction = "Post Announcement";
+        $logpass = $conn->prepare("INSERT INTO updatelogs VALUES ('',?,?,NOW(),?)");
+        $logpass->bind_param("sss", $passaction, $_SESSION['user_name'], $passval);
+        $logpass->execute();
+        $logpass->close();
+
+        $_GET['post'] = 'success';
+        header("Location: home.php?post=success");
         exit;
     } else {
         $postFailed = '<div class="alert alert-danger">
@@ -87,7 +110,16 @@ if (isset($_POST['editpost'])) {
 
     if ($editquery == TRUE) {
 
-        header("location: home.php");
+        $passval = 'Announcement edited successfully.';
+
+        $passaction = "Edit Announcement";
+        $logpass = $conn->prepare("INSERT INTO updatelogs VALUES ('',?,?,NOW(),?)");
+        $logpass->bind_param("sss", $passaction, $_SESSION['user_name'], $passval);
+        $logpass->execute();
+        $logpass->close();
+
+        $_GET['edit'] = 'success';
+        header("location: home.php?edit=success");
         exit;
     } else {
         echo "Update failed.";
@@ -133,8 +165,18 @@ if (isset($_POST['deletepost'])) {
 //
 
         $deletequery->execute();
+        $deletequery->close();
 
-        header("location: home.php");
+        $passval = 'Announcement deleted successfully.';
+
+        $passaction = "Delete Announcement";
+        $logpass = $conn->prepare("INSERT INTO updatelogs VALUES ('',?,?,NOW(),?)");
+        $logpass->bind_param("sss", $passaction, $_SESSION['user_name'], $passval);
+        $logpass->execute();
+        $logpass->close();
+
+        $_GET['delete'] = 'success';
+        header("location: home.php?delete=success");
         exit;
     } else {
 //            $_SESSION['tabedit'] = '5';
@@ -306,7 +348,25 @@ if (isset($_POST['deletepost'])) {
                     <h1 class="h2">Home</h1>
                 </div>
 
-                <?php echo $postFailed; ?>
+                <?php
+                if ($post == TRUE) {
+                    echo '<div class="alert alert-success"><span class="fas fa-check"></span> Announcement posted!</div>';
+                } else {
+                    echo '';
+                }
+
+                if ($edit == TRUE) {
+                    echo '<div class="alert alert-success"><span class="fas fa-check"></span> Post successfully edited!</div>';
+                } else {
+                    echo '';
+                }
+
+                if ($delete == TRUE) {
+                    echo '<div class="alert alert-success"><span class="fas fa-check"></span> Post successfully deleted!</div>';
+                } else {
+                    echo '';
+                }
+                ?>
 
 
                 <div class="accordion" id="accordionExample">
@@ -408,7 +468,7 @@ if (isset($_POST['deletepost'])) {
 
                                                                     <div class="modal-body">
                                                                         <div class="alert alert-danger alert-dismissible" role="alert">
-                                                                            <p style="font-size: 15px;"><strong>Note: </strong>Deleting a post will send it to your <a href="account.php">archives</a> for tracking purposes. 
+                                                                            <p style="font-size: 15px;"><strong>Note: </strong>Deleting a post will send it to your <a href="account4.php">archives</a> for tracking purposes. 
                                                                         </div>
                                                                         <div class="row">
                                                                             <div class="col-sm-12">

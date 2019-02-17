@@ -31,6 +31,14 @@ if (isset($_POST['updatedoc2'])) {
 
     if ($editquery == TRUE) {
 
+        $passval = 'Consultation Request No. '.$edit_doc_no.' changed status to '.$docstatus.'.';
+
+        $passaction = "Update Consultation Request Status";
+        $logpass = $conn->prepare("INSERT INTO updatelogs VALUES ('',?,?,NOW(),?)");
+        $logpass->bind_param("sss", $passaction, $_SESSION['user_name'], $passval);
+        $logpass->execute();
+        $logpass->close();
+
         header("location: consultations.php");
         exit;
     } else {
@@ -286,7 +294,7 @@ if (isset($_POST['updatedoc2'])) {
                 </div>
             </main>
         </div>
-        
+
         <br>
 
         <div class="container-fluid headerline">

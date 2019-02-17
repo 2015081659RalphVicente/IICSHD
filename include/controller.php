@@ -46,7 +46,7 @@ if (isset($_POST['login'])) {
                 $_SESSION['role'] = $row['role'];
                 $_SESSION['fname'] = $row['fname'];
                 $_SESSION['mname'] = $row['mname'];
-                $_SESSION['name'] = $row['lname'];
+                $_SESSION['lname'] = $row['lname'];
                 $_SESSION['userno'] = $row['userno'];
                 $_SESSION['section'] = $row['section'];
                 $_SESSION['last_time'] = time();
@@ -58,6 +58,15 @@ if (isset($_POST['login'])) {
                         header("location:/iicshd/reset.php");
                         exit();
                     } else {
+
+                        $passval = 'Login';
+
+                        $passaction = "Logged in successfully.";
+                        $logpass = $conn->prepare("INSERT INTO updatelogs VALUES ('',?,?,NOW(),?)");
+                        $logpass->bind_param("sss", $passaction, $_SESSION['user_name'], $passval);
+                        $logpass->execute();
+                        $logpass->close();
+
                         header("location:/iicshd/user/admin/home.php");
                         exit();
                     }
@@ -67,6 +76,15 @@ if (isset($_POST['login'])) {
                         header("location:/iicshd/reset.php");
                         exit();
                     } else {
+
+                        $passval = 'Login';
+
+                        $passaction = "Logged in successfully.";
+                        $logpass = $conn->prepare("INSERT INTO updatelogs VALUES ('',?,?,NOW(),?)");
+                        $logpass->bind_param("sss", $passaction, $_SESSION['user_name'], $passval);
+                        $logpass->execute();
+                        $logpass->close();
+
                         header("location:/iicshd/user/student/home.php");
                         exit();
                     }
@@ -76,6 +94,15 @@ if (isset($_POST['login'])) {
                         header("location:/iicshd/reset.php");
                         exit();
                     } else {
+
+                        $passval = 'Logged in successfully.';
+
+                        $passaction = "Login";
+                        $logpass = $conn->prepare("INSERT INTO updatelogs VALUES ('',?,?,NOW(),?)");
+                        $logpass->bind_param("sss", $passaction, $_SESSION['user_name'], $passval);
+                        $logpass->execute();
+                        $logpass->close();
+                        
                         header("location:/iicshd/user/faculty/home.php");
                         exit();
                     }
@@ -205,9 +232,9 @@ if (isset($_POST["resetlogin"])) {
     } else {
         if ($updateBool == TRUE) {
             $hashedPwd = password_hash($newPassword, PASSWORD_DEFAULT);
-            
-            $sqlupdate = "UPDATE users SET users.password= '$hashedPwd', users.forgotpass='0' WHERE users.userno= '".$_SESSION['userno']."'";
-            $sql = "SELECT * FROM users WHERE userno ='".$_SESSION['userno']."'";
+
+            $sqlupdate = "UPDATE users SET users.password= '$hashedPwd', users.forgotpass='0' WHERE users.userno= '" . $_SESSION['userno'] . "'";
+            $sql = "SELECT * FROM users WHERE userno ='" . $_SESSION['userno'] . "'";
             if ($sqlupdate == TRUE) {
                 $updateresul = mysqli_query($conn, $sqlupdate);
                 $result = mysqli_query($conn, $sql);
@@ -218,22 +245,21 @@ if (isset($_POST["resetlogin"])) {
                         $role = $row['role'];
                     }
                 }
-                
+
                 $_SESSION['user_name'] = $name;
                 $_SESSION['first_time'] = $newToken;
                 $_SESSION['last_time'] = time();
 
-                    if ($_SESSION['role'] == "admin") {
-                        header("location:/iicshd/user/admin/home.php");
-                        exit();
-                    } elseif ($_SESSION['role'] == "student") {
-                        header("location:/iicshd/user/student/home.php");
-                        exit();
-                    } elseif ($_SESSION['role'] == "faculty") {
-                        header("location:/iicshd/user/faculty/home.php");
-                        exit();
-                    }
-                    
+                if ($_SESSION['role'] == "admin") {
+                    header("location:/iicshd/user/admin/home.php");
+                    exit();
+                } elseif ($_SESSION['role'] == "student") {
+                    header("location:/iicshd/user/student/home.php");
+                    exit();
+                } elseif ($_SESSION['role'] == "faculty") {
+                    header("location:/iicshd/user/faculty/home.php");
+                    exit();
+                }
             } else {
                 echo "Error updating record: " . $connect->error;
             }

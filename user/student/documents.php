@@ -303,6 +303,12 @@ if (isset($_POST['receiveRel'])) {
                 </div>
 
                 <br>
+                <h5>Downloadable Templates</h5>
+                <hr>
+
+                
+                <br>
+                <br>
                 <h5>Tracking</h5><hr>
 
                 <div class="table-responsive">
@@ -376,7 +382,7 @@ if (isset($_POST['receiveRel'])) {
 
             </main>
         </div>
-        
+
         <br>
 
         <div class="container-fluid headerline">

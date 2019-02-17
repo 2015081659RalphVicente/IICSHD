@@ -32,6 +32,14 @@ if (isset($_POST['toggleClose'])) {
 
     if ($closeQuery == TRUE) {
 
+        $passval = 'Closed queue successfully.';
+
+        $passaction = "Queue Control";
+        $logpass = $conn->prepare("INSERT INTO updatelogs VALUES ('',?,?,NOW(),?)");
+        $logpass->bind_param("sss", $passaction, $_SESSION['user_name'], $passval);
+        $logpass->execute();
+        $logpass->close();
+
         header("location: queue.php");
         exit;
     } else {
@@ -50,31 +58,18 @@ if (isset($_POST['toggleOpen'])) {
 
     if ($openQuery == TRUE) {
 
+        $passval = 'Opened queue successfully.';
+
+        $passaction = "Queue Control";
+        $logpass = $conn->prepare("INSERT INTO updatelogs VALUES ('',?,?,NOW(),?)");
+        $logpass->bind_param("sss", $passaction, $_SESSION['user_name'], $passval);
+        $logpass->execute();
+        $logpass->close();
+
         header("location: queue.php");
         exit;
     } else {
         echo "Queue toggle failed.";
-    }
-}
-
-if (isset($_GET['clear'])) {
-    $clear = $_GET['clear'];
-} else {
-    $clear = '';
-}
-
-if (isset($_POST['toggleClear'])) {
-
-    $clearQuery = $conn->prepare("TRUNCATE TABLE queue");
-    $clearQuery->execute();
-    $clearQuery->close();
-
-    if ($clearQuery == TRUE) {
-        $_GET['clear'] = "success";
-        header("location: queue.php?clear=success");
-        exit;
-    } else {
-        echo "Clear Queue failed.";
     }
 }
 
@@ -138,6 +133,14 @@ if (isset($_POST['qNext'])) {
 
         $insertQ->execute();
         $insertQ->close();
+
+        $passval = 'Queue No. ' . $qqdone . ' listed as Done.';
+
+        $passaction = "Queue Control";
+        $logpass = $conn->prepare("INSERT INTO updatelogs VALUES ('',?,?,NOW(),?)");
+        $logpass->bind_param("sss", $passaction, $_SESSION['user_name'], $passval);
+        $logpass->execute();
+        $logpass->close();
 
         header("location: queue.php");
         exit;
@@ -206,6 +209,14 @@ if (isset($_POST['qNoShow'])) {
 
         $insertQ->execute();
         $insertQ->close();
+
+        $passval = 'Queue No. ' . $qqdone . ' listed as No-Show.';
+
+        $passaction = "Queue Control";
+        $logpass = $conn->prepare("INSERT INTO updatelogs VALUES ('',?,?,NOW(),?)");
+        $logpass->bind_param("sss", $passaction, $_SESSION['user_name'], $passval);
+        $logpass->execute();
+        $logpass->close();
 
         header("location: queue.php");
         exit;
@@ -374,14 +385,6 @@ if (isset($_POST['qNoShow'])) {
                 </div>
 
                 <?php
-                if ($clear == TRUE) {
-                    echo '<div class="alert alert-success"><span class="fas fa-check"></span> Queue cleared successfully!</div>';
-                } else {
-                    echo '';
-                }
-                ?>
-
-                <?php
                 $qCheck = mysqli_query($conn, "SELECT * FROM qtoggle WHERE qtogno = '1'");
 
                 if ($qCheck->num_rows > 0) {
@@ -398,13 +401,14 @@ if (isset($_POST['qNoShow'])) {
                             . '<form method="post" action="">'
                             . '<input type="hidden" name="closeQueue" value="0">'
                             . '<button class="btn btn-danger" type = "submit" name="toggleClose"><span class="fas fa-lock"></span> Close Queue</button> '
-                            . '<button class="btn btn-dark" onclick="alert()" type = "submit" name="toggleClear" title="Clear Queue"><span class="fas fa-trash"></span> Clear</button>'
                             . '</form>'
                             . '</div>'
                             . '</h5> '
                             . '</div> '
                             . '</div>'
-                            . '<br>';
+                            . '<br>'
+                            . '<div class="alert alert-warning"><b>NOTE: </b>You may clear the queue list by going to the Queue settings in the '
+                            . '<a href="cpanel3.php"><b>Admin Control Panel.</b></a></div>';
 
                             echo '<div class="row">';
 
@@ -640,12 +644,6 @@ if (isset($_POST['qNoShow'])) {
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-
-    <script>
-        function alert() {
-            alert("Are you sure you want to clear the queue?");
-        }
-    </script>
 
     <script src="../../js/jquery-3.3.1.js" ></script>
     <script>window.jQuery || document.write('<script src="../../js/jquery-3.3.1.js"><\/script>')</script>

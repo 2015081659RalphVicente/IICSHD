@@ -21,7 +21,8 @@ if (!isset($_SESSION['user_name'])) {
 }
 
 if (isset($_POST['getQueueNum'])) {
-
+    
+    $qno = $_POST['qno'];
     $qType = $_POST["selectType"];
     $qDesc = $_POST['qDesc'];
     $userno = $_SESSION['userno'];
@@ -52,6 +53,15 @@ if (isset($_POST['getQueueNum'])) {
             $userQ->execute();
             $userQ->close();
         }
+
+        $passval = 'Queue Ticket No. '.$qno.' / '.$qType.'';
+
+        $passaction = "Get Queue Ticket";
+        $logpass = $conn->prepare("INSERT INTO updatelogs VALUES ('',?,?,NOW(),?)");
+        $logpass->bind_param("sss", $passaction, $_SESSION['user_name'], $passval);
+        $logpass->execute();
+        $logpass->close();
+        
         header("Location: queue.php");
         exit;
     } else {
@@ -272,7 +282,7 @@ if (isset($_POST['getQueueNum'])) {
                                     <form method="post" action="">
                                         <div class="row">
                                             <div class="col-sm-12">
-
+                                                <input type = "hidden" name="qno" value="' . $qno . '">
                                                 <div class="form-group">
                                                     <label for="title"><h5>Transaction Type: <span class="require">*</span></h5></label>
                                                     <select name="selectType" class="form-control" id="selectType" required>
