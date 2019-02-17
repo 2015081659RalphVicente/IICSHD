@@ -253,7 +253,7 @@ if (isset($_POST['unpinPost'])) {
 
                                         echo '<div class="card">
                                         <div class="card-header text-white">
-                                            <a href="#book' . $annno . '" data-toggle="modal"><button type="button" class="btn btn-dark btn-sm" style="float:right;" title="Unpin Announcement"><i class="fas fa-thumbtack"></i></button></a>
+                                            <a href="#bookm' . $annno . '" data-toggle="modal"><button type="button" class="btn btn-dark btn-sm" style="float:right;" title="Unpin Announcement"><i class="fas fa-thumbtack"></i></button></a>
                                         </div>
                                         <div class="card-body">
                                             <h5 class="card-title">' . $anntitle . '</h5>
@@ -262,7 +262,7 @@ if (isset($_POST['unpinPost'])) {
                                         </div>
                                   </div><br>';
                                         echo
-                                        '<div id="book' . $annno . '" class="modal fade" role="dialog">
+                                        '<div id="bookm' . $annno . '" class="modal fade" role="dialog">
                                                             <form method="post">
                                                                 <div class="modal-dialog modal-lg">
                                                                     <!-- Modal content-->

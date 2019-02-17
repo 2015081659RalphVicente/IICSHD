@@ -1,10 +1,11 @@
 <?php
 include './include/controller.php';
 
+use PHPMailer\PHPMailer\PHPMailer;
+
 require './include/PHPMailer/src/PHPMailer.php';
 require './include/PHPMailer/src/SMTP.php';
 require './include/PHPMailer/src/Exception.php';
-require './include/PHPMailer/src/Config.php';
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -36,6 +37,16 @@ if (!isset($_SESSION['user_name'])) {
         header("location:/iicshd/login.php");
     }
 }
+
+$mail = new PHPMailer;
+
+$mail->isSMTP();                                      // Set mailer to use SMTP
+$mail->Host = 'smtp.gmail.com';  // Specify main and backup SMTP servers
+$mail->SMTPAuth = true;                               // Enable SMTP authentication
+$mail->Username = 'noreply.iicshd@gmail.com';                 // SMTP username
+$mail->Password = '1ng0dw3trust';                           // SMTP password
+$mail->SMTPSecure = 'tls';                            // Enable TLS encryption, `ssl` also accepted
+$mail->Port = 587;                                    // TCP port to connect to
 
 function RandomString($length) {
     $keys = array_merge(range(0, 9), range('A', 'Z'));
@@ -100,8 +111,7 @@ unset($_SESSION['seq']);
                             </div>
 
                             <?php
-                            $mail = new PHPMailer\PHPMailer\PHPMailer();
-
+                            
                             try {
                                 //Recipients
                                 $mail->setFrom('noreply.iicshd@gmail.com', 'IICS Help Desk');
@@ -117,7 +127,6 @@ unset($_SESSION['seq']);
                                         . '<hr>'
                                         . '<p align="left"><b>Temporary Password: </b>' . $temp_pass . '</p>'
                                         . '<hr></body></html>';
-
                             } catch (Exception $ex) {
                                 echo 'Message could not be sent. Mailer Error: ', $mail->ErrorInfo;
                             }

@@ -1,10 +1,11 @@
 <?php
 require './include/controller.php';
 
-require './include/PHPMailer/src/PHPMailer.php';
+use PHPMailer\PHPMailer\PHPMailer;
+
 require './include/PHPMailer/src/SMTP.php';
 require './include/PHPMailer/src/Exception.php';
-require './include/PHPMailer/src/Config.php';
+require './include/PHPMailer/src/PHPMailer.php';
 
 if (isset($_SESSION['user_name']) && $_SESSION['role'] == "admin") {
     header("location:/iicshd/user/admin/home.php");
@@ -23,6 +24,16 @@ if (isset($_SESSION['user_name'])) {
         $_SESSION['last_time'] = time();
     }
 }
+
+$mail = new PHPMailer;
+
+$mail->isSMTP();                                      // Set mailer to use SMTP
+$mail->Host = 'smtp.gmail.com';  // Specify main and backup SMTP servers
+$mail->SMTPAuth = true;                               // Enable SMTP authentication
+$mail->Username = 'noreply.iicshd@gmail.com';                 // SMTP username
+$mail->Password = '1ng0dw3trust';                           // SMTP password
+$mail->SMTPSecure = 'tls';                            // Enable TLS encryption, `ssl` also accepted
+$mail->Port = 587;                                    // TCP port to connect to
 
 $studSuccess = $_SESSION['studSuccess'];
 
@@ -246,8 +257,6 @@ if ($studSuccess == TRUE) {
                                         <?php
                                         if ($role == "student") {
 
-                                            $mail = new PHPMailer\PHPMailer\PHPMailer();
-
                                             try {
                                                 //Recipients
                                                 $mail->setFrom('noreply.iicshd@gmail.com', 'IICS Help Desk');
@@ -273,8 +282,6 @@ if ($studSuccess == TRUE) {
 
                                             echo $studemail . '.';
                                         } elseif ($role == "faculty") {
-
-                                            $mail = new PHPMailer\PHPMailer\PHPMailer();
 
                                             try {
                                                 //Recipients
