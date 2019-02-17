@@ -268,6 +268,7 @@ if (!isset($_SESSION['user_name'])) {
                                             <th>Date Queued</th>
                                             <th>Student Name</th>
                                             <th>Transaction Type</th>
+                                            <th>Title</th>
                                             <th>Description</th>
                                             <th>Status</th>
                                         </tr>
@@ -276,7 +277,7 @@ if (!isset($_SESSION['user_name'])) {
                                     <tbody>
 
                                         <?php
-                                        $qLogsquery = mysqli_query($conn, "SELECT LPAD(queue.qno,4,0), queue.qtype, queue.qdate, queue.qstatus, queue.qdesc, users.userid, users.fname, users.mname, users.lname FROM queuelogs queue INNER JOIN users ON queue.userno = users.userno");
+                                        $qLogsquery = mysqli_query($conn, "SELECT LPAD(queue.qno,4,0), queue.qtitle, queue.qtype, queue.qdate, queue.qstatus, queue.qdesc, users.userid, users.fname, users.mname, users.lname FROM queuelogs queue INNER JOIN users ON queue.userno = users.userno");
 
                                         if ($qLogsquery->num_rows > 0) {
                                             while ($row = $qLogsquery->fetch_assoc()) {
@@ -286,14 +287,22 @@ if (!isset($_SESSION['user_name'])) {
                                                 $qtype = $row['qtype'];
                                                 $qdesc = $row['qdesc'];
                                                 $qstatus = $row['qstatus'];
+                                                $qtitle = $row['qtitle'];
 
                                                 echo "<tr>"
                                                 . "<td>" . $qno . "</td>"
                                                 . "<td>" . $qdate . "</td>"
                                                 . "<td>" . $userid . "</td>"
-                                                . "<td>" . $qtype . "</td>"
-                                                . "<td>" . $qdesc . "</td>"
-                                                . "<td>" . $qstatus . "</td>";
+                                                . "<td>" . $qtype . "</td>";
+                                                if ($qtitle == "") {
+                                                    echo "<td> - </td>"
+                                                    . "<td>" . $qdesc . "</td>"
+                                                    . "<td>" . $qstatus . "</td>";
+                                                } else {
+                                                    echo "<td>" . $qtitle . "</td>"
+                                                    . "<td>" . $qdesc . "</td>"
+                                                    . "<td>" . $qstatus . "</td>";
+                                                }
                                             }
                                         }
                                         ?>
@@ -306,6 +315,7 @@ if (!isset($_SESSION['user_name'])) {
                                             <th>Date Queued</th>
                                             <th>Student Name</th>
                                             <th>Transaction Type</th>
+                                            <th>Title</th>
                                             <th>Description</th>
                                             <th>Status</th>
                                         </tr>

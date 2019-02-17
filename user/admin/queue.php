@@ -95,11 +95,12 @@ if (isset($_POST['qNext'])) {
     $qqdone = $_POST['userQDone'];
     $qnumdone = $_POST['userNumDone'];
     $qtype = $_POST['userQType'];
+    $qtitle = $_POST['userQTitle'];
     $qdesc = $_POST['userQDesc'];
     $qstatus = "Done";
     $inqueue = "0";
-
-
+    $docstatus = "Submitted";
+    $hidden = "0";
 
     $nextQuery = $conn->prepare("UPDATE queue SET qstatus=? WHERE qno=?");
     $nextQuery->bind_param("si", $qstatus, $qqdone);
@@ -109,8 +110,11 @@ if (isset($_POST['qNext'])) {
     $userQ = $conn->prepare("UPDATE users SET inqueue=? WHERE userno=?");
     $userQ->bind_param("ii", $inqueue, $qnumdone);
 
-    $insertQ = $conn->prepare("INSERT INTO queuelogs VALUES ('', ?, ?, ?, ?, ?)");
-    $insertQ->bind_param("issss", $qnumdone, $qtype, $qdesc, $thisDate, $qstatus);
+    $insertQ = $conn->prepare("INSERT INTO queuelogs VALUES ('', ?, ?, ?, ?, ?, ?)");
+    $insertQ->bind_param("isssss", $qnumdone, $qtype, $qtitle, $qdesc, $thisDate, $qstatus);
+    
+    $submitDoc = $conn->prepare("INSERT INTO documents VALUES ('', NOW(), ?, ?, ?, ?, '0', ?)");
+    $submitDoc->bind_param("isssi", $qnumdone, $qtitle, $qdesc, $docstatus, $hidden);
 
     if ($nextQuery == TRUE) {
         $checkQuery = mysqli_query($conn, "SELECT * FROM queue WHERE qstatus = 'Waiting' ORDER BY qno ASC LIMIT 1");
@@ -141,7 +145,14 @@ if (isset($_POST['qNext'])) {
         $logpass->bind_param("sss", $passaction, $_SESSION['user_name'], $passval);
         $logpass->execute();
         $logpass->close();
-
+        
+        if ($qtitle != ""){
+            $submitDoc->execute();
+            $submitDoc->close();
+        } else{
+            
+        }
+        
         header("location: queue.php");
         exit;
     } else {
@@ -185,8 +196,8 @@ if (isset($_POST['qNoShow'])) {
     $userQ = $conn->prepare("UPDATE users SET inqueue=? WHERE userno=?");
     $userQ->bind_param("ii", $inqueue, $qnumdone);
 
-    $insertQ = $conn->prepare("INSERT INTO queuelogs VALUES ('', ?, ?, ?, ?, ?)");
-    $insertQ->bind_param("issss", $qnumdone, $qtype, $qdesc, $thisDate, $qstatus);
+    $insertQ = $conn->prepare("INSERT INTO queuelogs VALUES ('', ?, ?, ?, ?, ?, ?)");
+    $insertQ->bind_param("isssss", $qnumdone, $qtype, $qtitle, $qdesc, $thisDate, $qstatus);
 
     if ($nextQuery == TRUE) {
         $checkQuery = mysqli_query($conn, "SELECT * FROM queue WHERE qstatus = 'Waiting' ORDER BY qno ASC LIMIT 1");
@@ -412,7 +423,7 @@ if (isset($_POST['qNoShow'])) {
 
                             echo '<div class="row">';
 
-                            $qQuery = mysqli_query($conn, "SELECT users.userno, queue.qdesc, LPAD(queue.qno,4,0), queue.qtype, queue.qdate, queue.qstatus, users.userid, users.fname, users.mname, users.lname FROM queue INNER JOIN users ON queue.userno = users.userno AND queue.qstatus = 'Now' LIMIT 1");
+                            $qQuery = mysqli_query($conn, "SELECT users.userno, queue.qtitle, queue.qdesc, LPAD(queue.qno,4,0), queue.qtype, queue.qdate, queue.qstatus, users.userid, users.fname, users.mname, users.lname FROM queue INNER JOIN users ON queue.userno = users.userno AND queue.qstatus = 'Now' LIMIT 1");
 
 
 
@@ -432,6 +443,8 @@ if (isset($_POST['qNoShow'])) {
                                     $qtype = $row['qtype'];
                                     $qstatus = $row['qstatus'];
                                     $qdesc = $row['qdesc'];
+                                    $qtitle = $row['qtitle'];
+
                                     echo' <div style = "align: center;">
                                             
                                 <center><h1>' . $qno . '</h1></center>
@@ -440,6 +453,10 @@ if (isset($_POST['qNoShow'])) {
                                 <p><b>Student Name:</b> ' . $username . '</p>
                                 <p><b>Transaction Type:</b> ' . $qtype . '</p>';
                                     if ($qtype == 'Other') {
+                                        echo '<p><b>Description:</b> ' . $qdesc . '</p>'
+                                        . '</div><hr>';
+                                    } elseif ($qtype == 'Document Submission') {
+                                        echo '<p><b>Document Title:</b> ' . $qtitle . '</p>';
                                         echo '<p><b>Description:</b> ' . $qdesc . '</p>'
                                         . '</div><hr>';
                                     } else {
@@ -470,7 +487,7 @@ if (isset($_POST['qNoShow'])) {
                                         </div>
                                         <div class="card-title btn btn-block">
                                             <input type ="hidden" name="userQNS" value="' . $qno . '">
-                                            <input type ="hidden" name="usernsQType" value="' . $qtype . '">
+                                            <input type ="hidden" name="usernsQType" value="' . $qtype . '">      
                                             <input type ="hidden" name="usernsQDesc" value="' . $qdesc . '">
                                             <input type ="hidden" name="usernsNumDone" value="' . $userno . '">  
                                             <button type="submit" name="qNoShow" class="btn btn-danger">No-Show</button>
@@ -488,6 +505,7 @@ if (isset($_POST['qNoShow'])) {
                                         <div class="card-title btn btn-block">
                                             <input type ="hidden" name="userQDone" value="' . $qno . '">
                                             <input type ="hidden" name="userQType" value="' . $qtype . '">
+                                            <input type ="hidden" name="userQTitle" value="' . $qtitle . '">
                                             <input type ="hidden" name="userQDesc" value="' . $qdesc . '">
                                             <input type ="hidden" name="userNumDone" value="' . $userno . '">       
                                             <button type="submit" name ="qNext" class="btn btn-success">Done</button>

@@ -21,49 +21,100 @@ if (!isset($_SESSION['user_name'])) {
 }
 
 if (isset($_POST['getQueueNum'])) {
-    
+
+    $docTitle = $_POST['docTitle'];
     $qno = $_POST['qno'];
     $qType = $_POST["selectType"];
     $qDesc = $_POST['qDesc'];
+    $qDesc2 = $_POST['qDesc2'];
     $userno = $_SESSION['userno'];
     $qStatus = "Waiting";
     $inqueue = "1";
 
-    $submitSql = $conn->prepare("INSERT INTO queue VALUES ('', ?, ?, ?, NOW(), ?)");
-    $submitSql->bind_param("isss", $_SESSION['userno'], $qType, $qDesc, $qStatus);
+    if ($docTitle == "") {
 
-    $submitSql2 = $conn->prepare("INSERT INTO queuelogs VALUES ('', ?, ?, ?, NOW(), ?)");
-    $submitSql2->bind_param("isss", $_SESSION['userno'], $qType, $qDesc, $qStatus);
+        $submitSql = $conn->prepare("INSERT INTO queue VALUES ('', ?, ?, ?, ?, NOW(), ?)");
+        $submitSql->bind_param("issss", $_SESSION['userno'], $qType, $docTitle, $qDesc, $qStatus);
 
-    $userQ = $conn->prepare("UPDATE users SET inqueue=? WHERE userno=?");
-    $userQ->bind_param("ii", $inqueue, $_SESSION['userno']);
+        $submitSql2 = $conn->prepare("INSERT INTO queuelogs VALUES ('', ?, ?, ?, ?, NOW(), ?)");
+        $submitSql2->bind_param("issss", $_SESSION['userno'], $qType, $docTitle, $qDesc, $qStatus);
+
+        $userQ = $conn->prepare("UPDATE users SET inqueue=? WHERE userno=?");
+        $userQ->bind_param("ii", $inqueue, $_SESSION['userno']);
 
 
-    if ($submitSql == TRUE) {
+        if ($submitSql == TRUE) {
 
-        $submitSql->execute();
-        $submitSql->close();
+            $submitSql->execute();
+            $submitSql->close();
 
-        if ($submitSql2 == TRUE) {
-            $submitSql2->execute();
-            $submitSql2->close();
+            if ($submitSql2 == TRUE) {
+                $submitSql2->execute();
+                $submitSql2->close();
+            }
+
+            if ($userQ == TRUE) {
+                $userQ->execute();
+                $userQ->close();
+            }
+
+            $passval = 'Queue Ticket No. ' . $qno . ' / ' . $qType . '';
+
+            $passaction = "Get Queue Ticket";
+            $logpass = $conn->prepare("INSERT INTO updatelogs VALUES ('',?,?,NOW(),?)");
+            $logpass->bind_param("sss", $passaction, $_SESSION['user_name'], $passval);
+            $logpass->execute();
+            $logpass->close();
+
+            header("Location: queue.php");
+            exit;
+        } else {
+            $postFailed = '<div class="alert alert-danger">
+                        Queue Failed!
+                        </div>';
         }
+    } elseif ($docTitle != "") {
 
-        if ($userQ == TRUE) {
-            $userQ->execute();
-            $userQ->close();
+        $submitSql = $conn->prepare("INSERT INTO queue VALUES ('', ?, ?, ?, ?, NOW(), ?)");
+        $submitSql->bind_param("issss", $_SESSION['userno'], $qType, $docTitle, $qDesc2, $qStatus);
+
+        $submitSql2 = $conn->prepare("INSERT INTO queuelogs VALUES ('', ?, ?, ?, ?, NOW(), ?)");
+        $submitSql2->bind_param("issss", $_SESSION['userno'], $qType, $docTitle, $qDesc2, $qStatus);
+
+        $userQ = $conn->prepare("UPDATE users SET inqueue=? WHERE userno=?");
+        $userQ->bind_param("ii", $inqueue, $_SESSION['userno']);
+
+
+        if ($submitSql == TRUE) {
+
+            $submitSql->execute();
+            $submitSql->close();
+
+            if ($submitSql2 == TRUE) {
+                $submitSql2->execute();
+                $submitSql2->close();
+            }
+
+            if ($userQ == TRUE) {
+                $userQ->execute();
+                $userQ->close();
+            }
+
+            $passval = 'Queue Ticket No. ' . $qno . ' / ' . $qType . '';
+
+            $passaction = "Get Queue Ticket";
+            $logpass = $conn->prepare("INSERT INTO updatelogs VALUES ('',?,?,NOW(),?)");
+            $logpass->bind_param("sss", $passaction, $_SESSION['user_name'], $passval);
+            $logpass->execute();
+            $logpass->close();
+
+            header("Location: queue.php");
+            exit;
+        } else {
+            $postFailed = '<div class="alert alert-danger">
+                        Queue Failed!
+                        </div>';
         }
-
-        $passval = 'Queue Ticket No. '.$qno.' / '.$qType.'';
-
-        $passaction = "Get Queue Ticket";
-        $logpass = $conn->prepare("INSERT INTO updatelogs VALUES ('',?,?,NOW(),?)");
-        $logpass->bind_param("sss", $passaction, $_SESSION['user_name'], $passval);
-        $logpass->execute();
-        $logpass->close();
-        
-        header("Location: queue.php");
-        exit;
     } else {
         $postFailed = '<div class="alert alert-danger">
                         Queue Failed!
@@ -301,8 +352,10 @@ if (isset($_POST['getQueueNum'])) {
                                                 </div>
                                                 
                                                <div class="form-group" id="qDesc2">
+                                                    <label for="title"><h5>Document Title: *</h5></label>
+                                                    <input type="text" class="form-control" name="docTitle"></input>
                                                     <label for="description"><h5>Description: *</h5></label>
-                                                    <textarea rows="2" class="form-control" name="qDesc"></textarea>
+                                                    <textarea rows="2" class="form-control" name="qDesc2"></textarea>
                                                 </div>
 
                                             </div>
