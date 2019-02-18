@@ -21,50 +21,25 @@ if (!isset($_SESSION['user_name'])) {
     header("location:/iicshd/index.php");
 }
 
-if (isset($_GET['clear'])) {
-    $clear = $_GET['clear'];
+if (isset($_GET['status'])) {
+    $status = $_GET['status'];
 } else {
-    $clear = '';
+    $status = '';
 }
 
-if (isset($_GET['check'])) {
-    $check = $_GET['check'];
-} else {
-    $check = '';
-}
+if (isset($_POST['deleteFile'])) {
+    $fileno = $_POST['fileno'];
+    $filepath = $_POST['filepath'];
 
-$passwordCheck = '';
+    $deleteSql = $conn->prepare("DELETE FROM files WHERE fileno = ?");
+    $deleteSql->bind_param("s", $fileno);
+    $deleteSql->execute();
+    $deleteSql->close();
 
-if (isset($_POST['toggleClear'])) {
-    $passwordCheck = $_POST['passwordCheck'];
-    $check_userid = $_POST['check_userid'];
+    unlink($filepath);
 
-    $pcheck = $conn->prepare("SELECT * FROM users WHERE userid = ?");
-    $pcheck->bind_param("s", $check_userid);
-    $pcheck->execute();
-    $result = $pcheck->get_result();
-
-    if ($result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()) {
-            $hashedPwdCheck = password_verify($passwordCheck, $row['password']);
-
-            if ($hashedPwdCheck == FALSE) {
-                $_GET['check'] = 'failed';
-                header("Location: cpanel3.php?check=failed");
-            } elseif ($hashedPwdCheck == TRUE) {
-
-                $clearQuery = $conn->prepare("TRUNCATE TABLE queue");
-                $clearQuery->execute();
-                $clearQuery->close();
-
-                $_GET['clear'] = "success";
-                header("location: cpanel3.php?clear=success");
-                exit;
-            }
-        }
-    } else {
-        echo "Clear Queue failed.";
-    }
+    $_GET['status'] = 'success';
+    header("Location: cpanel4.php?status=success");
 }
 ?>
 
@@ -103,6 +78,9 @@ if (isset($_POST['toggleClear'])) {
                 color: white;
                 font-size: 2px;
             }
+
+            th { font-size: 14px; }
+            td { font-size: 14px; }
         </style>
 
 
@@ -228,14 +206,8 @@ if (isset($_POST['toggleClear'])) {
                 </div>
 
                 <?php
-                if ($clear == TRUE) {
-                    echo '<div class="alert alert-success"><span class="fas fa-check"></span> Queue cleared successfully!</div>';
-                } else {
-                    echo '';
-                }
-
-                if ($check == TRUE) {
-                    echo '<div class="alert alert-danger"><span class="fas fa-times"></span> Clear queue failed.</div>';
+                if ($status == TRUE) {
+                    echo '<div class="alert alert-success"><span class="fas fa-check"></span> File deleted successfully!</div>';
                 } else {
                     echo '';
                 }
@@ -248,47 +220,97 @@ if (isset($_POST['toggleClear'])) {
                             <ul class="list-group list-group-flush">
                                 <a href="cpanel.php"><li class="list-group-item">General <span style="float:right;" class="fas fa-caret-right"></span></li></a>
                                 <a href="cpanel2.php"><li class="list-group-item">User Accounts <span style="float:right;" class="fas fa-caret-right"></span></li></a>
-                                <a href="cpanel3.php"><li class="list-group-item active">Queue Settings <span style="float:right;" class="fas fa-caret-right"></span></li></a>
-                                <a href="cpanel4.php"><li class="list-group-item">Manage Uploads <span style="float:right;" class="fas fa-caret-right"></span></li></a>
+                                <a href="cpanel3.php"><li class="list-group-item">Queue Settings <span style="float:right;" class="fas fa-caret-right"></span></li></a>
+                                <a href="cpanel4.php"><li class="list-group-item active">Manage Uploads <span style="float:right;" class="fas fa-caret-right"></span></li></a>
                             </ul>
                         </div>
                     </div>
 
                     <div class="col-sm-10">
                         <div class="card">
-                            <h4 class="card-header">Queue Settings</h4>
+                            <h4 class="card-header">Manage Uploads</h4>
                             <div class="card-body">
 
-                                <h5 class="card-title">Clear Queue List</h5>
-                                <hr>
-                                <a href='#clear' data-toggle='modal'><button type='button' class='btn btn-dark' title='Clear Queue'><span class='fas fa-trash' aria-hidden='true'></span> Clear</button></a>
+                                <div class="table-responsive">
 
-                                <div id="clear" class="modal fade" role="dialog">
+                                    <table id="downloadable" class="table table-striped table-responsive-lg">
 
-                                    <div class="modal-dialog modal-lg">
+                                        <thead>
+                                            <tr>
+                                                <th>Filename</th>
+                                                <th>Date Uploaded</th>
+                                                <th>View</th>
+                                                <th>Delete</th>
+                                            </tr>
+                                        </thead>
 
-                                        <form method="post">
-                                            <div class="modal-content">
+                                        <tbody>
 
-                                                <div class="modal-header">
-                                                    <h4 class="modal-title">Clear Queue</h4>
-                                                </div>
+                                            <?php
+                                            $getfiles = mysqli_query($conn, "SELECT * FROM files WHERE HIDDEN = '0'");
 
-                                                <div class="modal-body">
-                                                    <input type="hidden" name="check_userid" value="<?php echo $_SESSION['userid']; ?>">
-                                                    <label for="inputPassword">Please input your password: </label>
-                                                    <p><input type="password" id="inputPassword" class="form-control" placeholder="Password" name = "passwordCheck"></p>
+                                            if ($getfiles->num_rows > 0) {
+                                                while ($row = $getfiles->fetch_assoc()) {
+                                                    $fileno = $row['fileno'];
+                                                    $filetitle = $row['filetitle'];
+                                                    $filename = $row['filename'];
+                                                    $filedate = $row['filedate'];
 
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-default" data-dismiss="modal"><span class="fas fa-times"></span> Cancel</button>
-                                                        <button class="btn btn-dark" type = "submit" name="toggleClear" title="Clear Queue"><span class="fas fa-trash"></span> Clear</button>
-                                                    </div>
-                                                </div>
+                                                    echo '<tr><td>' . $filetitle . '</td>'
+                                                    . '<td>' . $filedate . '</td>'
+                                                    . '<td>'
+                                                    . '<a href = "../../uploads/' . $filename . '" target=”_blank”>'
+                                                    . '<button type = "button" class="btn btn-primary btn-sm" name ="viewFile" title="View"><span class="fas fa-eye"></span></button>'
+                                                    . '</a></td>'
+                                                    . '<td>'
+                                                    . '<a href = "#delete' . $fileno . '" data-toggle="modal">'
+                                                    . '<button type = "button" class="btn btn-danger btn-sm" name ="deleteFile" title="Delete"><span class="fas fa-trash"></span></button>'
+                                                    . '</a></td>'
+                                                    . ' </tr>';
 
-                                            </div>
-                                        </form>
+                                                    echo '<div id="delete' . $fileno . '" class="modal fade" role="dialog">
+                                                            <form method="post">
+                                                                <div class="modal-dialog modal-lg">
+                                                                    <!-- Modal content-->
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-header">
 
-                                    </div>
+                                                                            <h4 class="modal-title">Delete File (' . $filetitle . ')</h4>
+                                                                        </div>
+
+                                                                        <div class="modal-body">
+                                                                            
+                                                                        <div class="alert alert-danger">Are you sure you want to delete this file?</div>
+                                                                            <div class="row">
+                                                                                <div class="col-sm-12">
+                                                                                    <input type="hidden" name="fileno" value="' . $fileno . '">
+                                                                                    <input type="hidden" name="filepath" value="../../uploads/' . $filename . '">
+                                                                                    <p><strong>Filename: </strong>' . $filetitle . '</p>
+                                                                                    <p><strong>Date Uploaded: </strong>' . $filedate . '</p>
+                                                                                    <p><strong>Location: </strong>uploads/' . $filename . '</p>
+                                                                                </div>
+                                                                            </div>
+                                                                            <br>
+                                                                            <div class="modal-footer">
+                                                                                <button style="float: right;" type="button" class="btn btn-secondary btn-m" data-dismiss="modal"><span class="fas fa-times"></span> Cancel</button>
+                                                                                <button style="float: right;" type="submit" name="deleteFile" class="btn btn-danger btn-m"><span class="fas fa-trash" ></span> Delete</button>
+                                                                                
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </form>
+                                                        </div>';
+                                                }
+                                            }
+                                            ?>
+
+                                        </tbody>
+
+
+                                    </table>
+
+
 
                                 </div>
 
@@ -319,7 +341,7 @@ if (isset($_POST['toggleClear'])) {
         ================================================== -->
         <!-- Placed at the end of the document so the pages load faster -->
         <script src="../../js/jquery-3.3.1.js" ></script>
-        <script>window.jQuery || document.write('<script src="../../js/jquery-3.3.1.js"><\/script>')</script>
+        <script>window.jQuery || document.write('<script src = "../../js/jquery-3.3.1.js"><\/script>')</script>
         <script src="../../js/popper.js"></script>
         <script src="../../js/bootstrap.min.js"></script>
 
@@ -349,9 +371,8 @@ if (isset($_POST['toggleClear'])) {
 $thisDate = date("m/d/Y");
 ?>
 
-                $('#myannouncements').DataTable({
-                    "bLengthChange": false,
-                    pageLength: 5,
+                $('#downloadable').DataTable({
+
                     initComplete: function () {
                         this.api().columns().every(function () {
                             var column = this;

@@ -293,8 +293,8 @@ if ($studSuccess == TRUE) {
                                             try {
                                                 //Recipients
                                                 $mail->setFrom('noreply.iicshd@gmail.com', 'IICS Help Desk');
-//                                                $mail->addAddress($_SESSION['studemail']);
-                                                $mail->addAddress('rlphvicente@gmail.com');
+                                                $mail->addAddress($_SESSION['studemail']);
+//                                                $mail->addAddress('rlphvicente@gmail.com');
                                                 $mail->addReplyTo('noreply.iicshd@gmail.com', 'IICS Help Desk'); // Add a recipient
 
                                                 $mail->isHTML(true);                                  // Set email format to HTML
@@ -319,8 +319,8 @@ if ($studSuccess == TRUE) {
                                             try {
                                                 //Recipients
                                                 $mail->setFrom('noreply.iicshd@gmail.com', 'IICS Help Desk');
-                                                $mail->addAddress('rlphvicente@gmail.com');
-//                                                $mail->addAddress($_SESSION['empemail']);
+//                                                $mail->addAddress('rlphvicente@gmail.com');
+                                                $mail->addAddress($_SESSION['empemail']);
                                                 $mail->addReplyTo('noreply.iicshd@gmail.com', 'IICS Help Desk'); // Add a recipient
 
                                                 $mail->isHTML(true);                                  // Set email format to HTML

@@ -3,6 +3,10 @@
 // Check if image file is a actual image or fake image
 if (isset($_POST["uploadFile"])) {
 
+    $fileName = $_POST['fileName'];
+
+    $date = date("d/m/y");
+
     $target_dir = "../../uploads/";
     $target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
     $uploadOk = 1;
@@ -45,6 +49,12 @@ if (isset($_POST["uploadFile"])) {
             $logpass->bind_param("sss", $passaction, $_SESSION['user_name'], $passval);
             $logpass->execute();
             $logpass->close();
+
+            $fileSql = $conn->prepare("INSERT INTO files VALUES ('',?,?,?,'0')");
+            $fileSql->bind_param("sss", $fileName, $_FILES["fileToUpload"]["name"], $date);
+            $fileSql->execute();
+            $fileSql->close();
+            
 //            echo "The file " . basename($_FILES["fileToUpload"]["name"]) . " has been uploaded.";
         } else {
 //            echo "Sorry, there was an error uploading your file.";

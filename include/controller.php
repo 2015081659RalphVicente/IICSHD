@@ -59,9 +59,9 @@ if (isset($_POST['login'])) {
                         exit();
                     } else {
 
-                        $passval = 'Login';
+                        $passaction = 'Login';
 
-                        $passaction = "Logged in successfully.";
+                        $passval = "Logged in successfully.";
                         $logpass = $conn->prepare("INSERT INTO updatelogs VALUES ('',?,?,NOW(),?)");
                         $logpass->bind_param("sss", $passaction, $_SESSION['user_name'], $passval);
                         $logpass->execute();
@@ -77,9 +77,9 @@ if (isset($_POST['login'])) {
                         exit();
                     } else {
 
-                        $passval = 'Login';
+                        $passaction = 'Login';
 
-                        $passaction = "Logged in successfully.";
+                        $passval = "Logged in successfully.";
                         $logpass = $conn->prepare("INSERT INTO updatelogs VALUES ('',?,?,NOW(),?)");
                         $logpass->bind_param("sss", $passaction, $_SESSION['user_name'], $passval);
                         $logpass->execute();
@@ -95,9 +95,9 @@ if (isset($_POST['login'])) {
                         exit();
                     } else {
 
-                        $passval = 'Logged in successfully.';
+                        $passaction = 'Login';
 
-                        $passaction = "Login";
+                        $passval = "Logged in successfully.";
                         $logpass = $conn->prepare("INSERT INTO updatelogs VALUES ('',?,?,NOW(),?)");
                         $logpass->bind_param("sss", $passaction, $_SESSION['user_name'], $passval);
                         $logpass->execute();

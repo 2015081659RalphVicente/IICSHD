@@ -276,6 +276,7 @@ if (isset($_POST['addnewsecq'])) {
                                 <a href="cpanel.php"><li class="list-group-item active">General <span style="float:right;" class="fas fa-caret-right"></span></li></a>
                                 <a href="cpanel2.php"><li class="list-group-item">User Accounts <span style="float:right;" class="fas fa-caret-right"></span></li></a>
                                 <a href="cpanel3.php"><li class="list-group-item">Queue Settings <span style="float:right;" class="fas fa-caret-right"></span></li></a>
+                                <a href="cpanel4.php"><li class="list-group-item">Manage Uploads <span style="float:right;" class="fas fa-caret-right"></span></li></a>
                             </ul>
                         </div>
                     </div>
@@ -311,6 +312,11 @@ if (isset($_POST['addnewsecq'])) {
                                             <li>Only .pdf, .docx and .doc files are allowed.</li>
                                         </ul>
                                     </div>
+
+                                    <label for="filename">Filename: </label>
+
+                                    <input type="text" id="fileName" name="fileName" class="form-control"><br>
+
                                     <label for="newfile">Upload New Document Template: </label>
 
                                     <input type="file" id="fileToUpload" name="fileToUpload" class="form-control" accept=".pdf, .docx, .doc">
