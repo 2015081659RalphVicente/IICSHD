@@ -25,6 +25,12 @@ if (isset($_SESSION['user_name'])) {
     }
 }
 
+if (isset($_GET['codefail'])) {
+    $codefail = $_GET['codefail'];
+} else {
+    $codefail = '';
+}
+
 $mail = new PHPMailer;
 
 $mail->isSMTP();                                      // Set mailer to use SMTP
@@ -119,8 +125,17 @@ if ($studSuccess == TRUE) {
                         </div>';
                         }
                     } else {
-                        $_SESSION['studSuccess'] = 0;
-                        header("Location: verifyfail.php");
+                        $_SESSION['counter'] = 0;
+
+//                        while ($_SESSION['counter'] <= 2) {
+//                            $_SESSION['counter'] ++;
+//                            header("Location: success.php");
+//                        }
+                        if ($_SESSION['counter'] <= 2) {
+                            $_SESSION['counter'] ++;
+                            $_GET['codefail'] = 'success';
+                            header("Location: success.php?codefail=success");
+                        }
                     }
                 }
             }
@@ -200,8 +215,17 @@ if ($studSuccess == TRUE) {
                         </div>';
                         }
                     } else {
-                        $_SESSION['studSuccess'] = 0;
-                        header("Location: verifyfail.php");
+                        $_SESSION['counter'] = 0;
+
+//                        while ($_SESSION['counter'] <= 2) {
+//                            $_SESSION['counter'] ++;
+//                            header("Location: success.php");
+//                        }
+                        if ($_SESSION['counter'] <= 2) {
+                            $_SESSION['counter'] ++;
+                            $_GET['codefail'] = 'success';
+                            header("Location: success.php?codefail=success");
+                        }
                     }
                 }
             }
@@ -250,6 +274,15 @@ if ($studSuccess == TRUE) {
                         <div class="card-body">
                             <span class="fas fa-2x fa-user-check"></span>
                             <center><h4>Almost Done!</h4></center>
+                            <?php
+                            if ($codefail == TRUE) {
+                                echo "<div class='alert alert-danger'> Wrong verification code. Please check your <b>Spam</b> folder if you can't locate the email.</div>";
+                            } else {
+                                echo '';
+                            }
+                            ?>
+
+
                             <?php $_SESSION['param'] = ''; ?>
                             <div class="alert alert-success">
                                 We have sent an email to
