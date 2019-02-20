@@ -75,6 +75,7 @@ if (isset($_POST['addnewsecq'])) {
         $logpass->bind_param("sss", $passaction, $_SESSION['user_name'], $passval);
         $logpass->execute();
         $logpass->close();
+        
 
         $_GET['addSecQ'] = 'success';
         echo '<script>window.location.href="cpanel.php?addSecQ=success"</script>';

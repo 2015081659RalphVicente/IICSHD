@@ -20,6 +20,12 @@ if (!isset($_SESSION['user_name'])) {
     header("location:/iicshd/login.php");
 }
 
+if (isset($_GET['queue'])) {
+    $queue = $_GET['queue'];
+} else {
+    $queue = '';
+}
+
 if (isset($_POST['getQueueNum'])) {
 
     $docTitle = $_POST['docTitle'];
@@ -274,11 +280,20 @@ if (isset($_POST['getQueueNum'])) {
                 </div>
 
                 <?php
+                if ($queue == TRUE) {
+                    echo '<div class="alert alert-danger"><span class="fas fa-check"></span> Queue failed! Transaction type cannot be empty.</div>';
+                } else {
+                    echo '';
+                }
+                ?>
+
+                <?php
                 $qcToggle = mysqli_query($conn, "SELECT * FROM qtoggle WHERE qtogno = '1'");
 
                 if ($qcToggle->num_rows > 0) {
                     while ($row = $qcToggle->fetch_assoc()) {
                         $qtoggle = $row['qtoggle'];
+                        $qadmin = $row['qadmin'];
 
                         if ($qtoggle == '0') {
                             echo
@@ -299,7 +314,7 @@ if (isset($_POST['getQueueNum'])) {
                             . '</div> '
                             . '</div>'
                             . '<br>';
-                            ;
+
                             $qCheck = mysqli_query($conn, "SELECT *, LPAD(queue.qno,4,0) FROM users LEFT JOIN queue ON users.userno = queue.userno WHERE users.userid = " . $_SESSION['userid'] . " ORDER BY queue.qno DESC LIMIT 1");
 
                             if ($qCheck->num_rows > 0) {
@@ -337,11 +352,15 @@ if (isset($_POST['getQueueNum'])) {
                                                 <div class="form-group">
                                                     <label for="title"><h5>Transaction Type: <span class="require">*</span></h5></label>
                                                     <select name="selectType" class="form-control" id="selectType" required>
-                                                        <option selected disabled>Select one:</option>
+                                                        <option value="" selected disabled>Select one:</option>
                                                         <option value="Document Inquiry">Document Inquiry</option>
-                                                        <option value="Enrollment Concern">Enrollment Concern</option>
-                                                        <option value="Meeting with Admin">Meeting with Admin</option>
-                                                        <option value="Other">Other</option>
+                                                        <option value="Enrollment Concern">Enrollment Concern</option>';
+                                        if ($qadmin == '1') {
+                                            echo '<option value="Meeting with Admin">Meeting with Admin</option>';
+                                        } else {
+                                            echo '<option disabled>Meeting with Admin</option>';
+                                        }
+                                        echo '<option value="Other">Other</option>
                                                         <option value="Document Submission">Document Submission</option>
                                                     </select>
                                                 </div>

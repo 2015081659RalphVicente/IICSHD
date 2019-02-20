@@ -73,6 +73,58 @@ if (isset($_POST['toggleOpen'])) {
     }
 }
 
+if (isset($_POST['adminIn'])) {
+    $adminIn = "0";
+    $qtogno = "1";
+
+    $adminQ = $conn->prepare("UPDATE qtoggle SET qadmin=? WHERE qtogno=?");
+    $adminQ->bind_param("ii", $adminIn, $qtogno);
+    $adminQ->execute();
+    $adminQ->close();
+
+    if ($adminQ == TRUE) {
+
+        $passval = 'Admin is available.';
+
+        $passaction = "Queue Control";
+        $logpass = $conn->prepare("INSERT INTO updatelogs VALUES ('',?,?,NOW(),?)");
+        $logpass->bind_param("sss", $passaction, $_SESSION['user_name'], $passval);
+        $logpass->execute();
+        $logpass->close();
+
+        header("location: queue.php");
+        exit;
+    } else {
+        echo "Queue toggle failed.";
+    }
+}
+
+if (isset($_POST['adminOut'])) {
+    $adminOut = "1";
+    $qtogno = "1";
+
+    $adminQ2 = $conn->prepare("UPDATE qtoggle SET qadmin=? WHERE qtogno=?");
+    $adminQ2->bind_param("ii", $adminOut, $qtogno);
+    $adminQ2->execute();
+    $adminQ2->close();
+
+    if ($adminQ2 == TRUE) {
+
+        $passval = 'Admin is unavailable.';
+
+        $passaction = "Queue Control";
+        $logpass = $conn->prepare("INSERT INTO updatelogs VALUES ('',?,?,NOW(),?)");
+        $logpass->bind_param("sss", $passaction, $_SESSION['user_name'], $passval);
+        $logpass->execute();
+        $logpass->close();
+
+        header("location: queue.php");
+        exit;
+    } else {
+        echo "Queue toggle failed.";
+    }
+}
+
 if (isset($_POST['qStart'])) {
     $qqno = $_POST['startQno'];
     $qstatus = "Now";
@@ -112,7 +164,7 @@ if (isset($_POST['qNext'])) {
 
     $insertQ = $conn->prepare("INSERT INTO queuelogs VALUES ('', ?, ?, ?, ?, ?, ?)");
     $insertQ->bind_param("isssss", $qnumdone, $qtype, $qtitle, $qdesc, $thisDate, $qstatus);
-    
+
     $submitDoc = $conn->prepare("INSERT INTO documents VALUES ('', NOW(), ?, ?, ?, ?, '0', ?)");
     $submitDoc->bind_param("isssi", $qnumdone, $qtitle, $qdesc, $docstatus, $hidden);
 
@@ -145,14 +197,14 @@ if (isset($_POST['qNext'])) {
         $logpass->bind_param("sss", $passaction, $_SESSION['user_name'], $passval);
         $logpass->execute();
         $logpass->close();
-        
-        if ($qtitle != ""){
+
+        if ($qtitle != "") {
             $submitDoc->execute();
             $submitDoc->close();
-        } else{
+        } else {
             
         }
-        
+
         header("location: queue.php");
         exit;
     } else {
@@ -401,6 +453,7 @@ if (isset($_POST['qNoShow'])) {
                 if ($qCheck->num_rows > 0) {
                     while ($row = $qCheck->fetch_assoc()) {
                         $qtoggle = $row['qtoggle'];
+                        $qadmin = $row['qadmin'];
 
                         if ($qtoggle == '1') {
                             echo
@@ -412,9 +465,17 @@ if (isset($_POST['qNoShow'])) {
                             . '<form method="post" action="">'
                             . '<input type="hidden" name="closeQueue" value="0">'
                             . '<button class="btn btn-danger" type = "submit" name="toggleClose"><span class="fas fa-lock"></span> Close Queue</button> '
-                            . '</form>'
-                            . '</div>'
-                            . '</h5> '
+                            . '</form>';
+                            if ($qadmin == '1') {
+                                echo '<form method="post" action="">';
+                                echo '&nbsp; <button class="btn btn-primary" type = "submit" name="adminIn"><span class="fas fa-user-tie"></span> Admin is Available</button> ';
+                                echo '</form></div>';
+                            } else {
+                                echo '<form method="post" action="">';
+                                echo '&nbsp; <button class="btn btn-dark" type = "submit" name="adminOut"><span class="fas fa-user-tie"></span> Admin is Unavailable</button> ';
+                                echo '</form></div>';
+                            }
+                            echo '</h5> '
                             . '</div> '
                             . '</div>'
                             . '<br>'
