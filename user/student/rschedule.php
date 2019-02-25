@@ -164,15 +164,50 @@ if (!isset($_SESSION['user_name'])) {
                     <h1 class="h2">Room Schedule</h1>
                 </div>
 
-                <div id="spinner">
-                    <div>
-                        <center><img src="../../img/loading.gif" /></center>
+                <nav>
+                    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                        <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">CS</a>
+                        <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">IS</a>
+                        <a class="nav-item nav-link" id="nav-contact-tab" data-toggle="tab" href="#nav-contact" role="tab" aria-controls="nav-contact" aria-selected="false">IT</a>
+                    </div>
+                </nav>
+
+                <div class="tab-content" id="nav-tabContent">
+                    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                        <?php
+                        $query = mysqli_query($conn, "SELECT * FROM schedule WHERE schedname = 'CS Room Schedule'");
+                        if ($query->num_rows > 0) {
+                            while ($row = $query->fetch_assoc()) {
+                                $schedlink = $row['schedlink'];
+                                echo '<iframe style="border:none; position:relative; width:100%; height:100vh;" width="100%" src="' . $schedlink . '?widget=true&amp;headers=false"></iframe>';
+                            }
+                        }
+                        ?>
+                    </div>
+                    <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+                        <?php
+                        $query = mysqli_query($conn, "SELECT * FROM schedule WHERE schedname = 'IS Room Schedule'");
+                        if ($query->num_rows > 0) {
+                            while ($row = $query->fetch_assoc()) {
+                                $schedlink = $row['schedlink'];
+                                echo '<iframe style="border:none; position:relative; width:100%; height:100vh;" width="100%" src="' . $schedlink . '?widget=true&amp;headers=false"></iframe>';
+                            }
+                        }
+                        ?>
+                    </div>
+                    <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
+                        <?php
+                        $query = mysqli_query($conn, "SELECT * FROM schedule WHERE schedname = 'IT Room Schedule'");
+                        if ($query->num_rows > 0) {
+                            while ($row = $query->fetch_assoc()) {
+                                $schedlink = $row['schedlink'];
+                                echo '<iframe style="border:none; position:relative; width:100%; height:100vh;" width="100%" src="' . $schedlink . '?widget=true&amp;headers=false"></iframe>';
+                            }
+                        }
+                        ?>
                     </div>
                 </div>
-
-                <iframe style="border:none; position:relative; width:100%; height:100vh;"  
-                        onload="document.getElementById('spinner').style.display = 'none';" src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSab2wVyRg4pyarRUwsNmnXM-T92SOfpM_m5TCWGLzwOIQJxHrEs9gYpHhJtxbsj1-pnl_FToAsPZ6j/pubhtml?widget=true&amp;headers=false"></iframe>
-
+                
             </main>
         </div>
 
@@ -196,39 +231,39 @@ if (!isset($_SESSION['user_name'])) {
         <!-- Icons -->
         <script src="../../js/feather.min.js"></script>
         <script>
-                            feather.replace()
+            feather.replace()
         </script>
 
         <!-- Graphs -->
         <script src="../../js/Chart.min.js"></script>
         <script>
-                            var ctx = document.getElementById("myChart");
-                            var myChart = new Chart(ctx, {
-                                type: 'line',
-                                data: {
-                                    labels: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-                                    datasets: [{
-                                            data: [15339, 21345, 18483, 24003, 23489, 24092, 12034],
-                                            lineTension: 0,
-                                            backgroundColor: 'transparent',
-                                            borderColor: '#007bff',
-                                            borderWidth: 4,
-                                            pointBackgroundColor: '#007bff'
-                                        }]
-                                },
-                                options: {
-                                    scales: {
-                                        yAxes: [{
-                                                ticks: {
-                                                    beginAtZero: false
-                                                }
-                                            }]
-                                    },
-                                    legend: {
-                                        display: false,
-                                    }
+            var ctx = document.getElementById("myChart");
+            var myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+                    datasets: [{
+                            data: [15339, 21345, 18483, 24003, 23489, 24092, 12034],
+                            lineTension: 0,
+                            backgroundColor: 'transparent',
+                            borderColor: '#007bff',
+                            borderWidth: 4,
+                            pointBackgroundColor: '#007bff'
+                        }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                                ticks: {
+                                    beginAtZero: false
                                 }
-                            });
+                            }]
+                    },
+                    legend: {
+                        display: false,
+                    }
+                }
+            });
         </script>
     </body>
 </html>

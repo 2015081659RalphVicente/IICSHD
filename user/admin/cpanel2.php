@@ -61,7 +61,7 @@ if (isset($_POST['deactivate'])) {
             if ($conn->query($sql) === TRUE) {
 
                 $_GET['deactivate'] = 'success';
-                header("location: cpanel2.php?deactivate2=success");
+                header("location: cpanel2.php?deactivate=success");
             } else {
                 echo "Error deleting record: " . $conn->error;
             }
@@ -70,7 +70,7 @@ if (isset($_POST['deactivate'])) {
         }
     } else {
         $_GET['deactivate'] = 'failed';
-        header("location: cpanel2.php?deactivate2=failed");
+        header("location: cpanel2.php?deactivate=failed");
     }
 }
 
@@ -339,6 +339,7 @@ if (isset($_POST['activate2'])) {
                                 <a href="cpanel2.php"><li class="list-group-item active">User Accounts <span style="float:right;" class="fas fa-caret-right"></span></li></a>
                                 <a href="cpanel3.php"><li class="list-group-item">Queue Settings <span style="float:right;" class="fas fa-caret-right"></span></li></a>
                                 <a href="cpanel4.php"><li class="list-group-item">Manage Uploads <span style="float:right;" class="fas fa-caret-right"></span></li></a>
+                                <a href="cpanel5.php"><li class="list-group-item">Create Admin <span style="float:right;" class="fas fa-caret-right"></span></li></a>
                             </ul>
                         </div>
                     </div>

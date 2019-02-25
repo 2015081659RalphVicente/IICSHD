@@ -188,7 +188,7 @@ if (!isset($_SESSION['user_name'])) {
                             </h5>
                         </div>
 
-                        <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+                        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
                             <br>
                             <div class="table-responsive">
 
@@ -208,7 +208,7 @@ if (!isset($_SESSION['user_name'])) {
 
                                         <?php
                                         $newsubquery = mysqli_query($conn, "SELECT LPAD(documents.docno,4,0), documents.docdatesubmit, users.fname, users.mname, users.lname, documents.doctitle,"
-                                                . "documents.docdesc, documents.docstatus FROM documents INNER JOIN users WHERE documents.userno = users.userno AND documents.hidden = '0'");
+                                                . "documents.docdesc, documents.docstatus FROM documents INNER JOIN users WHERE documents.userno = users.userno AND documents.hidden = '0' ORDER BY documents.docdatesubmit DESC");
 
                                         if ($newsubquery->num_rows > 0) {
                                             while ($row = $newsubquery->fetch_assoc()) {
@@ -277,7 +277,7 @@ if (!isset($_SESSION['user_name'])) {
                                     <tbody>
 
                                         <?php
-                                        $qLogsquery = mysqli_query($conn, "SELECT LPAD(queue.qno,4,0), queue.qtitle, queue.qtype, queue.qdate, queue.qstatus, queue.qdesc, users.userid, users.fname, users.mname, users.lname FROM queuelogs queue INNER JOIN users ON queue.userno = users.userno");
+                                        $qLogsquery = mysqli_query($conn, "SELECT LPAD(queue.qno,4,0), queue.qtitle, queue.qtype, queue.qdate, queue.qstatus, queue.qdesc, users.userid, users.fname, users.mname, users.lname FROM queuelogs queue INNER JOIN users ON queue.userno = users.userno ORDER BY queue.qno DESC");
 
                                         if ($qLogsquery->num_rows > 0) {
                                             while ($row = $qLogsquery->fetch_assoc()) {

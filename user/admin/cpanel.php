@@ -22,7 +22,7 @@ if (!isset($_SESSION['user_name'])) {
     header("location:/iicshd/index.php");
 }
 
-$secqErr = $_FILES['fileToUpload'] = '';
+$secqErr = $_FILES['fileToUpload'] = $sectionErr = '';
 
 if (isset($_GET['addSecQ'])) {
     $addSecQ = $_GET['addSecQ'];
@@ -30,10 +30,34 @@ if (isset($_GET['addSecQ'])) {
     $addSecQ = '';
 }
 
+if (isset($_GET['addSection'])) {
+    $addSection = $_GET['addSection'];
+} else {
+    $addSection = '';
+}
+
+if (isset($_GET['activate'])) {
+    $activate = $_GET['activate'];
+} else {
+    $activate = '';
+}
+
+if (isset($_GET['deactivate'])) {
+    $deactivate = $_GET['deactivate'];
+} else {
+    $deactivate = '';
+}
+
 if (isset($_GET['upload'])) {
     $upload = $_GET['upload'];
 } else {
     $upload = '';
+}
+
+if (isset($_GET['updatesched'])) {
+    $updatesched = $_GET['updatesched'];
+} else {
+    $updatesched = '';
 }
 
 if (isset($_GET['uploadfail'])) {
@@ -75,10 +99,130 @@ if (isset($_POST['addnewsecq'])) {
         $logpass->bind_param("sss", $passaction, $_SESSION['user_name'], $passval);
         $logpass->execute();
         $logpass->close();
-        
+
 
         $_GET['addSecQ'] = 'success';
         echo '<script>window.location.href="cpanel.php?addSecQ=success"</script>';
+    }
+}
+
+if (isset($_POST['addSection'])) {
+    $newsection = $_POST['newSection'];
+
+    $bool = TRUE;
+
+    $secqcheck = $conn->prepare("SELECT sectionno FROM sections WHERE sectionname=? ");
+    $secqcheck->bind_param("s", $newsection);
+    $secqcheck->execute();
+
+    $secqcheckresult = $secqcheck->get_result();
+
+    if ($secqcheckresult->num_rows > 0) {
+        $sectionErr = '<div class="alert alert-warning">
+                        <strong>Section</strong> already exists!
+         </div>';
+        $bool = FALSE;
+    }
+
+    if ($bool == TRUE) {
+
+        $addnewsec = $conn->prepare("INSERT INTO sections VALUES ('', ?, '0')");
+        $addnewsec->bind_param("s", $newsection);
+
+        $addnewsec->execute();
+        $addnewsec->close();
+
+        $passval = 'Added section successfully.';
+
+        $passaction = "Add Section";
+        $logpass = $conn->prepare("INSERT INTO updatelogs VALUES ('',?,?,NOW(),?)");
+        $logpass->bind_param("sss", $passaction, $_SESSION['user_name'], $passval);
+        $logpass->execute();
+        $logpass->close();
+
+
+        $_GET['addSection'] = 'success';
+        echo '<script>window.location.href="cpanel.php?addSection=success"</script>';
+    }
+}
+
+if (isset($_POST['updateSched'])) {
+    // sql to deactivate a record
+    $schedid = $_POST['schedID'];
+    $schedlink = $_POST['schedLink'];
+    $schedname = $_POST['schedName'];
+
+    $bool = TRUE;
+
+    if ($bool == TRUE) {
+        $stmt = $conn->prepare("UPDATE schedule SET schedlink =? WHERE schedno= ? ");
+
+        $stmt->bind_param("si", $schedlink, $schedid);
+        $stmt->execute();
+        $stmt->close();
+
+
+        $passval = 'Updated schedule link of ' . $schedname . ' successfully.';
+
+        $passaction = "Update Schedule Link";
+        $logpass = $conn->prepare("INSERT INTO updatelogs VALUES ('',?,?,NOW(),?)");
+        $logpass->bind_param("sss", $passaction, $_SESSION['user_name'], $passval);
+        $logpass->execute();
+        $logpass->close();
+
+        $_GET['updatesched'] = 'success';
+
+        header("Location: cpanel.php?updatesched=success");
+    } else {
+        $_GET['updatesched'] = 'failed';
+        header("location: cpanel.php?updatesched=failed");
+    }
+}
+
+if (isset($_POST['deactivate'])) {
+    // sql to deactivate a record
+    $deactivate_id = $_POST['deactivate_id'];
+    $deacname = $_POST['deacname'];
+
+    $bool = TRUE;
+
+    if ($bool == TRUE) {
+        $sql = "UPDATE sections SET hidden = 1 where sectionno='$deactivate_id'";
+        if ($conn->query($sql) === TRUE) {
+            $sql = "UPDATE sections SET hidden = 1 where sectionno='$deactivate_id'";
+            if ($conn->query($sql) === TRUE) {
+
+                $_GET['deactivate'] = 'success';
+                header("location: cpanel.php?deactivate=success");
+            } else {
+                echo "Error deleting record: " . $conn->error;
+            }
+        } else {
+            echo "Error deleting record: " . $conn->error;
+        }
+    } else {
+        $_GET['deactivate'] = 'failed';
+        header("location: cpanel.php?deactivate=failed");
+    }
+}
+
+if (isset($_POST['activate'])) {
+    // sql to activate a record
+    $activate_id = $_POST['activate_id'];
+    $acname = $_POST['acname'];
+
+    $sql = "UPDATE sections SET hidden = 0 where sectionno='$activate_id'";
+    if ($conn->query($sql) === TRUE) {
+        $sql = "UPDATE sections SET hidden = 0 where sectionno='$activate_id'";
+
+        if ($conn->query($sql) === TRUE) {
+            $_GET['activate'] = 'success';
+            header("location: cpanel.php?activate=success");
+        } else {
+            echo "Error deleting record: " . $conn->error;
+        }
+    } else {
+        echo "Error deleting record: " . $conn->error;
     }
 }
 ?>
@@ -118,6 +262,9 @@ if (isset($_POST['addnewsecq'])) {
                 color: white;
                 font-size: 2px;
             }
+
+            th { font-size: 14px; }
+            td { font-size: 14px; }
         </style>
 
 
@@ -249,11 +396,36 @@ if (isset($_POST['addnewsecq'])) {
                     echo '';
                 }
 
+                if ($addSection == TRUE) {
+                    echo '<div class="alert alert-success"><span class="fas fa-check"></span> Section added successfully!</div>';
+                } else {
+                    echo '';
+                }
+
                 if ($upload == TRUE) {
                     echo '<div class="alert alert-success"><span class="fas fa-check"></span> Document uploaded successfully!</div>';
                 } else {
                     echo '';
                 }
+
+                if ($activate == TRUE) {
+                    echo '<div class="alert alert-success"><span class="fas fa-check"></span> Section activated successfully!</div>';
+                } else {
+                    echo '';
+                }
+
+                if ($updatesched == TRUE) {
+                    echo '<div class="alert alert-success"><span class="fas fa-check"></span> Updated schedule link successfully!</div>';
+                } else {
+                    echo '';
+                }
+
+                if ($deactivate == TRUE) {
+                    echo '<div class="alert alert-success"><span class="fas fa-check"></span> Section deactivated successfully!</div>';
+                } else {
+                    echo '';
+                }
+
 
                 if ($uploadfail == TRUE) {
                     echo '<div class="alert alert-danger"><span class="fas fa-times"></span> <b>Document upload failed! </b><br>'
@@ -278,6 +450,7 @@ if (isset($_POST['addnewsecq'])) {
                                 <a href="cpanel2.php"><li class="list-group-item">User Accounts <span style="float:right;" class="fas fa-caret-right"></span></li></a>
                                 <a href="cpanel3.php"><li class="list-group-item">Queue Settings <span style="float:right;" class="fas fa-caret-right"></span></li></a>
                                 <a href="cpanel4.php"><li class="list-group-item">Manage Uploads <span style="float:right;" class="fas fa-caret-right"></span></li></a>
+                                <a href="cpanel5.php"><li class="list-group-item">Create Admin <span style="float:right;" class="fas fa-caret-right"></span></li></a>
                             </ul>
                         </div>
                     </div>
@@ -301,6 +474,212 @@ if (isset($_POST['addnewsecq'])) {
                                     <button type="submit" name = "addnewsecq" class="btn btn-success float-right">Add</button>
                                 </form>
 
+                                <br>
+
+                                <h5 class="card-title">Manage Sections</h5>
+                                <hr>
+                                <div class="alert alert-secondary"><span class="fas fa-exclamation-circle"></span>
+                                    The section list must be updated each time a new semester starts.
+                                </div>
+                                <hr>
+                                <table id="sections" class="table table-striped table-responsive">
+                                    <thead>
+                                        <tr>
+                                            <th>Section</th>
+                                            <th>Status</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+
+                                        <?php
+                                        $query = mysqli_query($conn, "SELECT * FROM sections");
+                                        if ($query->num_rows > 0) {
+                                            while ($row = $query->fetch_assoc()) {
+                                                $getsecno = $row['sectionno'];
+                                                $getsecname = $row['sectionname'];
+                                                $getstatus = $row['hidden'];
+
+                                                echo "<tr>"
+                                                . "<td>" . $getsecname . "</td>";
+                                                if ($getstatus == 0) {
+                                                    echo "<td> Active </td>"
+                                                    . "<td>" . "<a href='#deactivate" . $getsecno . "'data-toggle='modal'><button type='button' class='btn btn-danger btn-sm' title='Deactivate'><span class='fas fa-lock' aria-hidden='true'></span></button></a>" . "</td>";
+                                                } else {
+                                                    echo "<td> Deactivated </td>"
+                                                    . "<td>" . "<a href='#activate" . $getsecno . "'data-toggle='modal'><button type='button' class='btn btn-success btn-sm' title='Activate'><span class='fas fa-lock' aria-hidden='true'></span></button></a>" . "</td>";
+                                                }
+
+                                                echo '<div id="activate';
+                                                echo $getsecno;
+                                                echo'" class="modal fade" role="dialog">
+                                                                <div class="modal-dialog modal-lg">
+                                                                    <form method="post">
+                                                                        <div class="modal-content">
+
+                                                                            <div class="modal-header">
+                                                                                <h4 class="modal-title">Activate Section</h4>
+                                                                            </div>
+
+                                                                            <div class="modal-body">
+                                                                                <input type="hidden" name="activate_id" value="';
+                                                echo $getsecno;
+                                                echo '">
+                                                                                <input type="hidden" name="acname" value="';
+                                                echo $getsecname;
+                                                echo '">
+
+                                                                                <div class="alert alert-warning"><p>Are you sure you want to ACTIVATE the section <strong>';
+                                                echo $getsecname;
+                                                echo'</strong>?</p>
+                                                                                </div>
+                                                                                <div class="modal-footer">
+                                                                                    <button type="submit" name="activate" class="btn btn-success"><span class="fas fa-check"></span> Yes</button>
+                                                                                    <button type="button" class="btn btn-default" data-dismiss="modal"><span class="fas fa-times"></span> No</button>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </form>
+                                                                </div>
+                                                            </div>
+
+
+                                                            <div id="deactivate';
+                                                echo $getsecno;
+                                                echo'" class="modal fade" role="dialog">
+                                                                <div class="modal-dialog modal-lg">
+                                                                    <form method="post">
+                                                                        <div class="modal-content">
+
+                                                                            <div class="modal-header">
+                                                                                <h4 class="modal-title">Deactivate Section</h4>
+                                                                            </div>
+
+                                                                            <div class="modal-body">
+                                                                                <input type="hidden" name="deactivate_id" value="';
+                                                echo $getsecno;
+                                                echo'">
+                                                                                <input type="hidden" name="deacname" value="';
+                                                echo $getsecname;
+                                                echo'">
+
+                                                                                <div class="alert alert-warning"><p>Are you sure you want to DEACTIVATE the section <strong>';
+                                                echo $getsecname;
+                                                echo'</strong>?</p>
+                                                                                </div>
+                                                                                <div class="modal-footer">
+                                                                                    <button type="submit" name="deactivate" class="btn btn-success"><span class="fas fa-check"></span> Yes</button>
+                                                                                    <button type="button" class="btn btn-default" data-dismiss="modal"><span class="fas fa-times"></span> No</button>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </form>
+                                                                </div>
+                                                            </div>';
+                                            }
+                                        }
+                                        ?>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <th>Section</th>
+                                            <th>Status</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                                <hr>
+                                <form action="" method="post" enctype="multipart/form-data">
+                                    <label for="newSection">Add New Section: </label>
+
+                                    <input type="text" id="newSection" name="newSection" class="form-control"><br>
+
+                                    <br>
+                                    <button type="submit" name = "addSection" class="btn btn-success float-right">Add</button>
+                                </form>
+
+                                <br>
+
+                                <h5 class="card-title">Update Schedule Link</h5>
+                                <hr>
+                                <form action="" method="post" enctype="multipart/form-data">
+                                    <div class="alert alert-secondary"><span class="fas fa-exclamation-circle"></span>
+                                        Class, Faculty and Room Schedules must be updated in Google Sheets before updating the link here.
+                                    </div>
+
+                                    <table id="schedule" class="table table-striped table-responsive">
+                                        <thead>
+                                            <tr>
+                                                <th>Schedule Name</th>
+                                                <th>Schedule Link</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+
+                                            <?php
+                                            $query = mysqli_query($conn, "SELECT * FROM schedule");
+                                            if ($query->num_rows > 0) {
+                                                while ($row = $query->fetch_assoc()) {
+                                                    $getschedno = $row['schedno'];
+                                                    $getschedname = $row['schedname'];
+                                                    $getschedlink = $row['schedlink'];
+
+                                                    echo "<tr>"
+                                                    . "<td>" . $getschedname . "</td>"
+                                                    . "<td>" . $getschedlink . "</td>";
+                                                    echo "<td>" . "<a href='#edit" . $getschedno . "'data-toggle='modal'><button type='button' class='btn btn-dark btn-sm' title='Edit'><span class='fas fa-edit' aria-hidden='true'></span></button></a>" . "</td>";
+
+                                                    echo '<div id="edit';
+                                                    echo $getschedno;
+                                                    echo'" class="modal fade" role="dialog">
+                                                                <div class="modal-dialog modal-lg">
+                                                                    <form method="post">
+                                                                        <div class="modal-content">
+
+                                                                            <div class="modal-header">
+                                                                                <h4 class="modal-title">Update Schedule Link of ' . $getschedname . '</h4>
+                                                                            </div>
+
+                                                                            <div class="modal-body">
+                                                                                <input type="hidden" name="schedID" value="';
+                                                    echo $getschedno;
+                                                    echo '">
+                                                                                <input type="hidden" name="schedName" value="';
+                                                    echo $getschedname;
+                                                    echo '">
+                                                        
+
+                                                                                <label for="schedule">Schedule Link: </label>
+
+                                                                                <input type="text" id="schedLink" name="schedLink" class="form-control" placeholder=' . $getschedlink . '>
+                                                                                
+                                                                                </div>
+                                                                                <div class="modal-footer">
+                                                                                    <button type="submit" name="updateSched" class="btn btn-success"><span class="fas fa-check"></span> Update</button>
+                                                                                    <button type="button" class="btn btn-default" data-dismiss="modal"><span class="fas fa-times"></span> Cancel</button>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </form>
+                                                                </div>
+                                                            </div>';
+                                                }
+                                            }
+                                            ?>
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <th>Schedule Name</th>
+                                                <th>Schedule Link</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+
+                                </form>
+
+                                <hr>
                                 <br>
 
                                 <h5 class="card-title">Document Templates</h5>
@@ -381,7 +760,42 @@ if (isset($_POST['addnewsecq'])) {
 $thisDate = date("m/d/Y");
 ?>
 
-                $('#myannouncements').DataTable({
+                $('#schedule').DataTable({
+                    "bLengthChange": false,
+                    pageLength: 9,
+                    autoWidth: false,
+                    initComplete: function () {
+                        this.api().columns().every(function () {
+                            var column = this;
+                            var select = $('<select><option value="">Show all</option></select>')
+                                    .appendTo($(column.footer()).empty())
+                                    .on('change', function () {
+                                        var val = $.fn.dataTable.util.escapeRegex(
+                                                $(this).val()
+                                                );
+
+                                        column
+                                                .search(val ? '^' + val + '$' : '', true, false)
+                                                .draw();
+                                    });
+
+                            column.data().unique().sort().each(function (d, j) {
+                                select.append('<option value="' + d + '">' + d + '</option>')
+                            });
+                        });
+                    }
+
+
+
+                });
+            });
+
+            $(document).ready(function () {
+<?php
+$thisDate = date("m/d/Y");
+?>
+
+                $('#sections').DataTable({
                     "bLengthChange": false,
                     pageLength: 5,
                     initComplete: function () {
@@ -409,6 +823,7 @@ $thisDate = date("m/d/Y");
 
                 });
             });
+
 
         </script>
 

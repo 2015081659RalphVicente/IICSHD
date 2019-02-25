@@ -250,6 +250,7 @@ if (isset($_POST['toggleClear'])) {
                                 <a href="cpanel2.php"><li class="list-group-item">User Accounts <span style="float:right;" class="fas fa-caret-right"></span></li></a>
                                 <a href="cpanel3.php"><li class="list-group-item active">Queue Settings <span style="float:right;" class="fas fa-caret-right"></span></li></a>
                                 <a href="cpanel4.php"><li class="list-group-item">Manage Uploads <span style="float:right;" class="fas fa-caret-right"></span></li></a>
+                                <a href="cpanel5.php"><li class="list-group-item">Create Admin <span style="float:right;" class="fas fa-caret-right"></span></li></a>
                             </ul>
                         </div>
                     </div>
