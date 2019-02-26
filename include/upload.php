@@ -5,7 +5,7 @@ if (isset($_POST["uploadFile"])) {
 
     $fileName = $_POST['fileName'];
 
-    $date = date("d/m/y");
+    $date = date("m/d/Y");
 
     $target_dir = "../../uploads/";
     $target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
@@ -54,8 +54,8 @@ if (isset($_POST["uploadFile"])) {
             $logpass->execute();
             $logpass->close();
 
-            $fileSql = $conn->prepare("INSERT INTO files VALUES ('',?,?,?,'0')");
-            $fileSql->bind_param("sss", $fileName, $_FILES["fileToUpload"]["name"], $date);
+            $fileSql = $conn->prepare("INSERT INTO files VALUES ('',?,?,NOW(),'0')");
+            $fileSql->bind_param("ss", $fileName, $_FILES["fileToUpload"]["name"]);
             $fileSql->execute();
             $fileSql->close();
 

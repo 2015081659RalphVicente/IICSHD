@@ -241,14 +241,27 @@ if (isset($_POST['updateSec'])) {
                                                 <td><h6><label for="section">Section: &nbsp;</label></h6></td>
                                                 <td>
                                                     <select required class="form-control" name="studsection">
-                                                        <option class="hidden" value="" selected disabled><?php echo $_SESSION['section']; ?></option>
+                                                        <option class="hidden" value="" selected disabled>
+                                                            <?php
+                                                                $prof = mysqli_query($conn, "SELECT section from users WHERE userno = '".$_SESSION['userno']."'");
+                                                                if ($prof->num_rows > 0) {
+                                                                    while ($row = $prof->fetch_assoc()) {
+                                                                        $section = $row['section'];
+                                                                        
+                                                                        echo $section;
+                                                                    }
+                                                                } else {
+                                                                    echo "Empty.";
+                                                                }
+                                                            ?>
+                                                        </option>
                                                         <?php
                                                         $prof = mysqli_query($conn, "SELECT * from sections WHERE hidden = '0' ORDER BY sectionname DESC");
                                                         if ($prof->num_rows > 0) {
                                                             while ($row = $prof->fetch_assoc()) {
                                                                 $sectionname = $row['sectionname'];
                                                                 $sectionno = $row['sectionno'];
-                                                                echo "<option value='" . $sectionno . "'>" . $sectionname . "</option>";
+                                                                echo "<option value='" . $sectionname . "'>" . $sectionname . "</option>";
                                                             }
                                                         } else {
                                                             echo"<option value=''></option>";

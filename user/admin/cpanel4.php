@@ -38,6 +38,14 @@ if (isset($_POST['deleteFile'])) {
 
     unlink($filepath);
 
+    $passval = 'Document template deleted.';
+
+    $passaction = "File Delete";
+    $logpass = $conn->prepare("INSERT INTO updatelogs VALUES ('',?,?,NOW(),?)");
+    $logpass->bind_param("sss", $passaction, $_SESSION['user_name'], $passval);
+    $logpass->execute();
+    $logpass->close();
+
     $_GET['status'] = 'success';
     header("Location: cpanel4.php?status=success");
 }

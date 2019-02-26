@@ -395,7 +395,7 @@ if (isset($_SESSION['tab'])) {
                                                 while ($row = $prof->fetch_assoc()) {
                                                     $sectionname = $row['sectionname'];
                                                     $sectionno = $row['sectionno'];
-                                                    echo "<option value='" . $sectionno . "'>" . $sectionname . "</option>";
+                                                    echo "<option value='" . $sectionname . "'>" . $sectionname . "</option>";
                                                 }
                                             } else {
                                                 echo"<option value=''></option>";
