@@ -789,7 +789,7 @@ $thisDate = date("m/d/Y");
 
                 $('#sections').DataTable({
                     "bLengthChange": false,
-                    pageLength: 5,
+                    pageLength: 10,
                     initComplete: function () {
                         this.api().columns().every(function () {
                             var column = this;
