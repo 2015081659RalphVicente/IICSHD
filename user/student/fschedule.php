@@ -170,14 +170,19 @@ if (!isset($_SESSION['user_name'])) {
                     </div>
                 </nav>
 
-                <div class="tab-content" id="nav-tabContent">
+<div class="tab-content" id="nav-tabContent">
                     <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
                         <?php
                         $query = mysqli_query($conn, "SELECT * FROM schedule WHERE schedname = 'CS Faculty Schedule'");
                         if ($query->num_rows > 0) {
                             while ($row = $query->fetch_assoc()) {
                                 $schedlink = $row['schedlink'];
-                                echo '<iframe style="border:none; position:relative; width:100%; height:100vh;" width="100%" src="' . $schedlink . '?widget=true&amp;headers=false"></iframe>';
+
+                                if ($schedlink == TRUE) {
+                                    echo '<iframe style="border:none; position:relative; width:100%; height:100vh;" width="100%" src="' . $schedlink . '?widget=true&amp;headers=false"></iframe>';
+                                } else {
+                                    echo '<br><h4>No schedule available yet.</h4><br>';
+                                }
                             }
                         }
                         ?>
@@ -188,7 +193,12 @@ if (!isset($_SESSION['user_name'])) {
                         if ($query->num_rows > 0) {
                             while ($row = $query->fetch_assoc()) {
                                 $schedlink = $row['schedlink'];
-                                echo '<iframe style="border:none; position:relative; width:100%; height:100vh;" width="100%" src="' . $schedlink . '?widget=true&amp;headers=false"></iframe>';
+
+                                if ($schedlink == TRUE) {
+                                    echo '<iframe style="border:none; position:relative; width:100%; height:100vh;" width="100%" src="' . $schedlink . '?widget=true&amp;headers=false"></iframe>';
+                                } else {
+                                    echo '<br><h4>No schedule available yet.</h4><br>';
+                                }
                             }
                         }
                         ?>
@@ -199,7 +209,12 @@ if (!isset($_SESSION['user_name'])) {
                         if ($query->num_rows > 0) {
                             while ($row = $query->fetch_assoc()) {
                                 $schedlink = $row['schedlink'];
-                                echo '<iframe style="border:none; position:relative; width:100%; height:100vh;" width="100%" src="' . $schedlink . '?widget=true&amp;headers=false"></iframe>';
+
+                                if ($schedlink == TRUE) {
+                                    echo '<iframe style="border:none; position:relative; width:100%; height:100vh;" width="100%" src="' . $schedlink . '?widget=true&amp;headers=false"></iframe>';
+                                } else {
+                                    echo '<br><h4>No schedule available yet.</h4><br>';
+                                }
                             }
                         }
                         ?>
