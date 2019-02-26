@@ -152,14 +152,9 @@ if (isset($_POST['getQueueNum'])) {
                 background: #2e2e2e;
                 color: white;
                 font-size: 30px;
-            }
-
-            .headerline {
-                padding: 1px;
-                text-align: center;
-                background: #b00f24;
-                color: white;
-                font-size: 2px;
+                position:fixed;
+                bottom:0;                
+                border-top: 5px solid #b00f24;
             }
         </style>
 
@@ -389,7 +384,6 @@ if (isset($_POST['getQueueNum'])) {
                                 </form>
                             </div>
                         </div>
-
                     </div>';
                                     } else {
                                         echo '<div class="card">'
@@ -421,8 +415,6 @@ if (isset($_POST['getQueueNum'])) {
                     <h1 class="h2">In Line</h1>
                 </div>
 
-
-
                 <?php
                 $qcToggle = mysqli_query($conn, "SELECT * FROM qtoggle WHERE qtogno = '1'");
 
@@ -431,9 +423,7 @@ if (isset($_POST['getQueueNum'])) {
                         $qtoggle = $row['qtoggle'];
 
                         if ($qtoggle == '0') {
-                            echo
-
-                            '<div class="card">'
+                            echo '<div class="card">'
                             . '<div class="card-header bg-dark text-white">'
                             . '<h5>Status: Closed '
                             . '</h5> '
@@ -442,140 +432,145 @@ if (isset($_POST['getQueueNum'])) {
                             . '<br>';
                         } else {
 
-                            echo '                    <div class="row text-center">
+                            echo '<div class="row text-center">
                                         <div class="col-lg-6">
-                            <div class="card flex-fill">
-                                <div class="card-header bg-info text-light rounded"><h5>Now Serving</h5></div>
-                                <div class="card-body">';
+                                            <div class="card flex-fill">
+                                                <div class="card-header bg-info text-light rounded"><h5>Now Serving</h5></div>
+                                                    <div class="card-body">';
 
                             $qWaiting = mysqli_query($conn, "SELECT LPAD(qno,4,0) FROM queue WHERE qstatus = 'Now' LIMIT 1");
                             if ($qWaiting->num_rows > 0) {
                                 while ($row = $qWaiting->fetch_assoc()) {
                                     $qno = $row['LPAD(qno,4,0)'];
-                                    echo '<center><h2>' . $qno . '</h2></center></div>';
+                                    echo '<center><h2>' . $qno . '</h2></center>';
                                 }
                             } else {
-                                echo '<center><h4>Empty</h4></center></div>';
+                                echo '<center><h4>Empty</h4></center>';
                             }
+
+                            echo '                  </div>
+                                                </div>
+                                                <br>
+                                            </div>
+                                <br>';
+
+                            echo '    <div class="col-lg-2">
+                                        <div class="card flex-fill">
+                                            <div class="card-header bg-orange text-light rounded"><h5>Waiting</h5></div>
+                                                <div class="card-body">';
+
+                            $qWaiting = mysqli_query($conn, "SELECT LPAD(qno,4,0) FROM queue WHERE qstatus = 'Waiting' LIMIT 5");
+                            if ($qWaiting->num_rows > 0) {
+                                while ($row = $qWaiting->fetch_assoc()) {
+                                    $qno = $row['LPAD(qno,4,0)'];
+                                    echo '<center><h4>' . $qno . '</h4></center><hr>';
+                                }
+                            } else {
+                                echo '<center><h4>Empty</h4></center>';
+                            }
+
+                            echo '              </div>
+                                            </div>
+                                            <br>
+                                        </div>
+                                <br>';
+
+                            echo '    <div class="col-lg-2">
+                                        <div class="card flex-fill">
+                                            <div class="card-header bg-dark text-light rounded"><h5>No-Show</h5></div>
+                                                <div class="card-body">';
+
+                            $qWaiting = mysqli_query($conn, "SELECT LPAD(qno,4,0) FROM queue WHERE qstatus = 'No-Show' ORDER BY qno DESC LIMIT 5");
+                            if ($qWaiting->num_rows > 0) {
+                                while ($row = $qWaiting->fetch_assoc()) {
+                                    $qno = $row['LPAD(qno,4,0)'];
+                                    echo '<center><h4>' . $qno . '</h4></center><hr>';
+                                }
+                            } else {
+                                echo '<center><h4>Empty</h4></center>';
+                            }
+
+                            echo '              </div>
+                                            </div>
+                                            <br>
+                                        </div>
+                                    <br>';
+
+                            echo '    <div class="col-lg-2">
+                                        <div class="card flex-fill">
+                                            <div class="card-header bg-success text-light rounded"><h5>Done</h5></div>
+                                                <div class="card-body">';
+
+                            $qWaiting = mysqli_query($conn, "SELECT LPAD(qno,4,0) FROM queue WHERE qstatus = 'Done' ORDER BY qno DESC LIMIT 5");
+                            if ($qWaiting->num_rows > 0) {
+                                while ($row = $qWaiting->fetch_assoc()) {
+                                    $qno = $row['LPAD(qno,4,0)'];
+                                    echo '<center><h4>' . $qno . '</h4></center><hr>';
+                                }
+                            } else {
+                                echo '<center><h4>Empty</h4></center>';
+                            }
+
+                            echo '              </div>
+                                            </div>
+                                            <br>
+                                        </div>
+                                      </div>
+                                    <br>
+                            </div>';
                         }
                     }
                 }
                 ?>
-        </div>
-        <br>
-    </div>
+                <br>
 
-    <br>
+                <br>
 
-    <div class="col-lg-2">
-        <div class="card flex-fill">
-            <div class="card-header bg-orange text-light rounded"><h5>Waiting</h5></div>
-            <div class="card-body">
-                <?php
-                $qWaiting = mysqli_query($conn, "SELECT LPAD(qno,4,0) FROM queue WHERE qstatus = 'Waiting' LIMIT 5");
-                if ($qWaiting->num_rows > 0) {
-                    while ($row = $qWaiting->fetch_assoc()) {
-                        $qno = $row['LPAD(qno,4,0)'];
-                        echo '<center><h4>' . $qno . '</h4></center><hr>';
-                    }
-                } else {
-                    echo '<center><h4>Empty</h4></center>';
-                }
-                ?>
+                </div>
+                <br><br><br>
+            </main>
+
+        <div class="container-fluid header">
+            <div align="center" style="font-size: 11px; color:white;">
+                IICS Help Desk © 2019
             </div>
         </div>
-        <br>
-    </div>
 
-    <div class="col-lg-2">
-        <div class="card flex-fill">
-            <div class="card-header bg-dark text-light rounded"><h5>No-Show</h5></div>
-            <div class="card-body">
-                <?php
-                $qWaiting = mysqli_query($conn, "SELECT LPAD(qno,4,0) FROM queue WHERE qstatus = 'No-Show' ORDER BY qno DESC LIMIT 5");
-                if ($qWaiting->num_rows > 0) {
-                    while ($row = $qWaiting->fetch_assoc()) {
-                        $qno = $row['LPAD(qno,4,0)'];
-                        echo '<center><h4>' . $qno . '</h4></center><hr>';
-                    }
-                } else {
-                    echo '<center><h4>Empty</h4></center>';
-                }
-                ?>
-            </div>
-        </div>
-        <br>
-    </div>
+        <!-- Bootstrap core JavaScript
+        ================================================== -->
+        <!-- Placed at the end of the document so the pages load faster -->
+        <script src="../../js/jquery-3.3.1.js" ></script>
+        <script>window.jQuery || document.write('<script src="../../js/jquery-3.3.1.js"><\/script>')</script>
+        <script src="../../js/popper.js"></script>
+        <script src="../../js/bootstrap.min.js"></script>
 
-    <div class="col-lg-2">
-        <div class="card flex-fill">
-            <div class="card-header bg-success text-light rounded"><h5>Done</h5></div>
-            <div class="card-body">
-                <?php
-                $qWaiting = mysqli_query($conn, "SELECT LPAD(qno,4,0) FROM queue WHERE qstatus = 'Done' ORDER BY qno DESC LIMIT 5");
-                if ($qWaiting->num_rows > 0) {
-                    while ($row = $qWaiting->fetch_assoc()) {
-                        $qno = $row['LPAD(qno,4,0)'];
-                        echo '<center><h4>' . $qno . '</h4></center><hr>';
-                    }
-                } else {
-                    echo '<center><h4>Empty</h4></center>';
-                }
-                ?>
-            </div>
-        </div>
-        <br>
-        <br>
-    </div>
-</div>
+        <!-- Icons -->
+        <script src="../../js/feather.min.js"></script>
+        <script>
+            feather.replace()
+        </script>
 
-</main>
-</div>
-
-<div class="container-fluid headerline">
-    &nbsp;
-</div>
-<div class="container-fluid header">
-    <div align="center" style="font-size: 11px; color:white;">
-        IICS Help Desk © 2019
-    </div>
-</div>
-
-<!-- Bootstrap core JavaScript
-================================================== -->
-<!-- Placed at the end of the document so the pages load faster -->
-<script src="../../js/jquery-3.3.1.js" ></script>
-<script>window.jQuery || document.write('<script src="../../js/jquery-3.3.1.js"><\/script>')</script>
-<script src="../../js/popper.js"></script>
-<script src="../../js/bootstrap.min.js"></script>
-
-<!-- Icons -->
-<script src="../../js/feather.min.js"></script>
-<script>
-    feather.replace()
-</script>
-
-<script>
-    $("#qDesc").hide();
-    $("#selectType").change(function () {
-        var val = $("#selectType").val();
-        if (val == "Other") {
-            $("#qDesc").show();
-        } else {
+        <script>
             $("#qDesc").hide();
-        }
-    });
+            $("#selectType").change(function () {
+                var val = $("#selectType").val();
+                if (val == "Other") {
+                    $("#qDesc").show();
+                } else {
+                    $("#qDesc").hide();
+                }
+            });
 
-    $("#qDesc2").hide();
-    $("#selectType").change(function () {
-        var val = $("#selectType").val();
-        if (val == "Document Submission") {
-            $("#qDesc2").show();
-        } else {
             $("#qDesc2").hide();
-        }
-    });
-</script>
+            $("#selectType").change(function () {
+                var val = $("#selectType").val();
+                if (val == "Document Submission") {
+                    $("#qDesc2").show();
+                } else {
+                    $("#qDesc2").hide();
+                }
+            });
+        </script>
 
-</body>
+    </body>
 </html>

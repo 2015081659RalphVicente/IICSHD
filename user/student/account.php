@@ -78,14 +78,9 @@ if (isset($_POST['updateSec'])) {
                 background: #2e2e2e;
                 color: white;
                 font-size: 30px;
-            }
-
-            .headerline {
-                padding: 1px;
-                text-align: center;
-                background: #b00f24;
-                color: white;
-                font-size: 2px;
+                position:fixed;
+                bottom:0;                
+                border-top: 5px solid #b00f24;
             }
         </style>
 
@@ -247,30 +242,18 @@ if (isset($_POST['updateSec'])) {
                                                 <td>
                                                     <select required class="form-control" name="studsection">
                                                         <option class="hidden" value="" selected disabled><?php echo $_SESSION['section']; ?></option>
-                                                        <option disabled>──────── 1st Year ────────</option>
-                                                        <option value="1ITA">1ITA</option>
-                                                        <option value="1ITB">1ITB</option>
-                                                        <option value="1ITC">1ITC</option>
-                                                        <option value="1ITD">1ITD</option>
-                                                        <option value="1ITE">1ITE</option>
-                                                        <option value="1ITF">1ITF</option>
-                                                        <option value="1ITG">1ITG</option>
-                                                        <option disabled>──────── 2nd Year ────────</option>
-                                                        <option value="2ITA">2ITA</option>
-                                                        <option value="2ITB">2ITB</option>
-                                                        <option disabled>──────── 3rd Year ────────</option>
-                                                        <option value="3ITA">3ITA</option>
-                                                        <option value="3ITB">3ITB</option>
-                                                        <option disabled>──────── 4th Year ────────</option>
-                                                        <option value="4ITA">4ITA</option>
-                                                        <option value="4ITB">4ITB</option>
-                                                        <option value="4ITC">4ITC</option>
-                                                        <option value="4ITD">4ITD</option>
-                                                        <option value="4ITE">4ITE</option>
-                                                        <option value="4ITF">4ITF</option>
-                                                        <option value="4ITG">4ITG</option>
-                                                        <option value="4ITH">4ITH</option>
-                                                        <option value="4ITI">4ITI</option>
+                                                        <?php
+                                                        $prof = mysqli_query($conn, "SELECT * from sections WHERE hidden = '0' ORDER BY sectionname DESC");
+                                                        if ($prof->num_rows > 0) {
+                                                            while ($row = $prof->fetch_assoc()) {
+                                                                $sectionname = $row['sectionname'];
+                                                                $sectionno = $row['sectionno'];
+                                                                echo "<option value='" . $sectionno . "'>" . $sectionname . "</option>";
+                                                            }
+                                                        } else {
+                                                            echo"<option value=''></option>";
+                                                        }
+                                                        ?>
                                                     </select>
                                                     <br>
                                                 </td>
@@ -289,14 +272,11 @@ if (isset($_POST['updateSec'])) {
 
                 </div>
 
-                <br>
+                <br><br><br>
 
             </main>               
         </div>
 
-        <div class="container-fluid headerline">
-            &nbsp;
-        </div>
         <div class="container-fluid header">
             <div align="center" style="font-size: 11px; color:white;">
                 IICS Help Desk © 2019

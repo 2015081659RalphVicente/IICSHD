@@ -253,16 +253,11 @@ if (isset($_POST['activate'])) {
                 background: #2e2e2e;
                 color: white;
                 font-size: 30px;
+                position:fixed;
+                bottom:0;                
+                border-top: 5px solid #b00f24;
             }
-
-            .headerline {
-                padding: 1px;
-                text-align: center;
-                background: #b00f24;
-                color: white;
-                font-size: 2px;
-            }
-
+            
             th { font-size: 14px; }
             td { font-size: 14px; }
         </style>
@@ -709,15 +704,12 @@ if (isset($_POST['activate'])) {
 
 
                 </div>
-                <br>
+                <br><br><br>
 
             </main>
 
         </div>
 
-        <div class="container-fluid headerline">
-            &nbsp;
-        </div>
         <div class="container-fluid header">
             <div align="center" style="font-size: 11px; color:white;">
                 IICS Help Desk © 2019
