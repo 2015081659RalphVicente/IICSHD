@@ -256,7 +256,7 @@ if (isset($_POST['updateSec'])) {
                                                             ?>
                                                         </option>
                                                         <?php
-                                                        $prof = mysqli_query($conn, "SELECT * from sections WHERE hidden = '0' ORDER BY sectionname DESC");
+                                                        $prof = mysqli_query($conn, "SELECT * from sections WHERE hidden = '0' ORDER BY sectionname ASC");
                                                         if ($prof->num_rows > 0) {
                                                             while ($row = $prof->fetch_assoc()) {
                                                                 $sectionname = $row['sectionname'];
