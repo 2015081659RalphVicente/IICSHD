@@ -66,6 +66,19 @@ if (isset($_GET['uploadfail'])) {
     $uploadfail = '';
 }
 
+if (isset($_GET['deletesec'])) {
+    $deletesec = $_GET['deletesec'];
+} else {
+    $deletesec = '';
+}
+
+if (isset($_GET['editsec'])) {
+    $editsec = $_GET['editsec'];
+} else {
+    $editsec = '';
+}
+
+
 if (isset($_POST['addnewsecq'])) {
     $newsecq = $_POST['newsecq'];
 
@@ -225,6 +238,53 @@ if (isset($_POST['activate'])) {
         echo "Error deleting record: " . $conn->error;
     }
 }
+
+if (isset($_POST['editsec'])) {
+    // sql to deactivate a record
+    $deactivate_id = $_POST['editsec_id'];
+    $deacname = $_POST['editsecname'];
+
+    $bool = TRUE;
+
+    if ($bool == TRUE) {
+        $sql = "UPDATE sections SET sectionname = '$deacname' where sectionno='$deactivate_id'";
+        if ($conn->query($sql) === TRUE) {
+            $sql = "UPDATE sections SET sectionname = '$deacname' where sectionno='$deactivate_id'";
+            if ($conn->query($sql) === TRUE) {
+
+                $_GET['editsec'] = 'success';
+                header("location: cpanel.php?editsec=success");
+            } else {
+                echo "Error deleting record: " . $conn->error;
+            }
+        } else {
+            echo "Error deleting record: " . $conn->error;
+        }
+    } else {
+        $_GET['editsec'] = 'failed';
+        header("location: cpanel.php?editsec=failed");
+    }
+}
+
+if (isset($_POST['deletesec'])) {
+    // sql to activate a record
+    $activate_id = $_POST['deletesec_id'];
+    $acname = $_POST['deletesecname'];
+
+    $sql = "DELETE FROM sections WHERE sectionno='$activate_id'";
+    if ($conn->query($sql) === TRUE) {
+        $sql = "DELETE FROM sections WHERE sectionno='$activate_id'";
+
+        if ($conn->query($sql) === TRUE) {
+            $_GET['deletesec'] = 'success';
+            header("location: cpanel.php?deletesec=success");
+        } else {
+            echo "Error deleting record: " . $conn->error;
+        }
+    } else {
+        echo "Error deleting record: " . $conn->error;
+    }
+}
 ?>
 
 <html lang="en">
@@ -257,7 +317,7 @@ if (isset($_POST['activate'])) {
                 bottom:0;                
                 border-top: 5px solid #b00f24;
             }
-            
+
             th { font-size: 14px; }
             td { font-size: 14px; }
         </style>
@@ -391,6 +451,18 @@ if (isset($_POST['activate'])) {
                     echo '';
                 }
 
+                if ($editsec == TRUE) {
+                    echo '<div class="alert alert-success"><span class="fas fa-check"></span> Section edited successfully!</div>';
+                } else {
+                    echo '';
+                }
+
+                if ($deletesec == TRUE) {
+                    echo '<div class="alert alert-success"><span class="fas fa-check"></span> Section deleted successfully!</div>';
+                } else {
+                    echo '';
+                }
+
                 if ($addSection == TRUE) {
                     echo '<div class="alert alert-success"><span class="fas fa-check"></span> Section added successfully!</div>';
                 } else {
@@ -483,6 +555,8 @@ if (isset($_POST['activate'])) {
                                             <th>Section</th>
                                             <th>Status</th>
                                             <th>Action</th>
+                                            <th>Edit</th>
+                                            <th>Delete</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -504,6 +578,8 @@ if (isset($_POST['activate'])) {
                                                     echo "<td> Deactivated </td>"
                                                     . "<td>" . "<a href='#activate" . $getsecno . "'data-toggle='modal'><button type='button' class='btn btn-success btn-sm' title='Activate'><span class='fas fa-lock' aria-hidden='true'></span></button></a>" . "</td>";
                                                 }
+                                                echo "<td>" . "<a href='#editsec" . $getsecno . "'data-toggle='modal'><button type='button' class='btn btn-dark btn-sm' title='Edit'><span class='fas fa-edit' aria-hidden='true'></span></button></a>" . "</td>";
+                                                echo "<td>" . "<a href='#deletesec" . $getsecno . "'data-toggle='modal'><button type='button' class='btn btn-danger btn-sm' title='Delete'><span class='fas fa-trash' aria-hidden='true'></span></button></a>" . "</td>";
 
                                                 echo '<div id="activate';
                                                 echo $getsecno;
@@ -536,10 +612,75 @@ if (isset($_POST['activate'])) {
                                                                         </div>
                                                                     </form>
                                                                 </div>
-                                                            </div>
+                                                            </div>';
 
 
-                                                            <div id="deactivate';
+                                                echo '<div id="deletesec';
+                                                echo $getsecno;
+                                                echo'" class="modal fade" role="dialog">
+                                                                <div class="modal-dialog modal-lg">
+                                                                    <form method="post">
+                                                                        <div class="modal-content">
+
+                                                                            <div class="modal-header">
+                                                                                <h4 class="modal-title">Delete Section</h4>
+                                                                            </div>
+
+                                                                            <div class="modal-body">
+                                                                                <input type="hidden" name="deletesec_id" value="';
+                                                echo $getsecno;
+                                                echo '">
+                                                                                <input type="hidden" name="deletesecname" value="';
+                                                echo $getsecname;
+                                                echo '">
+
+                                                                                <div class="alert alert-danger"><p>Are you sure you want to DELETE the section <strong>';
+                                                echo $getsecname;
+                                                echo'</strong>?</p>
+                                                                                </div>
+                                                                                <div class="modal-footer">
+                                                                                    <button type="submit" name="deletesec" class="btn btn-success"><span class="fas fa-check"></span> Yes</button>
+                                                                                    <button type="button" class="btn btn-default" data-dismiss="modal"><span class="fas fa-times"></span> No</button>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </form>
+                                                                </div>
+                                                            </div>';
+
+
+                                                echo '<div id="editsec';
+                                                echo $getsecno;
+                                                echo'" class="modal fade" role="dialog">
+                                                                <div class="modal-dialog modal-lg">
+                                                                    <form method="post">
+                                                                        <div class="modal-content">
+
+                                                                            <div class="modal-header">
+                                                                                <h4 class="modal-title">Edit Section</h4>
+                                                                            </div>
+
+                                                                            <div class="modal-body">
+                                                                                <input type="hidden" name="editsec_id" value="';
+                                                echo $getsecno;
+                                                echo '">
+                                                                                <input type="text" class="form-control" name="editsecname" value="';
+                                                echo $getsecname;
+                                                echo '">
+                                                                                </div>
+                                                                                <div class="modal-footer">
+                                                                                    <button type="submit" name="editsec" class="btn btn-success"><span class="fas fa-check"></span> Save Changes</button>
+                                                                                    <button type="button" class="btn btn-default" data-dismiss="modal"><span class="fas fa-times"></span> No</button>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </form>
+                                                                </div>
+                                                            </div>';
+
+
+
+                                                echo '            <div id="deactivate';
                                                 echo $getsecno;
                                                 echo'" class="modal fade" role="dialog">
                                                                 <div class="modal-dialog modal-lg">
@@ -580,6 +721,8 @@ if (isset($_POST['activate'])) {
                                             <th>Section</th>
                                             <th>Status</th>
                                             <th>Action</th>
+                                            <th>Edit</th>
+                                            <th>Delete</th>
                                         </tr>
                                     </tfoot>
                                 </table>
