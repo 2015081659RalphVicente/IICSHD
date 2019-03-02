@@ -135,7 +135,7 @@ if (isset($_POST['empRegister'])) {
         header("Location: cpanel5.php?createAdmin=success");
         exit;
     } else {
-        header("Location: cpanel5.php");
+        
     }
 }
 ?>
@@ -401,7 +401,6 @@ if (isset($_POST['empRegister'])) {
                                             </div>
                                             <br>
                                             <input type="submit" class="btnRegister" name="empRegister" value="Register"/><br><br>
-                                            <div align="right" style="font-size: 14px;"><a href="index.php">Already have an account? Log-In</a></div>
                                         </div>
                                     </div>
                                 </form>

@@ -5,7 +5,7 @@ require 'controller.php';
 header('Content-Type: application/json');
 
 //query to get data from the table
-$query = sprintf("SELECT COUNT(qno), qtype FROM queue");
+$query = sprintf("(select COUNT(qno) as qno, qstatus from queue where qstatus = 'Done') union (select COUNT(qno) as qno, qstatus from queue where qstatus = 'No-Show')");
 
 //execute query
 $result = $conn->query($query);
@@ -15,6 +15,7 @@ $data = array();
 foreach ($result as $row) {
   $data[] = $row;
 }
+
 
 //free memory associated with result
 $result->close();

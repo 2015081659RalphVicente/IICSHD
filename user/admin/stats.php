@@ -166,12 +166,52 @@ if (!isset($_SESSION['user_name'])) {
                     <h1 class="h2">Statistics</h1>
                 </div>
 
-                <div id="chart-container">
-                    <canvas id="mycanvas"></canvas>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>Total # of Queued Students based on Queue Status</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="chart-container" style="height:300px; width:580px">       
+                                    <canvas id="piechart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>Total # of Queued Students based on Transaction Type</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="chart-container" style="height:300px; width:580px">       
+                                    <canvas id="barchart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                    </div>
+
+
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>Total # of Documents based on Document Status</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="chart-container">       
+                                    <canvas id="barchart2"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <br><br><br>
-                
+
             </main>
         </div>
 
@@ -205,6 +245,53 @@ if (!isset($_SESSION['user_name'])) {
                     method: "GET",
                     success: function (data) {
                         console.log(data);
+                        var qstatus = [];
+                        var qno = [];
+
+                        for (var i in data) {
+                            qstatus.push(data[i].qstatus);
+                            qno.push(data[i].qno);
+                        }
+
+                        var chartdata = {
+                            labels: qstatus,
+                            datasets: [
+                                {
+                                    label: 'Queue Status',
+                                    backgroundColor: [
+                                        "#007E33",
+                                        "#CC0000"
+                                    ],
+                                    borderColor: 'rgba(200, 200, 200, 0.75)',
+                                    hoverBackgroundColor: [
+                                        "#00C851",
+                                        "#ff4444"
+                                    ],
+                                    hoverBorderColor: 'rgba(200, 200, 200, 1)',
+                                    data: qno
+                                }
+                            ]
+                        };
+
+                        var ctx = $("#piechart");
+
+                        var piegraph = new Chart(ctx, {
+                            type: 'pie',
+                            data: chartdata
+                        });
+                    },
+                    error: function (data) {
+                        console.log(data);
+                    }
+                });
+            });
+
+            $(document).ready(function () {
+                $.ajax({
+                    url: "http://localhost:81/IICSHD/include/secondChart.php",
+                    method: "GET",
+                    success: function (data) {
+                        console.log(data);
                         var qtype = [];
                         var qno = [];
 
@@ -217,20 +304,91 @@ if (!isset($_SESSION['user_name'])) {
                             labels: qtype,
                             datasets: [
                                 {
-                                    label: 'Transaction Type',
-                                    backgroundColor: 'rgba(200, 200, 200, 0.75)',
+                                    label: '# of Queued Students',
+                                    backgroundColor: [
+
+                                        'rgba(255,99,132,1)',
+                                        'rgba(54, 162, 235, 1)',
+                                        'rgba(255, 206, 86, 1)',
+                                        'rgba(75, 192, 192, 1)',
+                                        'rgba(153, 102, 255, 1)'
+                                    ],
                                     borderColor: 'rgba(200, 200, 200, 0.75)',
-                                    hoverBackgroundColor: 'rgba(200, 200, 200, 1)',
+                                    hoverBackgroundColor: [
+                                        'rgba(255, 99, 132, 0.2)',
+                                        'rgba(54, 162, 235, 0.2)',
+                                        'rgba(255, 206, 86, 0.2)',
+                                        'rgba(75, 192, 192, 0.2)',
+                                        'rgba(153, 102, 255, 0.2)'
+
+                                    ],
                                     hoverBorderColor: 'rgba(200, 200, 200, 1)',
                                     data: qno
                                 }
                             ]
                         };
 
-                        var ctx = $("#mycanvas");
+                        var ctx = $("#barchart");
 
-                        var barGraph = new Chart(ctx, {
-                            type: 'doughnut',
+                        var bargraph = new Chart(ctx, {
+                            type: 'horizontalBar',
+                            data: chartdata
+                        });
+                    },
+                    error: function (data) {
+                        console.log(data);
+                    }
+                });
+            });
+
+            $(document).ready(function () {
+                $.ajax({
+                    url: "http://localhost:81/IICSHD/include/thirdChart.php",
+                    method: "GET",
+                    success: function (data) {
+                        console.log(data);
+                        var docstatus = [];
+                        var docno = [];
+
+                        for (var i in data) {
+                            docstatus.push(data[i].docstatus);
+                            docno.push(data[i].docno);
+                        }
+
+                        var chartdata = {
+                            labels: docstatus,
+                            datasets: [
+                                {
+                                    label: '# of Documents',
+                                    backgroundColor: [
+
+                                        'rgba(255,99,132,1)',
+                                        'rgba(54, 162, 235, 1)',
+                                        'rgba(255, 206, 86, 1)',
+                                        'rgba(75, 192, 192, 1)',
+                                        'rgba(153, 102, 255, 1)',
+                                        'rgba(255, 159, 64, 1)'
+                                    ],
+                                    borderColor: 'rgba(200, 200, 200, 0.75)',
+                                    hoverBackgroundColor: [
+                                        'rgba(255, 99, 132, 0.2)',
+                                        'rgba(54, 162, 235, 0.2)',
+                                        'rgba(255, 206, 86, 0.2)',
+                                        'rgba(75, 192, 192, 0.2)',
+                                        'rgba(153, 102, 255, 0.2)',
+                                        'rgba(255, 159, 64, 0.2)'
+
+                                    ],
+                                    hoverBorderColor: 'rgba(200, 200, 200, 1)',
+                                    data: docno
+                                }
+                            ]
+                        };
+
+                        var ctx = $("#barchart2");
+
+                        var bargraph = new Chart(ctx, {
+                            type: 'bar',
                             data: chartdata
                         });
                     },

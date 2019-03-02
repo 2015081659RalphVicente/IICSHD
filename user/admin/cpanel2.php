@@ -355,6 +355,9 @@ if (isset($_POST['activate2'])) {
                                     <li class="nav-item">
                                         <a class="list-group-item" data-toggle="tab" href="#faculty">Faculty</a>
                                     </li>
+                                    <li class="nav-item">
+                                        <a class="list-group-item" data-toggle="tab" href="#admin">Admin</a>
+                                    </li>
                                 </ul>
 
                                 <br>
@@ -598,7 +601,128 @@ if (isset($_POST['activate2'])) {
                                             </tfoot>
                                         </table>
                                     </div>
+
+                                    <div class="tab-pane container fade" id="admin">
+                                        <table id="adminmembers" class="table table-striped table-responsive">
+                                            <thead>
+                                                <tr>
+                                                    <th>Username</th>
+                                                    <th>Name</th>
+                                                    <th>Email</th>
+                                                    <th>Status</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+
+                                                <?php
+                                                $query = mysqli_query($conn, "SELECT * FROM users WHERE role = 'admin' AND userno != '" . $_SESSION['userno'] . "'");
+                                                if ($query->num_rows > 0) {
+                                                    while ($row = $query->fetch_assoc()) {
+                                                        $getuno = $row['userno'];
+                                                        $getuid = $row['userid'];
+                                                        $getuname = ($row['fname'] . ' ' . $row['mname'] . ' ' . $row['lname']);
+                                                        $getumail = $row['email'];
+                                                        $getusection = $row['section'];
+                                                        $getstatus = $row['hidden'];
+
+                                                        echo "<tr>"
+                                                        . "<td>" . $getuid . "</td>"
+                                                        . "<td>" . $getuname . "</td>"
+                                                        . "<td>" . $getusection . "</td>";
+                                                        if ($getstatus == 0) {
+                                                            echo "<td> Active </td>"
+                                                            . "<td>" . "<a href='#deactivate" . $getuno . "'data-toggle='modal'><button type='button' class='btn btn-danger btn-sm' title='Deactivate'><span class='fas fa-lock' aria-hidden='true'></span></button></a>" . "</td>";
+                                                        } else {
+                                                            echo "<td> Deactivated </td>"
+                                                            . "<td>" . "<a href='#activate" . $getuno . "'data-toggle='modal'><button type='button' class='btn btn-success btn-sm' title='Activate'><span class='fas fa-lock' aria-hidden='true'></span></button></a>" . "</td>";
+                                                        }
+
+                                                        echo '<div id="activate';
+                                                        echo $getuno;
+                                                        echo'" class="modal fade" role="dialog">
+                                                                <div class="modal-dialog modal-lg">
+                                                                    <form method="post">
+                                                                        <div class="modal-content">
+
+                                                                            <div class="modal-header">
+                                                                                <h4 class="modal-title">Activate</h4>
+                                                                            </div>
+
+                                                                            <div class="modal-body">
+                                                                                <input type="hidden" name="activate_id" value="';
+                                                        echo $getuno;
+                                                        echo '">
+                                                                                <input type="hidden" name="acname" value="';
+                                                        echo $getuname;
+                                                        echo '">
+
+                                                                                <div class="alert alert-warning"><p>Are you sure you want to ACTIVATE account of <strong>';
+                                                        echo $getuname;
+                                                        echo'</strong>?</p>
+                                                                                </div>
+                                                                                <div class="modal-footer">
+                                                                                    <button type="submit" name="activate" class="btn btn-success"><span class="fas fa-check"></span> YES</button>
+                                                                                    <button type="button" class="btn btn-default" data-dismiss="modal"><span class="fas fa-times"></span> NO</button>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </form>
+                                                                </div>
+                                                            </div>
+
+
+                                                            <div id="deactivate';
+                                                        echo $getuno;
+                                                        echo'" class="modal fade" role="dialog">
+                                                                <div class="modal-dialog modal-lg">
+                                                                    <form method="post">
+                                                                        <div class="modal-content">
+
+                                                                            <div class="modal-header">
+                                                                                <h4 class="modal-title">Deactivate</h4>
+                                                                            </div>
+
+                                                                            <div class="modal-body">
+                                                                                <input type="hidden" name="deactivate_id" value="';
+                                                        echo $getuno;
+                                                        echo'">
+                                                                                <input type="hidden" name="deacname" value="';
+                                                        echo $getuname;
+                                                        echo'">
+
+                                                                                <div class="alert alert-warning"><p>Are you sure you want to DEACTIVATE account of <strong>';
+                                                        echo $getuname;
+                                                        echo'</strong>?</p>
+                                                                                </div>
+                                                                                <div class="modal-footer">
+                                                                                    <button type="submit" name="deactivate" class="btn btn-success"><span class="fas fa-check"></span> YES</button>
+                                                                                    <button type="button" class="btn btn-default" data-dismiss="modal"><span class="fas fa-times"></span> NO</button>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </form>
+                                                                </div>
+                                                            </div>';
+                                                    }
+                                                }
+                                                ?>
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <th>Student #</th>
+                                                    <th>Name</th>
+                                                    <th>Email</th>
+                                                    <th>Status</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+
                                 </div>
+
+
 
                             </div>
                         </div>
@@ -687,6 +811,39 @@ $thisDate = date("m/d/Y");
 ?>
 
                 $('#facultymembers').DataTable({
+                    "bLengthChange": true,
+                    initComplete: function () {
+                        this.api().columns().every(function () {
+                            var column = this;
+                            var select = $('<select><option value="">Show all</option></select>')
+                                    .appendTo($(column.footer()).empty())
+                                    .on('change', function () {
+                                        var val = $.fn.dataTable.util.escapeRegex(
+                                                $(this).val()
+                                                );
+
+                                        column
+                                                .search(val ? '^' + val + '$' : '', true, false)
+                                                .draw();
+                                    });
+
+                            column.data().unique().sort().each(function (d, j) {
+                                select.append('<option value="' + d + '">' + d + '</option>')
+                            });
+                        });
+                    }
+
+
+
+                });
+            });
+
+            $(document).ready(function () {
+<?php
+$thisDate = date("m/d/Y");
+?>
+
+                $('#adminmembers').DataTable({
                     "bLengthChange": true,
                     initComplete: function () {
                         this.api().columns().every(function () {

@@ -505,10 +505,10 @@ if (isset($_POST['updatedoc2'])) {
                                         echo "selected";
                                     } echo'>Processed
                                                                                     </option>
-                                                                                    <option value="Released"';
-                                    if ($docstatus == 'Released') {
+                                                                                    <option value="For Release"';
+                                    if ($docstatus == 'For Release') {
                                         echo "selected";
-                                    } echo'>Released
+                                    } echo'>For Release
                                                                                     </option>
                                                                                     </select>
                                                                                 </div>
