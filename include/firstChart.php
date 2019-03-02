@@ -5,7 +5,7 @@ require 'controller.php';
 header('Content-Type: application/json');
 
 //query to get data from the table
-$query = sprintf("(select COUNT(qno) as qno, qstatus from queue where qstatus = 'Done') union (select COUNT(qno) as qno, qstatus from queue where qstatus = 'No-Show')");
+$query = sprintf("(select COUNT(qno) as qno, qstatus from queuelogs where qstatus = 'Done') union (select COUNT(qno) as qno, qstatus from queuelogs where qstatus = 'No-Show')");
 
 //execute query
 $result = $conn->query($query);
