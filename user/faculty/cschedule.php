@@ -110,6 +110,49 @@ if (!isset($_SESSION['user_name'])) {
 
                 </ul>
 
+                <ul class="navbar-nav px-1">
+                    <li class="nav-item text-nowrap">
+                    <li class="nav-item dropdown">
+                        <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="fas fa-envelope"></span>
+                            Notifications
+                        </button>
+                        <div class="dropdown-menu" style="white-space: normal;">
+                            <?php
+                            $notifquery = "(SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, users.userno FROM notif INNER JOIN users ON users.userno = notif.notifaudience WHERE notif.notifaudience = '" . $_SESSION['userno'] . "' ORDER by notif.notifdate DESC)"
+                                    . " UNION "
+                                    . "(SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, notif.notifno as userno FROM notif WHERE notif.notifaudience = 'all' ORDER by notif.notifdate DESC)"
+                                    . " UNION "
+                                    . "(SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, notif.notifno as userno FROM notif WHERE notif.notifaudience = 'faculty' ORDER by notif.notifdate DESC)";
+                            $notifresult = $conn->query($notifquery);
+
+                            if ($notifresult->num_rows > 0) {
+                                while ($row = $notifresult->fetch_assoc()) {
+                                    $notiftitle = $row['notiftitle'];
+                                    $notifdesc = $row['notifdesc'];
+                                    $notifdate = $row['notifdate'];
+
+                                    echo '
+                                            <a class="dropdown-item" href="#" style="width: 300px; white-space: normal;">
+                                                <span style="font-size: 13px;"><strong> ' . $notiftitle . ' </strong></span><br>
+                                                ' . $notifdesc . ' <br>
+                                                <span style="font-size: 10px;"> ' . $notifdate . ' </span><br>
+                                            </a>
+                                            <div class="dropdown-divider"></div>';
+                                }
+                            } else {
+                                echo '
+                                            <a class="dropdown-item" href="#" style="width: 300px; white-space: normal;">
+                                                No new notifications.
+                                            </a>';
+                            }
+                            ?>
+
+                        </div>
+                    </li>
+                    </li>
+                </ul>
+
                 <ul class="navbar-nav px-3">
                     <li class="nav-item text-nowrap">
                     <li class="nav-item dropdown">
@@ -193,7 +236,7 @@ if (!isset($_SESSION['user_name'])) {
 
                                 if ($schedlink == TRUE) {
                                     echo '<iframe style="border:none; position:relative; width:100%; height:100vh;" width="100%" src="' . $schedlink . '?widget=true&amp;headers=false"></iframe>';
-                                }  else {
+                                } else {
                                     echo '<br><h4>No schedule available yet.</h4><br>';
                                 }
                             }
@@ -201,7 +244,7 @@ if (!isset($_SESSION['user_name'])) {
                         ?>
                     </div>
                 </div>
-                
+
                 <br><br><br>
 
             </main>

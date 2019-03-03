@@ -54,6 +54,15 @@ if (isset($_POST["uploadFile"])) {
             $logpass->execute();
             $logpass->close();
 
+            $notiftitle = "New File Upload";
+            $notifdesc = "New File Available: " . $_FILES['fileToUpload']['name'] . ".";
+            $notifaudience = "student";
+            
+            $notif = $conn->prepare("INSERT INTO notif VALUES ('',?,?,?,?,NOW())");
+            $notif->bind_param("isss", $_SESSION['userno'], $notiftitle, $notifdesc, $notifaudience);
+            $notif->execute();
+            $notif->close();
+
             $fileSql = $conn->prepare("INSERT INTO files VALUES ('',?,?,NOW(),'0')");
             $fileSql->bind_param("ss", $fileName, $_FILES["fileToUpload"]["name"]);
             $fileSql->execute();

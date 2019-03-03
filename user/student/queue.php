@@ -64,13 +64,24 @@ if (isset($_POST['getQueueNum'])) {
                 $userQ->close();
             }
 
-            $passval = 'Queue Ticket No. ' . $qno . ' / ' . $qType . '';
+            $qnologs = ++$qno;
+
+            $passval = 'Queue Ticket No. ' . $qnologs . ' / ' . $qType . '';
 
             $passaction = "Get Queue Ticket";
             $logpass = $conn->prepare("INSERT INTO updatelogs VALUES ('',?,?,NOW(),?)");
             $logpass->bind_param("sss", $passaction, $_SESSION['user_name'], $passval);
             $logpass->execute();
             $logpass->close();
+
+            $notiftitle = "New Queue Ticket";
+            $notifdesc = "Queue Ticket No. " . $qnologs . " now in Waiting list.";
+            $notifaudience = "admin";
+
+            $notif = $conn->prepare("INSERT INTO notif VALUES ('',?,?,?,?,NOW())");
+            $notif->bind_param("isss", $_SESSION['userno'], $notiftitle, $notifdesc, $notifaudience);
+            $notif->execute();
+            $notif->close();
 
             header("Location: queue.php");
             exit;
@@ -106,13 +117,24 @@ if (isset($_POST['getQueueNum'])) {
                 $userQ->close();
             }
 
-            $passval = 'Queue Ticket No. ' . $qno . ' / ' . $qType . '';
+            $qnologs = ++$qno;
+
+            $passval = 'Queue Ticket No. ' . $qnologs . ' / ' . $qType . '';
 
             $passaction = "Get Queue Ticket";
             $logpass = $conn->prepare("INSERT INTO updatelogs VALUES ('',?,?,NOW(),?)");
             $logpass->bind_param("sss", $passaction, $_SESSION['user_name'], $passval);
             $logpass->execute();
             $logpass->close();
+
+            $notiftitle = "New Queue Ticket";
+            $notifdesc = "Queue Ticket No. " . $qnologs . " now in Waiting list.";
+            $notifaudience = "admin";
+
+            $notif = $conn->prepare("INSERT INTO notif VALUES ('',?,?,?,?,NOW())");
+            $notif->bind_param("isss", $_SESSION['userno'], $notiftitle, $notifdesc, $notifaudience);
+            $notif->execute();
+            $notif->close();
 
             header("Location: queue.php");
             exit;
@@ -237,6 +259,49 @@ if (isset($_POST['getQueueNum'])) {
                         </div>
                     </li>
 
+                </ul>
+
+                <ul class="navbar-nav px-1">
+                    <li class="nav-item text-nowrap">
+                    <li class="nav-item dropdown">
+                        <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="fas fa-envelope"></span>
+                            Notifications
+                        </button>
+                        <div class="dropdown-menu" style="white-space: normal;">
+                            <?php
+                            $notifquery = "(SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, users.userno FROM notif INNER JOIN users ON users.userno = notif.notifaudience WHERE notif.notifaudience = '" . $_SESSION['userno'] . "' ORDER by notif.notifdate DESC)"
+                                    . " UNION "
+                                    . "(SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, notif.notifno as userno FROM notif WHERE notif.notifaudience = 'all' ORDER by notif.notifdate DESC)"
+                                    . " UNION "
+                                    . "(SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, notif.notifno as userno FROM notif WHERE notif.notifaudience = 'student' ORDER by notif.notifdate DESC)";
+                            $notifresult = $conn->query($notifquery);
+
+                            if ($notifresult->num_rows > 0) {
+                                while ($row = $notifresult->fetch_assoc()) {
+                                    $notiftitle = $row['notiftitle'];
+                                    $notifdesc = $row['notifdesc'];
+                                    $notifdate = $row['notifdate'];
+
+                                    echo '
+                                            <a class="dropdown-item" href="#" style="width: 300px; white-space: normal;">
+                                                <span style="font-size: 13px;"><strong> ' . $notiftitle . ' </strong></span><br>
+                                                ' . $notifdesc . ' <br>
+                                                <span style="font-size: 10px;"> ' . $notifdate . ' </span><br>
+                                            </a>
+                                            <div class="dropdown-divider"></div>';
+                                }
+                            } else {
+                                echo '
+                                            <a class="dropdown-item" href="#" style="width: 300px; white-space: normal;">
+                                                No new notifications.
+                                            </a>';
+                            }
+                            ?>
+
+                        </div>
+                    </li>
+                    </li>
                 </ul>
 
                 <ul class="navbar-nav px-3">
@@ -530,47 +595,47 @@ if (isset($_POST['getQueueNum'])) {
                 <br><br><br>
             </main>
 
-        <div class="container-fluid header">
-            <div align="center" style="font-size: 11px; color:white;">
-                IICS Help Desk © 2019
+            <div class="container-fluid header">
+                <div align="center" style="font-size: 11px; color:white;">
+                    IICS Help Desk © 2019
+                </div>
             </div>
-        </div>
 
-        <!-- Bootstrap core JavaScript
-        ================================================== -->
-        <!-- Placed at the end of the document so the pages load faster -->
-        <script src="../../js/jquery-3.3.1.js" ></script>
-        <script>window.jQuery || document.write('<script src="../../js/jquery-3.3.1.js"><\/script>')</script>
-        <script src="../../js/popper.js"></script>
-        <script src="../../js/bootstrap.min.js"></script>
+            <!-- Bootstrap core JavaScript
+            ================================================== -->
+            <!-- Placed at the end of the document so the pages load faster -->
+            <script src="../../js/jquery-3.3.1.js" ></script>
+            <script>window.jQuery || document.write('<script src="../../js/jquery-3.3.1.js"><\/script>')</script>
+            <script src="../../js/popper.js"></script>
+            <script src="../../js/bootstrap.min.js"></script>
 
-        <!-- Icons -->
-        <script src="../../js/feather.min.js"></script>
-        <script>
-            feather.replace()
-        </script>
+            <!-- Icons -->
+            <script src="../../js/feather.min.js"></script>
+            <script>
+                feather.replace()
+            </script>
 
-        <script>
-            $("#qDesc").hide();
-            $("#selectType").change(function () {
-                var val = $("#selectType").val();
-                if (val == "Other") {
-                    $("#qDesc").show();
-                } else {
-                    $("#qDesc").hide();
-                }
-            });
+            <script>
+                $("#qDesc").hide();
+                $("#selectType").change(function () {
+                    var val = $("#selectType").val();
+                    if (val == "Other") {
+                        $("#qDesc").show();
+                    } else {
+                        $("#qDesc").hide();
+                    }
+                });
 
-            $("#qDesc2").hide();
-            $("#selectType").change(function () {
-                var val = $("#selectType").val();
-                if (val == "Document Submission") {
-                    $("#qDesc2").show();
-                } else {
-                    $("#qDesc2").hide();
-                }
-            });
-        </script>
+                $("#qDesc2").hide();
+                $("#selectType").change(function () {
+                    var val = $("#selectType").val();
+                    if (val == "Document Submission") {
+                        $("#qDesc2").show();
+                    } else {
+                        $("#qDesc2").hide();
+                    }
+                });
+            </script>
 
     </body>
 </html>

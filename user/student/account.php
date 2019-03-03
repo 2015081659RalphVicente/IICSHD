@@ -159,6 +159,49 @@ if (isset($_POST['updateSec'])) {
 
                 </ul>
 
+                <ul class="navbar-nav px-1">
+                    <li class="nav-item text-nowrap">
+                    <li class="nav-item dropdown">
+                        <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="fas fa-envelope"></span>
+                            Notifications
+                        </button>
+                        <div class="dropdown-menu" style="white-space: normal;">
+                            <?php
+                            $notifquery = "(SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, users.userno FROM notif INNER JOIN users ON users.userno = notif.notifaudience WHERE notif.notifaudience = '" . $_SESSION['userno'] . "' ORDER by notif.notifdate DESC)"
+                                    . " UNION "
+                                    . "(SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, notif.notifno as userno FROM notif WHERE notif.notifaudience = 'all' ORDER by notif.notifdate DESC)"
+                                    . " UNION "
+                                    . "(SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, notif.notifno as userno FROM notif WHERE notif.notifaudience = 'student' ORDER by notif.notifdate DESC)";
+                            $notifresult = $conn->query($notifquery);
+
+                            if ($notifresult->num_rows > 0) {
+                                while ($row = $notifresult->fetch_assoc()) {
+                                    $notiftitle = $row['notiftitle'];
+                                    $notifdesc = $row['notifdesc'];
+                                    $notifdate = $row['notifdate'];
+
+                                    echo '
+                                            <a class="dropdown-item" href="#" style="width: 300px; white-space: normal;">
+                                                <span style="font-size: 13px;"><strong> ' . $notiftitle . ' </strong></span><br>
+                                                ' . $notifdesc . ' <br>
+                                                <span style="font-size: 10px;"> ' . $notifdate . ' </span><br>
+                                            </a>
+                                            <div class="dropdown-divider"></div>';
+                                }
+                            } else {
+                                echo '
+                                            <a class="dropdown-item" href="#" style="width: 300px; white-space: normal;">
+                                                No new notifications.
+                                            </a>';
+                            }
+                            ?>
+
+                        </div>
+                    </li>
+                    </li>
+                </ul>
+
                 <ul class="navbar-nav px-3">
                     <li class="nav-item text-nowrap">
                     <li class="nav-item dropdown">
@@ -243,16 +286,16 @@ if (isset($_POST['updateSec'])) {
                                                     <select required class="form-control" name="studsection">
                                                         <option class="hidden" value="" selected disabled>
                                                             <?php
-                                                                $prof = mysqli_query($conn, "SELECT section from users WHERE userno = '".$_SESSION['userno']."'");
-                                                                if ($prof->num_rows > 0) {
-                                                                    while ($row = $prof->fetch_assoc()) {
-                                                                        $section = $row['section'];
-                                                                        
-                                                                        echo $section;
-                                                                    }
-                                                                } else {
-                                                                    echo "Empty.";
+                                                            $prof = mysqli_query($conn, "SELECT section from users WHERE userno = '" . $_SESSION['userno'] . "'");
+                                                            if ($prof->num_rows > 0) {
+                                                                while ($row = $prof->fetch_assoc()) {
+                                                                    $section = $row['section'];
+
+                                                                    echo $section;
                                                                 }
+                                                            } else {
+                                                                echo "Empty.";
+                                                            }
                                                             ?>
                                                         </option>
                                                         <?php
