@@ -456,7 +456,7 @@ if (isset($_POST['receiveRel'])) {
                                     . '<td>' . $doctitle . '</td>'
                                     . '<td>' . $docdesc . '</td>'
                                     . '<td>' . $docstatus . '</td>';
-                                    if ($docstatus == 'Released') {
+                                    if ($docstatus == 'For Release') {
                                         echo '<td>'
                                         . '<form method="post">'
                                         . '<input type = "hidden" name="recDoc" value="' . $docid . '">'
