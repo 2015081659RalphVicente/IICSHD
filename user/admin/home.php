@@ -59,7 +59,7 @@ if (isset($_POST['postAnnouncement'])) {
         $logpass->close();
 
         $notiftitle = "New Announcement Posted";
-        $notifdesc = "". $pTitle ." posted by " . $_SESSION['user_name'] . "";
+        $notifdesc = "" . $pTitle . " posted by " . $_SESSION['user_name'] . "";
         $notifaudience = "all";
 
         $notif = $conn->prepare("INSERT INTO notif VALUES ('',?,?,?,?,NOW())");
@@ -323,7 +323,7 @@ if (isset($_POST['deletepost'])) {
                         </button>
                         <div class="dropdown-menu" style="white-space: normal;">
                             <?php
-                            $notifquery = "(SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, users.userno FROM notif INNER JOIN users ON users.userno = notif.notifaudience WHERE notif.notifaudience = '".$_SESSION['userno']."' ORDER by notif.notifdate DESC)"
+                            $notifquery = "(SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, users.userno FROM notif INNER JOIN users ON users.userno = notif.notifaudience WHERE notif.notifaudience = '" . $_SESSION['userno'] . "' ORDER by notif.notifdate DESC)"
                                     . " UNION "
                                     . "(SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, notif.notifno as userno FROM notif WHERE notif.notifaudience = 'all' ORDER by notif.notifdate DESC)"
                                     . " UNION "
@@ -337,7 +337,18 @@ if (isset($_POST['deletepost'])) {
                                     $notifdate = $row['notifdate'];
 
                                     echo '
-                                            <a class="dropdown-item" href="#" style="width: 300px; white-space: normal;">
+                                            <a class="dropdown-item" ';
+
+                                    if ($notiftitle == "New Announcement Posted") {
+                                        echo 'href="home.php"';
+                                    }
+                                    if ($notiftitle == "New Queue Ticket") {
+                                        echo 'href="queue.php"';
+                                    }
+                                    if ($notiftitle == "Schedule Updated") {
+                                        echo 'href="fschedule.php"';
+                                    }
+                                    echo 'style="width: 300px; white-space: normal;">
                                                 <span style="font-size: 13px;"><strong> ' . $notiftitle . ' </strong></span><br>
                                                 ' . $notifdesc . ' <br>
                                                 <span style="font-size: 10px;"> ' . $notifdate . ' </span><br>

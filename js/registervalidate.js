@@ -43,7 +43,7 @@ $(function () {
 
     jQuery.validator.addMethod("empnum", function (value, element) {
         return this.optional(element) || /^(19|20)([0-9]{8})*$/.test(value);
-    }, "Invalid faculty number. Sample: 2011001234");
+    }, "Invalid employee number. Sample: 2011001234");
 
     jQuery.validator.addMethod("fname", function (value, element) {
         return this.optional(element) || /^[a-zA-Z\u00f1\u00d1 ]*$/u.test(value);

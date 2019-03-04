@@ -50,7 +50,7 @@ if (isset($_SESSION['resetpass']) && $_SESSION['resetpass'] == 0) {
                 <?php echo $registerSuccess; ?>
                 <form class="form-signin" action="" method="POST">
                     <span id="reauth-email" class="reauth-email"></span>
-                    <p><input type="text" id="inputEmail" class="form-control" placeholder="Student Number / Faculty Number" name="userid" autofocus></p>
+                    <p><input type="text" id="inputEmail" class="form-control" placeholder="Student Number / Employee Number" name="userid" autofocus></p>
                     <p><input type="password" id="inputPassword" class="form-control" placeholder="Password" name = "password"><?php echo $passwordErr; ?></p>
                     <button class="btn btn-lg btn-success btn-block btn-signin" type="submit" name="login">Log-In</button>
                 </form><!-- /form -->

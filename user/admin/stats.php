@@ -139,7 +139,7 @@ if (!isset($_SESSION['user_name'])) {
                         </button>
                         <div class="dropdown-menu" style="white-space: normal;">
                             <?php
-                            $notifquery = "(SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, users.userno FROM notif INNER JOIN users ON users.userno = notif.notifaudience WHERE notif.notifaudience = '".$_SESSION['userno']."' ORDER by notif.notifdate DESC)"
+                            $notifquery = "(SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, users.userno FROM notif INNER JOIN users ON users.userno = notif.notifaudience WHERE notif.notifaudience = '" . $_SESSION['userno'] . "' ORDER by notif.notifdate DESC)"
                                     . " UNION "
                                     . "(SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, notif.notifno as userno FROM notif WHERE notif.notifaudience = 'all' ORDER by notif.notifdate DESC)"
                                     . " UNION "
@@ -153,7 +153,18 @@ if (!isset($_SESSION['user_name'])) {
                                     $notifdate = $row['notifdate'];
 
                                     echo '
-                                            <a class="dropdown-item" href="#" style="width: 300px; white-space: normal;">
+                                            <a class="dropdown-item" ';
+
+                                    if ($notiftitle == "New Announcement Posted") {
+                                        echo 'href="home.php"';
+                                    }
+                                    if ($notiftitle == "New Queue Ticket") {
+                                        echo 'href="queue.php"';
+                                    }
+                                    if ($notiftitle == "Schedule Updated") {
+                                        echo 'href="fschedule.php"';
+                                    }
+                                    echo 'style="width: 300px; white-space: normal;">
                                                 <span style="font-size: 13px;"><strong> ' . $notiftitle . ' </strong></span><br>
                                                 ' . $notifdesc . ' <br>
                                                 <span style="font-size: 10px;"> ' . $notifdate . ' </span><br>
@@ -175,6 +186,7 @@ if (!isset($_SESSION['user_name'])) {
                     </li>
                     </li>
                 </ul>
+                
                 
                 <ul class="navbar-nav px-3">
                     <li class="nav-item text-nowrap">
@@ -287,7 +299,7 @@ if (!isset($_SESSION['user_name'])) {
         <script>
             $(document).ready(function () {
                 $.ajax({
-                    url: "http://localhost:81/IICSHD/include/firstChart.php",
+                    url: "../../include/firstChart.php",
                     method: "GET",
                     success: function (data) {
                         console.log(data);
@@ -334,7 +346,7 @@ if (!isset($_SESSION['user_name'])) {
 
             $(document).ready(function () {
                 $.ajax({
-                    url: "http://localhost:81/IICSHD/include/secondChart.php",
+                    url: "../../include/secondChart.php",
                     method: "GET",
                     success: function (data) {
                         console.log(data);
@@ -389,7 +401,7 @@ if (!isset($_SESSION['user_name'])) {
 
             $(document).ready(function () {
                 $.ajax({
-                    url: "http://localhost:81/IICSHD/include/thirdChart.php",
+                    url: "../../include/thirdChart.php",
                     method: "GET",
                     success: function (data) {
                         console.log(data);

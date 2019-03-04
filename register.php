@@ -463,7 +463,7 @@ if (isset($_SESSION['tab'])) {
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <input type="text" class="form-control" placeholder="Faculty Number *" value="<?php echo $empnum; ?>" name="empnum" required/>
+                                        <input type="text" class="form-control" placeholder="Employee Number *" value="<?php echo $empnum; ?>" name="empnum" required/>
                                         <?php
                                         echo $empnumErr2;
                                         echo $numErr2;

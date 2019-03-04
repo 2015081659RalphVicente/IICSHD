@@ -26,7 +26,7 @@ if (isset($_POST['submitCon'])) {
     $cProf = $_POST['cProf'];
     $cStatus = "Requested";
 
-    $submitSql = $conn->prepare("INSERT INTO consultations VALUES ('', ?, ?, ?, ?, NOW(), ?, '0')");
+    $submitSql = $conn->prepare("INSERT INTO consultations VALUES ('', ?, ?, ?, ?, NOW(), ?, '','0','0','0')");
     $submitSql->bind_param("ssiis", $cTitle, $cDesc, $cProf, $_SESSION['userno'], $cStatus);
 
     $submitSql2 = $conn->prepare("INSERT INTO consultlogs VALUES ('', ?, ?, ?, ?, NOW(), ?, '0')");
@@ -203,7 +203,18 @@ if (isset($_POST['submitCon'])) {
                                     $notifdate = $row['notifdate'];
 
                                     echo '
-                                            <a class="dropdown-item" href="#" style="width: 300px; white-space: normal;">
+                                            <a class="dropdown-item" ';
+
+                                    if ($notiftitle == "New Announcement Posted") {
+                                        echo 'href="home.php"';
+                                    }
+                                    if ($notiftitle == "New File Upload") {
+                                        echo 'href="documents.php"';
+                                    }
+                                    if ($notiftitle == "Schedule Updated") {
+                                        echo 'href="fschedule.php"';
+                                    }
+                                    echo 'style="width: 300px; white-space: normal;">
                                                 <span style="font-size: 13px;"><strong> ' . $notiftitle . ' </strong></span><br>
                                                 ' . $notifdesc . ' <br>
                                                 <span style="font-size: 10px;"> ' . $notifdate . ' </span><br>
@@ -333,6 +344,9 @@ if (isset($_POST['submitCon'])) {
                                 <th>Subject</th>
                                 <th>Description</th>
                                 <th>Status</th>
+                                <th>Remarks</th>
+                                <th>Start Date/Time</th>
+                                <th>End Date/Time</th>
                             </tr>
                         </thead>
 
@@ -340,7 +354,7 @@ if (isset($_POST['submitCon'])) {
 
                             <?php
                             $newsubquery = mysqli_query($conn, "SELECT LPAD(c.conno,4,0), c.condatecreated, u.fname, u.mname, u.lname, c.consub,"
-                                    . "c.condesc, c.constatus, c.conprof FROM consultations c INNER JOIN users u WHERE c.userno = u.userno "
+                                    . "c.condesc, c.constatus, c.conprof, c.conremarks, c.constart, c.conend FROM consultations c INNER JOIN users u WHERE c.userno = u.userno "
                                     . "AND c.userno = " . $_SESSION['userno'] . "");
 
                             if ($newsubquery->num_rows > 0) {
@@ -351,6 +365,10 @@ if (isset($_POST['submitCon'])) {
                                     $doctitle = $row['consub'];
                                     $docdesc = $row['condesc'];
                                     $docstatus = $row['constatus'];
+                                    $conremarks = $row['conremarks'];
+                                    $constart = $row['constart'];
+                                    $conend = $row['conend'];
+
 
                                     echo '<tr>'
                                     . '<td>' . $docid . '</td>'
@@ -359,6 +377,21 @@ if (isset($_POST['submitCon'])) {
                                     . '<td>' . $doctitle . '</td>'
                                     . '<td>' . $docdesc . '</td>'
                                     . '<td>' . $docstatus . '</td>';
+                                    if ($conremarks != "") {
+                                        echo '<td>' . $conremarks . '</td>';
+                                    } else {
+                                        echo '<td>Waiting for Approval</td>';
+                                    }
+                                    if ($constart != 0) {
+                                        echo '<td>' . $constart . '</td>';
+                                    } else {
+                                        echo '<td>N/A</td>';
+                                    }
+                                    if ($conend != 0) {
+                                        echo '<td>' . $conend . '</td>';
+                                    } else {
+                                        echo '<td>N/A</td>';
+                                    }
                                 }
                             }
                             ?>
@@ -373,6 +406,9 @@ if (isset($_POST['submitCon'])) {
                                 <th>Subject</th>
                                 <th>Description</th>
                                 <th>Status</th>
+                                <th>Remarks</th>
+                                <th>Start Date/Time</th>
+                                <th>End Date/Time</th>
                             </tr>
                         </tfoot>
                     </table>

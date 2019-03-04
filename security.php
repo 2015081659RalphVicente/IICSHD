@@ -30,6 +30,30 @@ if (!isset($_SESSION['seq'])) {
 } else {
     $seq = $_SESSION['seq'];
 }
+
+function RandomString($length) {
+    $keys = array_merge(range(0, 9), range('A', 'Z'));
+
+    $key = "";
+    for ($i = 0; $i < $length; $i++) {
+        $key .= $keys[mt_rand(0, count($keys) - 1)];
+    }
+    return $key;
+}
+
+$vcode = RandomString(5);
+
+if (isset($_POST['forgotSecurity'])) {
+    $vcode = RandomString(5);
+    $email = $_SESSION['requser'];
+
+    $sqladd = $conn->prepare("UPDATE users SET vcode = ? WHERE email = ?");
+    $sqladd->bind_param("ss", $vcode, $email);
+    $sqladd->execute();
+    $sqladd->close();
+    
+    header("Location: forgotsecurity.php");
+}
 ?>
 
 <html>
@@ -97,9 +121,15 @@ if (!isset($_SESSION['seq'])) {
                                 <button type="submit" class="btn btn-lg btn-success btn-block btn-signin" name="submitAnswer">Submit</button>
                                 <br>
                                 <a href = "index.php"><button type="button" class="btn btn-lg btn-success btn-block btn-signin" name="back">Cancel</button></a>
+                                <br>
                                 <!-- form end -->
                             </div>
                         </form>
+
+                        <form method="POST" action="">
+                            <button type="submit" class="btn btn-lg btn-success btn-block btn-signin" name="forgotSecurity">I forgot the answer to my Security Question.</button>
+                        </form>
+
                         <div>
                         </div>
                     </div>

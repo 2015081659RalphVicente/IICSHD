@@ -423,7 +423,7 @@ if (isset($_POST['deletesec'])) {
                         </button>
                         <div class="dropdown-menu" style="white-space: normal;">
                             <?php
-                            $notifquery = "(SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, users.userno FROM notif INNER JOIN users ON users.userno = notif.notifaudience WHERE notif.notifaudience = '".$_SESSION['userno']."' ORDER by notif.notifdate DESC)"
+                            $notifquery = "(SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, users.userno FROM notif INNER JOIN users ON users.userno = notif.notifaudience WHERE notif.notifaudience = '" . $_SESSION['userno'] . "' ORDER by notif.notifdate DESC)"
                                     . " UNION "
                                     . "(SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, notif.notifno as userno FROM notif WHERE notif.notifaudience = 'all' ORDER by notif.notifdate DESC)"
                                     . " UNION "
@@ -437,7 +437,18 @@ if (isset($_POST['deletesec'])) {
                                     $notifdate = $row['notifdate'];
 
                                     echo '
-                                            <a class="dropdown-item" href="#" style="width: 300px; white-space: normal;">
+                                            <a class="dropdown-item" ';
+
+                                    if ($notiftitle == "New Announcement Posted") {
+                                        echo 'href="home.php"';
+                                    }
+                                    if ($notiftitle == "New Queue Ticket") {
+                                        echo 'href="queue.php"';
+                                    }
+                                    if ($notiftitle == "Schedule Updated") {
+                                        echo 'href="fschedule.php"';
+                                    }
+                                    echo 'style="width: 300px; white-space: normal;">
                                                 <span style="font-size: 13px;"><strong> ' . $notiftitle . ' </strong></span><br>
                                                 ' . $notifdesc . ' <br>
                                                 <span style="font-size: 10px;"> ' . $notifdate . ' </span><br>
@@ -786,7 +797,7 @@ if (isset($_POST['deletesec'])) {
                                 <form action="" method="post" enctype="multipart/form-data">
                                     <label for="newSection">Add New Section: </label>
 
-                                    <input type="text" id="newSection" name="newSection" class="form-control"><br>
+                                    <input type="text" id="newSection" name="newSection" class="form-control" required><br>
 
                                     <br>
                                     <button type="submit" name = "addSection" class="btn btn-success float-right">Add</button>
@@ -846,7 +857,7 @@ if (isset($_POST['deletesec'])) {
 
                                                                                 <label for="schedule">Schedule Link: </label>
 
-                                                                                <input type="text" id="schedLink" name="schedLink" class="form-control" placeholder=' . $getschedlink . '>
+                                                                                <input type="text" id="schedLink" name="schedLink" class="form-control" placeholder=' . $getschedlink . ' required>
                                                                                 
                                                                                 </div>
                                                                                 <div class="modal-footer">
@@ -889,11 +900,11 @@ if (isset($_POST['deletesec'])) {
 
                                     <label for="filename">Filename: </label>
 
-                                    <input type="text" id="fileName" name="fileName" class="form-control"><br>
+                                    <input type="text" id="fileName" name="fileName" class="form-control" required><br>
 
                                     <label for="newfile">Upload New Document Template: </label>
 
-                                    <input type="file" id="fileToUpload" name="fileToUpload" class="form-control" accept=".pdf, .docx, .doc">
+                                    <input type="file" id="fileToUpload" name="fileToUpload" class="form-control" accept=".pdf, .docx, .doc" required>
                                     <br>
                                     <button type="submit" name = "uploadFile" class="btn btn-success float-right">Upload</button>
                                 </form>

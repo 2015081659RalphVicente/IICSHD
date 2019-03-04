@@ -167,6 +167,9 @@ if (isset($_POST['qNext'])) {
 
     $submitDoc = $conn->prepare("INSERT INTO documents VALUES ('', NOW(), ?, ?, ?, ?, '0', ?)");
     $submitDoc->bind_param("isssi", $qnumdone, $qtitle, $qdesc, $docstatus, $hidden);
+    
+    $submitSql2 = $conn->prepare("INSERT INTO doclogs VALUES ('', NOW(), ?, ?, ?, ?, '0', ?)");
+    $submitSql2->bind_param("isssi", $qnumdone, $qtitle, $qdesc, $docstatus, $hidden);
 
     if ($nextQuery == TRUE) {
         $checkQuery = mysqli_query($conn, "SELECT * FROM queue WHERE qstatus = 'Waiting' ORDER BY qno ASC LIMIT 1");
@@ -201,6 +204,8 @@ if (isset($_POST['qNext'])) {
         if ($qtitle != "") {
             $submitDoc->execute();
             $submitDoc->close();
+            $submitSql2->execute();
+            $submitSql2->close();
         } else {
             
         }
@@ -415,7 +420,7 @@ if (isset($_POST['qNoShow'])) {
                         </button>
                         <div class="dropdown-menu" style="white-space: normal;">
                             <?php
-                            $notifquery = "(SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, users.userno FROM notif INNER JOIN users ON users.userno = notif.notifaudience WHERE notif.notifaudience = '".$_SESSION['userno']."' ORDER by notif.notifdate DESC)"
+                            $notifquery = "(SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, users.userno FROM notif INNER JOIN users ON users.userno = notif.notifaudience WHERE notif.notifaudience = '" . $_SESSION['userno'] . "' ORDER by notif.notifdate DESC)"
                                     . " UNION "
                                     . "(SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, notif.notifno as userno FROM notif WHERE notif.notifaudience = 'all' ORDER by notif.notifdate DESC)"
                                     . " UNION "
@@ -429,7 +434,18 @@ if (isset($_POST['qNoShow'])) {
                                     $notifdate = $row['notifdate'];
 
                                     echo '
-                                            <a class="dropdown-item" href="#" style="width: 300px; white-space: normal;">
+                                            <a class="dropdown-item" ';
+
+                                    if ($notiftitle == "New Announcement Posted") {
+                                        echo 'href="home.php"';
+                                    }
+                                    if ($notiftitle == "New Queue Ticket") {
+                                        echo 'href="queue.php"';
+                                    }
+                                    if ($notiftitle == "Schedule Updated") {
+                                        echo 'href="fschedule.php"';
+                                    }
+                                    echo 'style="width: 300px; white-space: normal;">
                                                 <span style="font-size: 13px;"><strong> ' . $notiftitle . ' </strong></span><br>
                                                 ' . $notifdesc . ' <br>
                                                 <span style="font-size: 10px;"> ' . $notifdate . ' </span><br>
