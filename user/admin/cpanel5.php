@@ -257,7 +257,7 @@ if (isset($_POST['empRegister'])) {
 
 
                 </ul>
-
+                
                 <ul class="navbar-nav px-1">
                     <li class="nav-item text-nowrap">
                     <li class="nav-item dropdown">
@@ -267,11 +267,20 @@ if (isset($_POST['empRegister'])) {
                         </button>
                         <div class="dropdown-menu" style="white-space: normal;">
                             <?php
-                            $notifquery = "(SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, users.userno FROM notif INNER JOIN users ON users.userno = notif.notifaudience WHERE notif.notifaudience = '" . $_SESSION['userno'] . "' ORDER by notif.notifdate DESC)"
-                                    . " UNION "
-                                    . "(SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, notif.notifno as userno FROM notif WHERE notif.notifaudience = 'all' ORDER by notif.notifdate DESC)"
-                                    . " UNION "
-                                    . "(SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, notif.notifno as userno FROM notif WHERE notif.notifaudience = 'admin' ORDER by notif.notifdate DESC)";
+                            $notifquery = "SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, users.userno 
+                                                    FROM notif 
+                                                INNER JOIN users 
+                                                ON users.userno = notif.notifaudience 
+                                                WHERE notif.notifaudience = '1' 
+                                                UNION ALL 
+                                            SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, notif.notifno as userno 
+                                                    FROM notif 
+                                                WHERE notif.notifaudience = 'all' 
+                                                UNION ALL
+                                            SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, notif.notifno as userno 
+                                                    FROM notif 
+                                                    WHERE notif.notifaudience = 'admin' 
+                                            ORDER BY notifno DESC LIMIT 4";
                             $notifresult = $conn->query($notifquery);
 
                             if ($notifresult->num_rows > 0) {
