@@ -1,12 +1,11 @@
-
 <?php
 include '../../include/controller.php';
 
+if (isset($_SESSION['user_name']) && $_SESSION['role'] == "admin") {
+    header("location:/iicshd/user/admin/home.php");
+}
 if (isset($_SESSION['user_name']) && $_SESSION['role'] == "faculty") {
     header("location:/iicshd/user/faculty/home.php");
-}
-if (isset($_SESSION['user_name']) && $_SESSION['role'] == "student") {
-    header("location:/iicshd/user/student/home.php");
 }
 if (isset($_SESSION['user_name'])) {
 
@@ -20,6 +19,77 @@ if (isset($_SESSION['user_name'])) {
 if (!isset($_SESSION['user_name'])) {
     header("location:/iicshd/login.php");
 }
+
+$oldPassErr = $confirmErr = $passwordErr = "";
+
+if (isset($_GET['status'])) {
+    $changePw = $_GET['status'];
+} else {
+    $changePw = '';
+}
+
+if (isset($_POST['updatePass'])) {
+    $oldPass = $_POST['oldPass'];
+    $newPass = $_POST['newPass'];
+    $confirm = $_POST['confirmPass'];
+    $edit_pno = $_POST['edit_pno'];
+
+    $updateBool = TRUE;
+
+    $sql = "SELECT * FROM users WHERE userno = '{$_SESSION['userno']}'";
+    $result = mysqli_query($conn, $sql);
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $hashedOldPwdCheck = password_verify($oldPass, $row['password']);
+
+
+            if ($hashedOldPwdCheck == FALSE) {
+                $oldPassErr = '<div class="alert alert-warning">
+                        Wrong password.
+                        </div>';
+            } elseif ($hashedOldPwdCheck == TRUE) {
+
+                if ($newPass != $confirm) {
+                    $confirmErr = '<div class="alert alert-warning">
+                        Password does not match the confirm password.
+                        </div>';
+                    $updateBool = FALSE;
+                }
+
+                if (!preg_match("/(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/", $newPass)) {
+                    $passwordErr = '<div class="alert alert-warning">
+                        Password must be atleast 8 characters long and must be a combination of uppercase letters, lowercase letters and numbers.
+                        </div>';
+
+                    $updateBool = FALSE;
+                }
+
+                if ($updateBool == TRUE) {
+                    $hashedPwd = password_hash($newPass, PASSWORD_DEFAULT);
+                    if ($stmt = $conn->prepare("UPDATE users SET PASSWORD =? WHERE USERNO= ? ")) {
+
+                        $stmt->bind_param("si", $hashedPwd, $edit_pno);
+                        $stmt->execute();
+                        $stmt->close();
+
+
+                        $passval = 'Password changed.';
+
+                        $passaction = "Change Password";
+                        $logpass = $conn->prepare("INSERT INTO updatelogs VALUES ('',?,?,NOW(),?)");
+                        $logpass->bind_param("sss", $passaction, $_SESSION['user_name'], $passval);
+                        $logpass->execute();
+                        $logpass->close();
+
+                        $_GET['status'] = 'success';
+
+                        header("Location: account2.php?status=success");
+                    }
+                }
+            }
+        }
+    }
+}
 ?>
 
 <!doctype html>
@@ -31,7 +101,7 @@ if (!isset($_SESSION['user_name'])) {
         <meta name="author" content="">
         <link rel="icon" href="../../img/favicon.png">
 
-        <title>IICS Help Desk - Admin</title>
+        <title>IICS Help Desk</title>
 
         <!-- Bootstrap core CSS -->
         <link href="../../css/bootstrap.min.css" rel="stylesheet">
@@ -95,7 +165,15 @@ if (!isset($_SESSION['user_name'])) {
                             Queue
                         </a>
                     </li>
-                    <li class="nav-item dropdown active">
+
+                    <li class="nav-item">
+                        <a class="nav-link" style="color:white;" href="consultations.php">
+                            <span data-feather="info"></span>
+                            Consultation
+                        </a>
+                    </li>
+
+                    <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" style="color:white;" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
                             <span data-feather="calendar"></span>
                             Schedule
@@ -109,23 +187,11 @@ if (!isset($_SESSION['user_name'])) {
                                 <span data-feather="book-open"></span>
                                 Class Schedule
                             </a>
-                            <a class="dropdown-item active" href="rschedule.php">
+                            <a class="dropdown-item" href="rschedule.php">
                                 <span data-feather="book-open"></span>
                                 Room Schedule
                             </a>
                         </div>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" style="color:white;" href="stats.php">
-                            <span data-feather="bar-chart-2"></span>
-                            Statistics
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" style="color:white;" href="reports.php">
-                            <span data-feather="layers"></span>
-                            Reports
-                        </a>
                     </li>
 
                 </ul>
@@ -139,11 +205,11 @@ if (!isset($_SESSION['user_name'])) {
                         </button>
                         <div class="dropdown-menu" style="white-space: normal;">
                             <?php
-                            $notifquery = "(SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, users.userno FROM notif INNER JOIN users ON users.userno = notif.notifaudience WHERE notif.notifaudience = '".$_SESSION['userno']."' ORDER by notif.notifdate DESC)"
+                            $notifquery = "(SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, users.userno FROM notif INNER JOIN users ON users.userno = notif.notifaudience WHERE notif.notifaudience = '" . $_SESSION['userno'] . "' ORDER by notif.notifdate DESC)"
                                     . " UNION "
                                     . "(SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, notif.notifno as userno FROM notif WHERE notif.notifaudience = 'all' ORDER by notif.notifdate DESC)"
                                     . " UNION "
-                                    . "(SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, notif.notifno as userno FROM notif WHERE notif.notifaudience = 'admin' ORDER by notif.notifdate DESC)";
+                                    . "(SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, notif.notifno as userno FROM notif WHERE notif.notifaudience = 'student' ORDER by notif.notifdate DESC)";
                             $notifresult = $conn->query($notifquery);
 
                             if ($notifresult->num_rows > 0) {
@@ -186,10 +252,6 @@ if (!isset($_SESSION['user_name'])) {
                             ?>
                         </button>
                         <div class="dropdown-menu">
-                            <a class="dropdown-item" href="cpanel.php">
-                                <i class="fas fa-sliders-h"></i>
-                                Control Panel
-                            </a>
                             <a class="dropdown-item" href="account.php">
                                 <i class="fas fa-user-cog"></i>
                                 Account
@@ -205,77 +267,49 @@ if (!isset($_SESSION['user_name'])) {
             </div>
         </nav>
 
-
-
         <div class="container-fluid">
 
             <main role="main" class="col-md-12 ml-sm-auto">
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2">Room Schedule</h1>
+                    <h1 class="h2">Notifications</h1>
                 </div>
 
-                <nav>
-                    <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                        <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">CS</a>
-                        <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">IS</a>
-                        <a class="nav-item nav-link" id="nav-contact-tab" data-toggle="tab" href="#nav-contact" role="tab" aria-controls="nav-contact" aria-selected="false">IT</a>
-                    </div>
-                </nav>
+                <?php
+                $notifquery = "(SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, users.userno FROM notif INNER JOIN users ON users.userno = notif.notifaudience WHERE notif.notifaudience = '" . $_SESSION['userno'] . "' ORDER by notif.notifdate DESC)"
+                        . " UNION "
+                        . "(SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, notif.notifno as userno FROM notif WHERE notif.notifaudience = 'all' ORDER by notif.notifdate DESC)"
+                        . " UNION "
+                        . "(SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, notif.notifno as userno FROM notif WHERE notif.notifaudience = 'student' ORDER by notif.notifdate DESC)";
+                $notifresult = $conn->query($notifquery);
 
-                <div class="tab-content" id="nav-tabContent">
-                    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
-                        <?php
-                        $query = mysqli_query($conn, "SELECT * FROM schedule WHERE schedname = 'CS Room Schedule'");
-                        if ($query->num_rows > 0) {
-                            while ($row = $query->fetch_assoc()) {
-                                $schedlink = $row['schedlink'];
+                if ($notifresult->num_rows > 0) {
+                    while ($row = $notifresult->fetch_assoc()) {
+                        $notiftitle = $row['notiftitle'];
+                        $notifdesc = $row['notifdesc'];
+                        $notifdate = $row['notifdate'];
 
-                                if ($schedlink == TRUE) {
-                                    echo '<iframe style="border:none; position:relative; width:100%; height:100vh;" width="100%" src="' . $schedlink . '?widget=true&amp;headers=false"></iframe>';
-                                } else {
-                                    echo '<br><h4>No schedule available yet.</h4><br>';
-                                }
-                            }
-                        }
-                        ?>
-                    </div>
-                    <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
-                        <?php
-                        $query = mysqli_query($conn, "SELECT * FROM schedule WHERE schedname = 'IS Room Schedule'");
-                        if ($query->num_rows > 0) {
-                            while ($row = $query->fetch_assoc()) {
-                                $schedlink = $row['schedlink'];
+                        echo '
+                                            <div class="card">
+                                                <div class="card-header">
+                                                    <span><strong> ' . $notiftitle . ' </strong></span><br>
+                                                </div>
+                                                    <div class="card-body">
+                                                        ' . $notifdesc . ' <br>
+                                                    </div>
+                                                <div class="card-footer">
+                                                    <span style="font-size: 12px; font-style:italic;">Date: ' . $notifdate . ' </span><br>
+                                                </div>
+                                            </div>';
+                    }
+                } else {
+                    echo '<h5>No new notifications.</h5>';
+                }
+                ?>
 
-                                if ($schedlink == TRUE) {
-                                    echo '<iframe style="border:none; position:relative; width:100%; height:100vh;" width="100%" src="' . $schedlink . '?widget=true&amp;headers=false"></iframe>';
-                                } else {
-                                    echo '<br><h4>No schedule available yet.</h4><br>';
-                                }
-                            }
-                        }
-                        ?>
-                    </div>
-                    <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
-                        <?php
-                        $query = mysqli_query($conn, "SELECT * FROM schedule WHERE schedname = 'IT Room Schedule'");
-                        if ($query->num_rows > 0) {
-                            while ($row = $query->fetch_assoc()) {
-                                $schedlink = $row['schedlink'];
-
-                                if ($schedlink == TRUE) {
-                                    echo '<iframe style="border:none; position:relative; width:100%; height:100vh;" width="100%" src="' . $schedlink . '?widget=true&amp;headers=false"></iframe>';
-                                } else {
-                                    echo '<br><h4>No schedule available yet.</h4><br>';
-                                }
-                            }
-                        }
-                        ?>
-                    </div>
-                </div>
 
                 <br><br><br>
 
-            </main>
+            </main>               
         </div>
 
         <div class="container-fluid header">
@@ -283,7 +317,6 @@ if (!isset($_SESSION['user_name'])) {
                 IICS Help Desk © 2019
             </div>
         </div>
-
 
         <!-- Bootstrap core JavaScript
         ================================================== -->
@@ -299,36 +332,6 @@ if (!isset($_SESSION['user_name'])) {
             feather.replace()
         </script>
 
-        <!-- Graphs -->
-        <script src="../../js/Chart.min.js"></script>
-        <script>
-            var ctx = document.getElementById("myChart");
-            var myChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-                    datasets: [{
-                            data: [15339, 21345, 18483, 24003, 23489, 24092, 12034],
-                            lineTension: 0,
-                            backgroundColor: 'transparent',
-                            borderColor: '#007bff',
-                            borderWidth: 4,
-                            pointBackgroundColor: '#007bff'
-                        }]
-                },
-                options: {
-                    scales: {
-                        yAxes: [{
-                                ticks: {
-                                    beginAtZero: false
-                                }
-                            }]
-                    },
-                    legend: {
-                        display: false,
-                    }
-                }
-            });
-        </script>
+
     </body>
 </html>

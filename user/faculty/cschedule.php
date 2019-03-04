@@ -147,7 +147,10 @@ if (!isset($_SESSION['user_name'])) {
                                             </a>';
                             }
                             ?>
-
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="notifications.php" style="color: blue; width: 300px; white-space: normal;">
+                                <center>View All Notifications</center>
+                            </a>
                         </div>
                     </li>
                     </li>
