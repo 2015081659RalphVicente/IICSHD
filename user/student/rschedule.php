@@ -125,7 +125,7 @@ if (!isset($_SESSION['user_name'])) {
 
                 </ul>
 
- <ul class="navbar-nav px-1">
+                <ul class="navbar-nav px-1">
                     <li class="nav-item text-nowrap">
                     <li class="nav-item dropdown">
                         <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -138,7 +138,7 @@ if (!isset($_SESSION['user_name'])) {
                                                     FROM notif 
                                                 INNER JOIN users 
                                                 ON users.userno = notif.notifaudience 
-                                                WHERE notif.notifaudience = '1' 
+                                                WHERE notif.notifaudience = '".$_SESSION['userno']."' 
                                                 UNION ALL 
                                             SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, notif.notifno as userno 
                                                     FROM notif 
@@ -190,8 +190,8 @@ if (!isset($_SESSION['user_name'])) {
                     </li>
                     </li>
                 </ul>
-                
-                
+
+
                 <ul class="navbar-nav px-3">
                     <li class="nav-item text-nowrap">
                     <li class="nav-item dropdown">

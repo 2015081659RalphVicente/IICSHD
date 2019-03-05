@@ -261,7 +261,7 @@ if (isset($_POST['getQueueNum'])) {
 
                 </ul>
 
- <ul class="navbar-nav px-1">
+                <ul class="navbar-nav px-1">
                     <li class="nav-item text-nowrap">
                     <li class="nav-item dropdown">
                         <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -274,7 +274,7 @@ if (isset($_POST['getQueueNum'])) {
                                                     FROM notif 
                                                 INNER JOIN users 
                                                 ON users.userno = notif.notifaudience 
-                                                WHERE notif.notifaudience = '1' 
+                                                WHERE notif.notifaudience = '" . $_SESSION['userno'] . "' 
                                                 UNION ALL 
                                             SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, notif.notifno as userno 
                                                     FROM notif 

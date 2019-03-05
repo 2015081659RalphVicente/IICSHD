@@ -424,7 +424,7 @@ if (isset($_POST['qNoShow'])) {
                                                     FROM notif 
                                                 INNER JOIN users 
                                                 ON users.userno = notif.notifaudience 
-                                                WHERE notif.notifaudience = '1' 
+                                                WHERE notif.notifaudience = '".$_SESSION['userno']."' 
                                                 UNION ALL 
                                             SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, notif.notifno as userno 
                                                     FROM notif 

@@ -1,6 +1,6 @@
+  
 <?php
 include '../../include/controller.php';
-
 if (isset($_SESSION['user_name']) && $_SESSION['role'] == "admin") {
     header("location:/iicshd/user/admin/home.php");
 }
@@ -8,39 +8,31 @@ if (isset($_SESSION['user_name']) && $_SESSION['role'] == "student") {
     header("location:/iicshd/user/student/home.php");
 }
 if (isset($_SESSION['user_name'])) {
-
     if ((time() - $_SESSION['last_time']) > 2000) {
         header("Location:../../logout.php");
     } else {
         $_SESSION['last_time'] = time();
     }
 }
-
 if (!isset($_SESSION['user_name'])) {
     header("location:/iicshd/login.php");
 }
-
 if (isset($_POST['updatedoc2'])) {
     $edit_doc_no = $_POST['edit_doc_no2'];
-    $docstatus = $_POST['edit_status2'];
+    $docstatus = $_POST['editStatus'];
     $conremarks = $_POST['conremarks'];
     $constart = $_POST['constart'];
     $conend = $_POST['conend'];
 
-    $constart = date("Y-m-d H:i:s");
-    $conend = date("Y-m-d H:i:s");
-
-
     if ($docstatus == "Declined") {
         $constart = "0";
         $conend = "0";
-
+        
         $editquery = $conn->prepare("UPDATE consultations SET constatus=?, conremarks = ?, constart = ?, conend = ?, condatemodified=NOW() WHERE conno=?");
         $editquery->bind_param("ssssi", $docstatus, $conremarks, $constart, $conend, $edit_doc_no);
         $editquery->execute();
         $editquery->close();
     } elseif ($docstatus == "Accepted") {
-
         $editquery = $conn->prepare("UPDATE consultations SET constatus=?, conremarks = ?, constart = ?, conend = ?, condatemodified=NOW() WHERE conno=?");
         $editquery->bind_param("ssssi", $docstatus, $conremarks, $constart, $conend, $edit_doc_no);
         $editquery->execute();
@@ -48,15 +40,12 @@ if (isset($_POST['updatedoc2'])) {
     }
 
     if ($editquery == TRUE) {
-
         $passval = 'Consultation Request No. ' . $edit_doc_no . ' changed status to ' . $docstatus . '.';
-
         $passaction = "Update Consultation Request Status";
         $logpass = $conn->prepare("INSERT INTO updatelogs VALUES ('',?,?,NOW(),?)");
         $logpass->bind_param("sss", $passaction, $_SESSION['user_name'], $passval);
         $logpass->execute();
         $logpass->close();
-
         header("location: consultations.php");
         exit;
     } else {
@@ -161,7 +150,7 @@ if (isset($_POST['updatedoc2'])) {
 
                 </ul>
 
-                 <ul class="navbar-nav px-1">
+                <ul class="navbar-nav px-1">
                     <li class="nav-item text-nowrap">
                     <li class="nav-item dropdown">
                         <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -174,7 +163,7 @@ if (isset($_POST['updatedoc2'])) {
                                                     FROM notif 
                                                 INNER JOIN users 
                                                 ON users.userno = notif.notifaudience 
-                                                WHERE notif.notifaudience = '1' 
+                                                WHERE notif.notifaudience = '" . $_SESSION['userno'] . "' 
                                                 UNION ALL 
                                             SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, notif.notifno as userno 
                                                     FROM notif 
@@ -185,16 +174,13 @@ if (isset($_POST['updatedoc2'])) {
                                                     WHERE notif.notifaudience = 'faculty' 
                                             ORDER BY notifno DESC LIMIT 4";
                             $notifresult = $conn->query($notifquery);
-
                             if ($notifresult->num_rows > 0) {
                                 while ($row = $notifresult->fetch_assoc()) {
                                     $notiftitle = $row['notiftitle'];
                                     $notifdesc = $row['notifdesc'];
                                     $notifdate = $row['notifdate'];
-
                                     echo '
                                             <a class="dropdown-item" ';
-
                                     if ($notiftitle == "New Announcement Posted") {
                                         echo 'href="home.php"';
                                     }
@@ -285,7 +271,6 @@ if (isset($_POST['updatedoc2'])) {
                             $newsubquery = mysqli_query($conn, "SELECT LPAD(c.conno,4,0), c.condatecreated, u.fname, u.mname, u.lname, c.consub,"
                                     . "c.condesc, c.constatus, c.conprof, c.conremarks, c.constart, c.conend FROM consultations c INNER JOIN users u WHERE c.userno = u.userno "
                                     . "AND c.conprof = " . $_SESSION['userno'] . "");
-
                             if ($newsubquery->num_rows > 0) {
                                 while ($row = $newsubquery->fetch_assoc()) {
                                     $docid = $row['LPAD(c.conno,4,0)'];
@@ -297,7 +282,6 @@ if (isset($_POST['updatedoc2'])) {
                                     $conremarks = $row['conremarks'];
                                     $constart = $row['constart'];
                                     $conend = $row['conend'];
-
                                     echo '<tr>';
                                     if ($docstatus == 'Accepted') {
                                         echo '<td> - </td>';
@@ -305,7 +289,7 @@ if (isset($_POST['updatedoc2'])) {
                                         echo '<td> - </td>';
                                     } else {
                                         echo
-                                        "<td>" . "<a href='#edit2" . $docid . "'data-toggle='modal'><button type='button' class='btn btn-dark btn-sm' title='Edit'><span class='fas fa-edit' aria-hidden='true'></span></button></a>" . "</td>";
+                                        "<td>" . "<a href='#edit" . $docid . "'data-toggle='modal'><button type='button' class='btn btn-dark btn-sm' title='Edit'><span class='fas fa-edit' aria-hidden='true'></span></button></a>" . "</td>";
                                     } echo '<td>' . $docid . '</td>'
                                     . '<td>' . $docdatesubmit . '</td>'
                                     . '<td>' . $userid . '</td>'
@@ -327,18 +311,15 @@ if (isset($_POST['updatedoc2'])) {
                                     } else {
                                         echo '<td>N/A</td>';
                                     }
-                                    ?>
-                                    <?php
-                                    echo '<div id="edit2' . $docid . '" class="modal fade" role="dialog">
+
+                                    echo '<div id="edit' . $docid . '" class="modal fade" role="dialog">
                                                             <form method="post">
                                                                 <div class="modal-dialog modal-lg">
                                                                     <!-- Modal content-->
                                                                     <div class="modal-content">
                                                                         <div class="modal-header">
-
                                                                             <h4 class="modal-title">Edit Consultation Request #' . $docid . '</h4>
                                                                         </div>
-
                                                                         <div class="modal-body">
                                                                             <div class="row">
                                                                                 <div class="col-sm-12">
@@ -347,17 +328,15 @@ if (isset($_POST['updatedoc2'])) {
                                                                                     <p><strong>Description: </strong>' . $docdesc . '</p>
                                                                                     <p><strong>Date Requested: </strong>' . $docdatesubmit . '</p>
                                                                                     <p><strong>Requested By: </strong>' . $userid . '</p>  
-                                                                                    <p><strong>Update Status: </strong><select name="edit_status2" id="edit_status2" class="form-control">
+                                                                                    <p><strong>Update Status: </strong><select name="editStatus" id="editStatus" class="form-control">
                                                                                     <option value="Accepted"';
                                     if ($docstatus == 'Accepted') {
                                         echo "selected";
-                                    } echo' >Accept
-                                                                                    </option>
+                                    } echo' >Accept</option>
                                                                                     <option value="Declined"';
                                     if ($docstatus == 'Declined') {
                                         echo "selected";
-                                    } echo'>Decline
-                                                                                    </option>
+                                    } echo'>Decline</option>
                                                                                     </select></p>
                                                                                     
                                                                                 <div class="form-group" id="conremarks">
@@ -367,13 +346,14 @@ if (isset($_POST['updatedoc2'])) {
                                                                                 
                                                                                 <div class="form-group" id="constart">
                                                                                     <strong>Start Date/Time: </strong>
-                                                                                    <input type="datetime-local" name="constart" id="constart" class="form-control">
-                                                                                </div>
-                                                                                
-                                                                                <div class="form-group" id="conend">
+                                                                                        <input type="datetime-local" name="constart" id="constart" class="form-control">
+                                                                                 </div>
+                                                                                 
+                                                                                 <div class="form-group" id="conend">
                                                                                     <strong>End Date/Time: </strong>
-                                                                                    <input type="datetime-local" name="conend" id="conend" class="form-control">
+                                                                                        <input type="datetime-local" name="conend" id="conend" class="form-control">
                                                                                 </div>
+                                                                               
                                                                                 
                                                                                 </div>
                                                                             </div>
@@ -391,6 +371,8 @@ if (isset($_POST['updatedoc2'])) {
                                 }
                             }
                             ?>
+
+
 
                         </tbody>
 
@@ -453,13 +435,10 @@ if (isset($_POST['updatedoc2'])) {
         </script>
 
         <script>
-
-
             $(document).ready(function () {
 <?php
 $thisDate = date("m/d/Y");
 ?>
-
                 $('#consultation').DataTable({
                     dom: 'lBfrtip',
                     buttons: [
@@ -486,31 +465,11 @@ $thisDate = date("m/d/Y");
                                 select.append('<option value="' + d + '">' + d + '</option>')
                             });
                         });
-
                     }
-
-
-
-
                 }
                 );
-
-            });
-
-            $("#constart").show();
-            $("#conend").show();
-            $("#edit_status2").change(function () {
-                var val = $("#edit_status2").val();
-                if (val == "Declined") {
-                    $("#constart").hide();
-                    $("#conend").hide();
-                } else {
-                    $("#constart").show();
-                    $("#conend").show();
-                }
             });
 
         </script>
-
     </body>
 </html>
