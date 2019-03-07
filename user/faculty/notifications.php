@@ -33,6 +33,10 @@ if (isset($_POST['updatePass'])) {
     $newPass = $_POST['newPass'];
     $confirm = $_POST['confirmPass'];
     $edit_pno = $_POST['edit_pno'];
+    header("location:/iicshd/user/admin/home.php");
+}
+if (isset($_SESSION['user_name']) && $_SESSION['role'] == "student") {
+    header("location:/iicshd/user/student/home.php");
 
     $updateBool = TRUE;
 
@@ -180,70 +184,77 @@ if (isset($_POST['updatePass'])) {
                 </ul>
 
                 <ul class="navbar-nav px-1">
-                    <li class="nav-item text-nowrap">
-                    <li class="nav-item dropdown">
-                        <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span class="fas fa-envelope"></span>
-                            Notifications
-                        </button>
-                        <div class="dropdown-menu" style="white-space: normal;">
-                            <?php
-                            $notifquery = "SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, users.userno 
-                                                    FROM notif 
-                                                INNER JOIN users 
-                                                ON users.userno = notif.notifaudience 
-                                                WHERE notif.notifaudience = '".$_SESSION['userno']."' 
-                                                UNION ALL 
-                                            SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, notif.notifno as userno 
-                                                    FROM notif 
-                                                WHERE notif.notifaudience = 'all' 
-                                                UNION ALL
-                                            SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, notif.notifno as userno 
-                                                    FROM notif 
-                                                    WHERE notif.notifaudience = 'faculty' 
-                                            ORDER BY notifno DESC LIMIT 4";
-                            $notifresult = $conn->query($notifquery);
-
-                            if ($notifresult->num_rows > 0) {
-                                while ($row = $notifresult->fetch_assoc()) {
-                                    $notiftitle = $row['notiftitle'];
-                                    $notifdesc = $row['notifdesc'];
-                                    $notifdate = $row['notifdate'];
-
-                                    echo '
-                                            <a class="dropdown-item" ';
-
-                                    if ($notiftitle == "New Announcement Posted") {
-                                        echo 'href="home.php"';
-                                    }
-                                    if ($notiftitle == "Consultation Request") {
-                                        echo 'href="consultations.php"';
-                                    }
-                                    if ($notiftitle == "Schedule Updated") {
-                                        echo 'href="fschedule.php"';
-                                    }
-                                    echo 'style="width: 300px; white-space: normal;">
-                                                <span style="font-size: 13px;"><strong> ' . $notiftitle . ' </strong></span><br>
-                                                ' . $notifdesc . ' <br>
-                                                <span style="font-size: 10px;"> ' . $notifdate . ' </span><br>
-                                            </a>
-                                            <div class="dropdown-divider"></div>';
-                                }
-                            } else {
-                                echo '
-                                            <a class="dropdown-item" href="#" style="width: 300px; white-space: normal;">
-                                                No new notifications.
-                                            </a>';
-                            }
-                            ?>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="notifications.php" style="color: blue; width: 300px; white-space: normal;">
-                                <center>View All Notifications</center>
-                            </a>
-                        </div>
-                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="btn btn-primary btn-sm dropdown-toggle notif-toggle" data-toggle="dropdown"><span class="badge badge-danger count" style="border-radius:10px;"></span> <span class="fas fa-bell" style="font-size:18px;"></span> Notifications</a>
+                        <ul class="shownotif dropdown-menu" style="white-space:normal;"></ul>
                     </li>
                 </ul>
+
+                <!--                <ul class="navbar-nav px-1">
+                                    <li class="nav-item text-nowrap">
+                                    <li class="nav-item dropdown">
+                                        <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <span class="fas fa-envelope"></span>
+                                            Notifications
+                                        </button>
+                                        <div class="dropdown-menu" style="white-space: normal;">
+                <?php
+//                            $notifquery = "SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, users.userno 
+//                                                    FROM notif 
+//                                                INNER JOIN users 
+//                                                ON users.userno = notif.notifaudience 
+//                                                WHERE notif.notifaudience = '" . $_SESSION['userno'] . "' 
+//                                                UNION ALL 
+//                                            SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, notif.notifno as userno 
+//                                                    FROM notif 
+//                                                WHERE notif.notifaudience = 'all' 
+//                                                UNION ALL
+//                                            SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, notif.notifno as userno 
+//                                                    FROM notif 
+//                                                    WHERE notif.notifaudience = 'faculty' 
+//                                            ORDER BY notifno DESC LIMIT 4";
+//                            $notifresult = $conn->query($notifquery);
+//
+//                            if ($notifresult->num_rows > 0) {
+//                                while ($row = $notifresult->fetch_assoc()) {
+//                                    $notiftitle = $row['notiftitle'];
+//                                    $notifdesc = $row['notifdesc'];
+//                                    $notifdate = $row['notifdate'];
+//
+//                                    echo '
+//                                            <a class="dropdown-item" ';
+//
+//                                    if ($notiftitle == "New Announcement Posted") {
+//                                        echo 'href="home.php"';
+//                                    }
+//                                    if ($notiftitle == "Consultation Request") {
+//                                        echo 'href="consultations.php"';
+//                                    }
+//                                    if ($notiftitle == "Schedule Updated") {
+//                                        echo 'href="fschedule.php"';
+//                                    }
+//                                    echo 'style="width: 300px; white-space: normal;">
+//                                                <span style="font-size: 13px;"><strong> ' . $notiftitle . ' </strong></span><br>
+//                                                ' . $notifdesc . ' <br>
+//                                                <span style="font-size: 10px;"> ' . $notifdate . ' </span><br>
+//                                            </a>
+//                                            <div class="dropdown-divider"></div>';
+//                                }
+//                            } else {
+//                                echo '
+//                                            <a class="dropdown-item" href="#" style="width: 300px; white-space: normal;">
+//                                                No new notifications.
+//                                            </a>';
+//                            }
+                ?>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item" href="notifications.php" style="color: blue; width: 300px; white-space: normal;">
+                                                <center>View All Notifications</center>
+                                            </a>
+                                        </div>
+                                    </li>
+                                    </li>
+                                </ul>-->
 
                 <ul class="navbar-nav px-3">
                     <li class="nav-item text-nowrap">
@@ -283,7 +294,7 @@ if (isset($_POST['updatePass'])) {
                                                     FROM notif 
                                                 INNER JOIN users 
                                                 ON users.userno = notif.notifaudience 
-                                                WHERE notif.notifaudience = '".$_SESSION['userno']."' 
+                                                WHERE notif.notifaudience = '" . $_SESSION['userno'] . "' 
                                                 UNION ALL 
                                             SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, notif.notifno as userno 
                                                     FROM notif 
@@ -345,6 +356,42 @@ if (isset($_POST['updatePass'])) {
         <script src="../../js/feather.min.js"></script>
         <script>
             feather.replace()
+        </script>
+
+        <script>
+            $(document).ready(function () {
+
+                function load_unseen_notification(view = '')
+                {
+                    $.ajax({
+                        url: "../../include/fetch3.php",
+                        method: "POST",
+                        data: {view: view},
+                        dataType: "json",
+                        success: function (data)
+                        {
+                            $('.shownotif').html(data.notification);
+                            if (data.unseen_notification > 0)
+                            {
+                                $('.count').html(data.unseen_notification);
+                            }
+                        }
+                    });
+                }
+
+                load_unseen_notification();
+
+                $(document).on('click', '.notif-toggle', function () {
+                    $('.count').html('');
+                    load_unseen_notification('yes');
+                });
+
+                setInterval(function () {
+                    load_unseen_notification();
+                    ;
+                }, 1000);
+
+            });
         </script>
 
     </body>

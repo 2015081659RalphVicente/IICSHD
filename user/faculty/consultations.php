@@ -23,11 +23,13 @@ if (isset($_POST['updatedoc2'])) {
     $conremarks = $_POST['conremarks'];
     $constart = $_POST['constart'];
     $conend = $_POST['conend'];
+    $edit_doc_user = $_POST['edit_doc_user'];
+    $edit_doc_title = $_POST['edit_doc_title'];
 
     if ($docstatus == "Declined") {
         $constart = "0";
         $conend = "0";
-        
+
         $editquery = $conn->prepare("UPDATE consultations SET constatus=?, conremarks = ?, constart = ?, conend = ?, condatemodified=NOW() WHERE conno=?");
         $editquery->bind_param("ssssi", $docstatus, $conremarks, $constart, $conend, $edit_doc_no);
         $editquery->execute();
@@ -46,10 +48,60 @@ if (isset($_POST['updatedoc2'])) {
         $logpass->bind_param("sss", $passaction, $_SESSION['user_name'], $passval);
         $logpass->execute();
         $logpass->close();
+
+        $notiftitle = 'Consultation Request Update';
+        $notifdesc = "Title: " . $edit_doc_title . " (" . $docstatus . ")";
+        $notifaudience = $edit_doc_user;
+
+        $notif = $conn->prepare("INSERT INTO notif VALUES ('',?,?,?,?,NOW(),0)");
+        $notif->bind_param("isss", $_SESSION['userno'], $notiftitle, $notifdesc, $notifaudience);
+        $notif->execute();
+        $notif->close();
+
         header("location: consultations.php");
         exit;
     } else {
-        echo "Update failed.";
+//        echo "Update failed.";
+    }
+}
+
+if (isset($_POST['updatedoc3'])) {
+
+    $edit_doc_no = $_POST['edit_doc_no2'];
+    $docstatus = $_POST['editStatus'];
+    $conremarks = $_POST['conremarks'];
+    $constart = $_POST['constart'];
+    $conend = $_POST['conend'];
+    $edit_doc_user = $_POST['edit_doc_user'];
+    $edit_doc_title = $_POST['edit_doc_title'];
+
+    $editquery = $conn->prepare("UPDATE consultations SET constatus = ?, conremarks = ?, condatemodified=NOW() WHERE conno=?");
+    $editquery->bind_param("ssi", $docstatus, $conremarks, $edit_doc_no);
+    $editquery->execute();
+    $editquery->close();
+
+    if ($editquery == TRUE) {
+
+        $passval = 'Consultation Request No. ' . $edit_doc_no . ' changed status to ' . $docstatus . '.';
+        $passaction = "Update Consultation Request Remarks";
+        $logpass = $conn->prepare("INSERT INTO updatelogs VALUES ('',?,?,NOW(),?)");
+        $logpass->bind_param("sss", $passaction, $_SESSION['user_name'], $passval);
+        $logpass->execute();
+        $logpass->close();
+
+        $notiftitle = 'Consultation Request Update';
+        $notifdesc = "Title: " . $edit_doc_title . " (" . $constatus . ")";
+        $notifaudience = $edit_doc_user;
+
+        $notif = $conn->prepare("INSERT INTO notif VALUES ('',?,?,?,?,NOW(),0)");
+        $notif->bind_param("isss", $_SESSION['userno'], $notiftitle, $notifdesc, $notifaudience);
+        $notif->execute();
+        $notif->close();
+
+        header("location: consultations.php");
+        exit;
+    } else {
+//        echo "Update failed.";
     }
 }
 ?>
@@ -151,67 +203,74 @@ if (isset($_POST['updatedoc2'])) {
                 </ul>
 
                 <ul class="navbar-nav px-1">
-                    <li class="nav-item text-nowrap">
-                    <li class="nav-item dropdown">
-                        <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span class="fas fa-envelope"></span>
-                            Notifications
-                        </button>
-                        <div class="dropdown-menu" style="white-space: normal;">
-                            <?php
-                            $notifquery = "SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, users.userno 
-                                                    FROM notif 
-                                                INNER JOIN users 
-                                                ON users.userno = notif.notifaudience 
-                                                WHERE notif.notifaudience = '" . $_SESSION['userno'] . "' 
-                                                UNION ALL 
-                                            SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, notif.notifno as userno 
-                                                    FROM notif 
-                                                WHERE notif.notifaudience = 'all' 
-                                                UNION ALL
-                                            SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, notif.notifno as userno 
-                                                    FROM notif 
-                                                    WHERE notif.notifaudience = 'faculty' 
-                                            ORDER BY notifno DESC LIMIT 4";
-                            $notifresult = $conn->query($notifquery);
-                            if ($notifresult->num_rows > 0) {
-                                while ($row = $notifresult->fetch_assoc()) {
-                                    $notiftitle = $row['notiftitle'];
-                                    $notifdesc = $row['notifdesc'];
-                                    $notifdate = $row['notifdate'];
-                                    echo '
-                                            <a class="dropdown-item" ';
-                                    if ($notiftitle == "New Announcement Posted") {
-                                        echo 'href="home.php"';
-                                    }
-                                    if ($notiftitle == "Consultation Request") {
-                                        echo 'href="consultations.php"';
-                                    }
-                                    if ($notiftitle == "Schedule Updated") {
-                                        echo 'href="fschedule.php"';
-                                    }
-                                    echo 'style="width: 300px; white-space: normal;">
-                                                <span style="font-size: 13px;"><strong> ' . $notiftitle . ' </strong></span><br>
-                                                ' . $notifdesc . ' <br>
-                                                <span style="font-size: 10px;"> ' . $notifdate . ' </span><br>
-                                            </a>
-                                            <div class="dropdown-divider"></div>';
-                                }
-                            } else {
-                                echo '
-                                            <a class="dropdown-item" href="#" style="width: 300px; white-space: normal;">
-                                                No new notifications.
-                                            </a>';
-                            }
-                            ?>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="notifications.php" style="color: blue; width: 300px; white-space: normal;">
-                                <center>View All Notifications</center>
-                            </a>
-                        </div>
-                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="btn btn-primary btn-sm dropdown-toggle notif-toggle" data-toggle="dropdown"><span class="badge badge-danger count" style="border-radius:10px;"></span> <span class="fas fa-bell" style="font-size:18px;"></span> Notifications</a>
+                        <ul class="shownotif dropdown-menu" style="white-space:normal;"></ul>
                     </li>
                 </ul>
+
+                <!--                <ul class="navbar-nav px-1">
+                                    <li class="nav-item text-nowrap">
+                                    <li class="nav-item dropdown">
+                                        <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <span class="fas fa-envelope"></span>
+                                            Notifications
+                                        </button>
+                                        <div class="dropdown-menu" style="white-space: normal;">
+                <?php
+//                            $notifquery = "SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, users.userno 
+//                                                    FROM notif 
+//                                                INNER JOIN users 
+//                                                ON users.userno = notif.notifaudience 
+//                                                WHERE notif.notifaudience = '" . $_SESSION['userno'] . "' 
+//                                                UNION ALL 
+//                                            SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, notif.notifno as userno 
+//                                                    FROM notif 
+//                                                WHERE notif.notifaudience = 'all' 
+//                                                UNION ALL
+//                                            SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, notif.notifno as userno 
+//                                                    FROM notif 
+//                                                    WHERE notif.notifaudience = 'faculty' 
+//                                            ORDER BY notifno DESC LIMIT 4";
+//                            $notifresult = $conn->query($notifquery);
+//                            if ($notifresult->num_rows > 0) {
+//                                while ($row = $notifresult->fetch_assoc()) {
+//                                    $notiftitle = $row['notiftitle'];
+//                                    $notifdesc = $row['notifdesc'];
+//                                    $notifdate = $row['notifdate'];
+//                                    echo '
+//                                            <a class="dropdown-item" ';
+//                                    if ($notiftitle == "New Announcement Posted") {
+//                                        echo 'href="home.php"';
+//                                    }
+//                                    if ($notiftitle == "Consultation Request") {
+//                                        echo 'href="consultations.php"';
+//                                    }
+//                                    if ($notiftitle == "Schedule Updated") {
+//                                        echo 'href="fschedule.php"';
+//                                    }
+//                                    echo 'style="width: 300px; white-space: normal;">
+//                                                <span style="font-size: 13px;"><strong> ' . $notiftitle . ' </strong></span><br>
+//                                                ' . $notifdesc . ' <br>
+//                                                <span style="font-size: 10px;"> ' . $notifdate . ' </span><br>
+//                                            </a>
+//                                            <div class="dropdown-divider"></div>';
+//                                }
+//                            } else {
+//                                echo '
+//                                            <a class="dropdown-item" href="#" style="width: 300px; white-space: normal;">
+//                                                No new notifications.
+//                                            </a>';
+//                            }
+                ?>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item" href="notifications.php" style="color: blue; width: 300px; white-space: normal;">
+                                                <center>View All Notifications</center>
+                                            </a>
+                                        </div>
+                                    </li>
+                                    </li>
+                                </ul>-->
 
                 <ul class="navbar-nav px-3">
                     <li class="nav-item text-nowrap">
@@ -268,7 +327,7 @@ if (isset($_POST['updatedoc2'])) {
                         <tbody>
 
                             <?php
-                            $newsubquery = mysqli_query($conn, "SELECT LPAD(c.conno,4,0), c.condatecreated, u.fname, u.mname, u.lname, c.consub,"
+                            $newsubquery = mysqli_query($conn, "SELECT LPAD(c.conno,4,0), c.condatecreated, u.userno, u.fname, u.mname, u.lname, c.consub,"
                                     . "c.condesc, c.constatus, c.conprof, c.conremarks, c.constart, c.conend FROM consultations c INNER JOIN users u WHERE c.userno = u.userno "
                                     . "AND c.conprof = " . $_SESSION['userno'] . "");
                             if ($newsubquery->num_rows > 0) {
@@ -282,12 +341,21 @@ if (isset($_POST['updatedoc2'])) {
                                     $conremarks = $row['conremarks'];
                                     $constart = $row['constart'];
                                     $conend = $row['conend'];
+                                    $userno = $row['userno'];
+                                    
+                                    
+
                                     echo '<tr>';
                                     if ($docstatus == 'Accepted') {
-                                        echo '<td> - </td>';
+                                        echo "<td>" . "<a href='#update" . $docid . "'data-toggle='modal'><button type='button' class='btn btn-success btn-sm' title='Update'><span class='fas fa-check-square' aria-hidden='true'></span></button></a>" . "</td>";
                                     } elseif ($docstatus == 'Declined') {
-                                        echo '<td> - </td>';
-                                    } else {
+                                        echo "<td> - </td>";
+                                    } elseif($docstatus == 'Done'){
+                                        echo "<td> - </td>";
+                                    } elseif($docstatus == 'No-Show'){
+                                        echo "<td> - </td>";
+                                    }
+                                    else {
                                         echo
                                         "<td>" . "<a href='#edit" . $docid . "'data-toggle='modal'><button type='button' class='btn btn-dark btn-sm' title='Edit'><span class='fas fa-edit' aria-hidden='true'></span></button></a>" . "</td>";
                                     } echo '<td>' . $docid . '</td>'
@@ -302,12 +370,12 @@ if (isset($_POST['updatedoc2'])) {
                                         echo '<td>Waiting for Approval</td>';
                                     }
                                     if ($constart != 0) {
-                                        echo '<td>' . $constart . '</td>';
+                                        echo '<td>' . date("m/d/Y h:iA", strtotime($constart)) . '</td>';
                                     } else {
                                         echo '<td>N/A</td>';
                                     }
                                     if ($conend != 0) {
-                                        echo '<td>' . $conend . '</td>';
+                                        echo '<td>' . date("m/d/Y h:iA", strtotime($conend)) . '</td>';
                                     } else {
                                         echo '<td>N/A</td>';
                                     }
@@ -323,6 +391,8 @@ if (isset($_POST['updatedoc2'])) {
                                                                         <div class="modal-body">
                                                                             <div class="row">
                                                                                 <div class="col-sm-12">
+                                                                                    <input type="hidden" name="edit_doc_title" value="' . $doctitle . '">
+                                                                                    <input type="hidden" name="edit_doc_user" value="' . $userno . '">
                                                                                     <input type="hidden" name="edit_doc_no2" value="' . $docid . '">
                                                                                     <p><strong>Subject of Concern: </strong>' . $doctitle . '</p>
                                                                                     <p><strong>Description: </strong>' . $docdesc . '</p>
@@ -341,17 +411,21 @@ if (isset($_POST['updatedoc2'])) {
                                                                                     
                                                                                 <div class="form-group" id="conremarks">
                                                                                     <strong>Remarks: *</strong>
-                                                                                    <textarea rows="2" class="form-control" name="conremarks" id="conremarks"></textarea>
+                                                                                    <textarea rows="2" class="form-control" name="conremarks" id="conremarks" required></textarea>
+                                                                                </div>
+                                                                                
+                                                                                <div class="alert alert-warning">
+                                                                                    <span class="fas fa-exclamation-circle"></span> Choosing the <b>"Decline"</b> status will disregard the date and time set below.
                                                                                 </div>
                                                                                 
                                                                                 <div class="form-group" id="constart">
                                                                                     <strong>Start Date/Time: </strong>
-                                                                                        <input type="datetime-local" name="constart" id="constart" class="form-control">
+                                                                                        <input type="datetime-local" name="constart" id="constart" class="form-control" min="' . $thisDate . '" required>
                                                                                  </div>
                                                                                  
                                                                                  <div class="form-group" id="conend">
                                                                                     <strong>End Date/Time: </strong>
-                                                                                        <input type="datetime-local" name="conend" id="conend" class="form-control">
+                                                                                        <input type="datetime-local" name="conend" id="conend" class="form-control" min="' . $thisDate . '" required>
                                                                                 </div>
                                                                                
                                                                                 
@@ -361,6 +435,54 @@ if (isset($_POST['updatedoc2'])) {
                                                                             <div class="modal-footer">
                                                                                 <button style="float: right;" type="button" class="btn btn-secondary btn-m" data-dismiss="modal"><span class="fas fa-times"></span> Cancel</button>
                                                                                 <button style="float: right;" type="submit" name="updatedoc2" class="btn btn-success btn-m"><span class="fas fa-clipboard-check" ></span> Save Changes</button>
+                                                                                 
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </form>
+                                                        </div>';
+
+                                    echo '<div id="update' . $docid . '" class="modal fade" role="dialog">
+                                                            <form method="post">
+                                                                <div class="modal-dialog modal-lg">
+                                                                    <!-- Modal content-->
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-header">
+                                                                            <h4 class="modal-title">Update Consultation Request #' . $docid . '</h4>
+                                                                        </div>
+                                                                        <div class="modal-body">
+                                                                            <div class="row">
+                                                                                <div class="col-sm-12">
+                                                                                    <input type="hidden" name="edit_doc_title" value="' . $doctitle . '">
+                                                                                    <input type="hidden" name="edit_doc_user" value="' . $userno . '">
+                                                                                    <input type="hidden" name="edit_doc_no2" value="' . $docid . '">
+                                                                                    <p><strong>Subject of Concern: </strong>' . $doctitle . '</p>
+                                                                                    <p><strong>Description: </strong>' . $docdesc . '</p>
+                                                                                    <p><strong>Date Requested: </strong>' . $docdatesubmit . '</p>
+                                                                                    <p><strong>Requested By: </strong>' . $userid . '</p>
+                                                                                    <p><strong>Update Status: </strong><select name="editStatus" id="editStatus" class="form-control">
+                                                                                    <option value="Done"';
+                                    if ($docstatus == 'Done') {
+                                        echo "selected";
+                                    } echo' >Done</option>
+                                                                                    <option value="No-Show"';
+                                    if ($docstatus == 'No-Show') {
+                                        echo "selected";
+                                    } echo'>No-Show</option>
+                                                                                    </select></p>
+                                                                                        
+                                                                                    <div class="form-group" id="conremarks">
+                                                                                        <strong>Update Remarks: *</strong>
+                                                                                        <textarea rows="2" class="form-control" name="conremarks" id="conremarks"></textarea>
+                                                                                    </div>                                                                               
+                                                                                
+                                                                                </div>
+                                                                            </div>
+                                                                            <br>
+                                                                            <div class="modal-footer">
+                                                                                <button style="float: right;" type="button" class="btn btn-secondary btn-m" data-dismiss="modal"><span class="fas fa-times"></span> Cancel</button>
+                                                                                <button style="float: right;" type="submit" name="updatedoc3" class="btn btn-success btn-m"><span class="fas fa-clipboard-check" ></span> Save Changes</button>
                                                                                  
                                                                             </div>
                                                                         </div>
@@ -471,5 +593,43 @@ $thisDate = date("m/d/Y");
             });
 
         </script>
+
+        <script>
+            $(document).ready(function () {
+
+                function load_unseen_notification(view = '')
+                {
+                    $.ajax({
+                        url: "../../include/fetch3.php",
+                        method: "POST",
+                        data: {view: view},
+                        dataType: "json",
+                        success: function (data)
+                        {
+                            $('.shownotif').html(data.notification);
+                            if (data.unseen_notification > 0)
+                            {
+                                $('.count').html(data.unseen_notification);
+                            }
+                        }
+                    });
+                }
+
+                load_unseen_notification();
+
+                $(document).on('click', '.notif-toggle', function () {
+                    $('.count').html('');
+                    load_unseen_notification('yes');
+                });
+
+                setInterval(function () {
+                    load_unseen_notification();
+                    ;
+                }, 1000);
+
+            });
+        </script>
+
+
     </body>
 </html>

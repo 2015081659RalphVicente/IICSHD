@@ -58,7 +58,7 @@ if (isset($_POST["uploadFile"])) {
             $notifdesc = "New File Available: " . $_FILES['fileToUpload']['name'] . ".";
             $notifaudience = "student";
             
-            $notif = $conn->prepare("INSERT INTO notif VALUES ('',?,?,?,?,NOW())");
+            $notif = $conn->prepare("INSERT INTO notif VALUES ('',?,?,?,?,NOW(),0)");
             $notif->bind_param("isss", $_SESSION['userno'], $notiftitle, $notifdesc, $notifaudience);
             $notif->execute();
             $notif->close();

@@ -4,141 +4,141 @@ include '../../include/controller.php';
 include '../../include/upload.php';
 
 if (isset($_SESSION['user_name']) && $_SESSION['role'] == "faculty") {
-    header("location:/iicshd/user/faculty/home.php");
+header("location:/iicshd/user/faculty/home.php");
 }
 if (isset($_SESSION['user_name']) && $_SESSION['role'] == "student") {
-    header("location:/iicshd/user/student/home.php");
+header("location:/iicshd/user/student/home.php");
 }
 if (isset($_SESSION['user_name'])) {
 
-    if ((time() - $_SESSION['last_time']) > 2000) {
-        header("Location:../../logout.php");
-    } else {
-        $_SESSION['last_time'] = time();
-    }
+if ((time() - $_SESSION['last_time']) > 2000) {
+header("Location:../../logout.php");
+} else {
+$_SESSION['last_time'] = time();
+}
 }
 
 if (!isset($_SESSION['user_name'])) {
-    header("location:/iicshd/index.php");
+header("location:/iicshd/index.php");
 }
 
 if (isset($_GET['activate'])) {
-    $activate = $_GET['activate'];
+$activate = $_GET['activate'];
 } else {
-    $activate = '';
+$activate = '';
 }
 
 if (isset($_GET['deactivate'])) {
-    $deactivate = $_GET['deactivate'];
+$deactivate = $_GET['deactivate'];
 } else {
-    $deactivate = '';
+$deactivate = '';
 }
 
 if (isset($_GET['activate2'])) {
-    $activate2 = $_GET['activate2'];
+$activate2 = $_GET['activate2'];
 } else {
-    $activate2 = '';
+$activate2 = '';
 }
 
 if (isset($_GET['deactivate2'])) {
-    $deactivate2 = $_GET['deactivate2'];
+$deactivate2 = $_GET['deactivate2'];
 } else {
-    $deactivate2 = '';
+$deactivate2 = '';
 }
 
 
 if (isset($_POST['deactivate'])) {
-    // sql to deactivate a record
-    $deactivate_id = $_POST['deactivate_id'];
-    $deacname = $_POST['deacname'];
+// sql to deactivate a record
+$deactivate_id = $_POST['deactivate_id'];
+$deacname = $_POST['deacname'];
 
-    $bool = TRUE;
+$bool = TRUE;
 
-    if ($bool == TRUE) {
-        $sql = "UPDATE users SET hidden = 1 where userno='$deactivate_id'";
-        if ($conn->query($sql) === TRUE) {
-            $sql = "UPDATE users SET hidden = 1 where userno='$deactivate_id'";
-            if ($conn->query($sql) === TRUE) {
+if ($bool == TRUE) {
+$sql = "UPDATE users SET hidden = 1 where userno='$deactivate_id'";
+if ($conn->query($sql) === TRUE) {
+$sql = "UPDATE users SET hidden = 1 where userno='$deactivate_id'";
+if ($conn->query($sql) === TRUE) {
 
-                $_GET['deactivate'] = 'success';
-                header("location: cpanel2.php?deactivate=success");
-            } else {
-                echo "Error deleting record: " . $conn->error;
-            }
-        } else {
-            echo "Error deleting record: " . $conn->error;
-        }
-    } else {
-        $_GET['deactivate'] = 'failed';
-        header("location: cpanel2.php?deactivate=failed");
-    }
+$_GET['deactivate'] = 'success';
+header("location: cpanel2.php?deactivate=success");
+} else {
+echo "Error deleting record: " . $conn->error;
+}
+} else {
+echo "Error deleting record: " . $conn->error;
+}
+} else {
+$_GET['deactivate'] = 'failed';
+header("location: cpanel2.php?deactivate=failed");
+}
 }
 
 if (isset($_POST['deactivate2'])) {
-    // sql to deactivate a record
-    $deactivate_id = $_POST['deactivate_id2'];
-    $deacname = $_POST['deacname2'];
+// sql to deactivate a record
+$deactivate_id = $_POST['deactivate_id2'];
+$deacname = $_POST['deacname2'];
 
-    $bool = TRUE;
+$bool = TRUE;
 
-    if ($bool == TRUE) {
-        $sql = "UPDATE users SET hidden = 1 where userno='$deactivate_id'";
-        if ($conn->query($sql) === TRUE) {
-            $sql = "UPDATE users SET hidden = 1 where userno='$deactivate_id'";
-            if ($conn->query($sql) === TRUE) {
+if ($bool == TRUE) {
+$sql = "UPDATE users SET hidden = 1 where userno='$deactivate_id'";
+if ($conn->query($sql) === TRUE) {
+$sql = "UPDATE users SET hidden = 1 where userno='$deactivate_id'";
+if ($conn->query($sql) === TRUE) {
 
-                $_GET['deactivate2'] = 'success';
-                header("location: cpanel2.php?deactivate2=success");
-            } else {
-                echo "Error deleting record: " . $conn->error;
-            }
-        } else {
-            echo "Error deleting record: " . $conn->error;
-        }
-    } else {
-        $_GET['deactivate2'] = 'failed';
-        header("location: cpanel2.php?deactivate2=failed");
-    }
+$_GET['deactivate2'] = 'success';
+header("location: cpanel2.php?deactivate2=success");
+} else {
+echo "Error deleting record: " . $conn->error;
+}
+} else {
+echo "Error deleting record: " . $conn->error;
+}
+} else {
+$_GET['deactivate2'] = 'failed';
+header("location: cpanel2.php?deactivate2=failed");
+}
 }
 
 if (isset($_POST['activate'])) {
-    // sql to activate a record
-    $activate_id = $_POST['activate_id'];
-    $acname = $_POST['acname'];
+// sql to activate a record
+$activate_id = $_POST['activate_id'];
+$acname = $_POST['acname'];
 
-    $sql = "UPDATE users SET hidden = 0 where userno='$activate_id'";
-    if ($conn->query($sql) === TRUE) {
-        $sql = "UPDATE users SET hidden = 0 where userno='$activate_id'";
+$sql = "UPDATE users SET hidden = 0 where userno='$activate_id'";
+if ($conn->query($sql) === TRUE) {
+$sql = "UPDATE users SET hidden = 0 where userno='$activate_id'";
 
-        if ($conn->query($sql) === TRUE) {
-            $_GET['activate'] = 'success';
-            header("location: cpanel2.php?activate=success");
-        } else {
-            echo "Error deleting record: " . $conn->error;
-        }
-    } else {
-        echo "Error deleting record: " . $conn->error;
-    }
+if ($conn->query($sql) === TRUE) {
+$_GET['activate'] = 'success';
+header("location: cpanel2.php?activate=success");
+} else {
+echo "Error deleting record: " . $conn->error;
+}
+} else {
+echo "Error deleting record: " . $conn->error;
+}
 }
 
 if (isset($_POST['activate2'])) {
-    // sql to activate a record
-    $activate_id = $_POST['activate_id2'];
-    $acname = $_POST['acname2'];
+// sql to activate a record
+$activate_id = $_POST['activate_id2'];
+$acname = $_POST['acname2'];
 
-    $sql = "UPDATE users SET hidden = 0 where userno='$activate_id'";
-    if ($conn->query($sql) === TRUE) {
-        $sql = "UPDATE users SET hidden = 0 where userno='$activate_id'";
+$sql = "UPDATE users SET hidden = 0 where userno='$activate_id'";
+if ($conn->query($sql) === TRUE) {
+$sql = "UPDATE users SET hidden = 0 where userno='$activate_id'";
 
-        if ($conn->query($sql) === TRUE) {
-            $_GET['activate2'] = 'success';
-            header("location: cpanel2.php?activate2=success");
-        } else {
-            echo "Error deleting record: " . $conn->error;
-        }
-    } else {
-        echo "Error deleting record: " . $conn->error;
-    }
+if ($conn->query($sql) === TRUE) {
+$_GET['activate2'] = 'success';
+header("location: cpanel2.php?activate2=success");
+} else {
+echo "Error deleting record: " . $conn->error;
+}
+} else {
+echo "Error deleting record: " . $conn->error;
+}
 }
 ?>
 
@@ -261,70 +261,77 @@ if (isset($_POST['activate2'])) {
                 </ul>
 
                 <ul class="navbar-nav px-1">
-                    <li class="nav-item text-nowrap">
-                    <li class="nav-item dropdown">
-                        <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span class="fas fa-envelope"></span>
-                            Notifications
-                        </button>
-                        <div class="dropdown-menu" style="white-space: normal;">
-                            <?php
-                            $notifquery = "SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, users.userno 
-                                                    FROM notif 
-                                                INNER JOIN users 
-                                                ON users.userno = notif.notifaudience 
-                                                WHERE notif.notifaudience = '".$_SESSION['userno']."' 
-                                                UNION ALL 
-                                            SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, notif.notifno as userno 
-                                                    FROM notif 
-                                                WHERE notif.notifaudience = 'all' 
-                                                UNION ALL
-                                            SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, notif.notifno as userno 
-                                                    FROM notif 
-                                                    WHERE notif.notifaudience = 'admin' 
-                                            ORDER BY notifno DESC LIMIT 4";
-                            $notifresult = $conn->query($notifquery);
-
-                            if ($notifresult->num_rows > 0) {
-                                while ($row = $notifresult->fetch_assoc()) {
-                                    $notiftitle = $row['notiftitle'];
-                                    $notifdesc = $row['notifdesc'];
-                                    $notifdate = $row['notifdate'];
-
-                                    echo '
-                                            <a class="dropdown-item" ';
-
-                                    if ($notiftitle == "New Announcement Posted") {
-                                        echo 'href="home.php"';
-                                    }
-                                    if ($notiftitle == "New Queue Ticket") {
-                                        echo 'href="queue.php"';
-                                    }
-                                    if ($notiftitle == "Schedule Updated") {
-                                        echo 'href="fschedule.php"';
-                                    }
-                                    echo 'style="width: 300px; white-space: normal;">
-                                                <span style="font-size: 13px;"><strong> ' . $notiftitle . ' </strong></span><br>
-                                                ' . $notifdesc . ' <br>
-                                                <span style="font-size: 10px;"> ' . $notifdate . ' </span><br>
-                                            </a>
-                                            <div class="dropdown-divider"></div>';
-                                }
-                            } else {
-                                echo '
-                                            <a class="dropdown-item" href="#" style="width: 300px; white-space: normal;">
-                                                No new notifications.
-                                            </a>';
-                            }
-                            ?>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="notifications.php" style="color: blue; width: 300px; white-space: normal;">
-                                <center>View All Notifications</center>
-                            </a>
-                        </div>
-                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="btn btn-primary btn-sm dropdown-toggle notif-toggle" data-toggle="dropdown"><span class="badge badge-danger count" style="border-radius:10px;"></span> <span class="fas fa-bell" style="font-size:18px;"></span> Notifications</a>
+                        <ul class="shownotif dropdown-menu" style="white-space:normal;"></ul>
                     </li>
                 </ul>
+
+                <!--                <ul class="navbar-nav px-1">
+                                    <li class="nav-item text-nowrap">
+                                    <li class="nav-item dropdown">
+                                        <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <span class="fas fa-envelope"></span>
+                                            Notifications
+                                        </button>
+                                        <div class="dropdown-menu" style="white-space: normal;">
+                <?php
+//                            $notifquery = "SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, users.userno 
+//                                                    FROM notif 
+//                                                INNER JOIN users 
+//                                                ON users.userno = notif.notifaudience 
+//                                                WHERE notif.notifaudience = '".$_SESSION['userno']."' 
+//                                                UNION ALL 
+//                                            SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, notif.notifno as userno 
+//                                                    FROM notif 
+//                                                WHERE notif.notifaudience = 'all' 
+//                                                UNION ALL
+//                                            SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, notif.notifno as userno 
+//                                                    FROM notif 
+//                                                    WHERE notif.notifaudience = 'admin' 
+//                                            ORDER BY notifno DESC LIMIT 4";
+//                            $notifresult = $conn->query($notifquery);
+//
+//                            if ($notifresult->num_rows > 0) {
+//                                while ($row = $notifresult->fetch_assoc()) {
+//                                    $notiftitle = $row['notiftitle'];
+//                                    $notifdesc = $row['notifdesc'];
+//                                    $notifdate = $row['notifdate'];
+//
+//                                    echo '
+//                                            <a class="dropdown-item" ';
+//
+//                                    if ($notiftitle == "New Announcement Posted") {
+//                                        echo 'href="home.php"';
+//                                    }
+//                                    if ($notiftitle == "New Queue Ticket") {
+//                                        echo 'href="queue.php"';
+//                                    }
+//                                    if ($notiftitle == "Schedule Updated") {
+//                                        echo 'href="fschedule.php"';
+//                                    }
+//                                    echo 'style="width: 300px; white-space: normal;">
+//                                                <span style="font-size: 13px;"><strong> ' . $notiftitle . ' </strong></span><br>
+//                                                ' . $notifdesc . ' <br>
+//                                                <span style="font-size: 10px;"> ' . $notifdate . ' </span><br>
+//                                            </a>
+//                                            <div class="dropdown-divider"></div>';
+//                                }
+//                            } else {
+//                                echo '
+//                                            <a class="dropdown-item" href="#" style="width: 300px; white-space: normal;">
+//                                                No new notifications.
+//                                            </a>';
+//                }
+                ?>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item" href="notifications.php" style="color: blue; width: 300px; white-space: normal;">
+                                                <center>View All Notifications</center>
+                                            </a>
+                                        </div>
+                                    </li>
+                                    </li>
+                                </ul>-->
 
                 <ul class="navbar-nav px-3">
                     <li class="nav-item text-nowrap">
@@ -944,6 +951,42 @@ $thisDate = date("m/d/Y");
                 $(this).parent().find(".fa-plus-circle").removeClass("fa-plus-circle").addClass("fa-minus-circle");
             }).on('hidden.bs.collapse', function () {
                 $(this).parent().find(".fa-minus-circle").removeClass("fa-minus-circle").addClass("fa-plus-circle");
+            });
+        </script>
+
+        <script>
+            $(document).ready(function () {
+
+                function load_unseen_notification(view = '')
+                {
+                    $.ajax({
+                        url: "../../include/fetch1.php",
+                        method: "POST",
+                        data: {view: view},
+                        dataType: "json",
+                        success: function (data)
+                        {
+                            $('.shownotif').html(data.notification);
+                            if (data.unseen_notification > 0)
+                            {
+                                $('.count').html(data.unseen_notification);
+                            }
+                        }
+                    });
+                }
+
+                load_unseen_notification();
+
+                $(document).on('click', '.notif-toggle', function () {
+                    $('.count').html('');
+                    load_unseen_notification('yes');
+                });
+
+                setInterval(function () {
+                    load_unseen_notification();
+                    ;
+                }, 1000);
+
             });
         </script>
 

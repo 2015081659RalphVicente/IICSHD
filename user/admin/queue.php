@@ -1,6 +1,21 @@
-
 <?php
 include '../../include/controller.php';
+
+use PHPMailer\PHPMailer\PHPMailer;
+
+require '../../include/PHPMailer/src/SMTP.php';
+require '../../include/PHPMailer/src/Exception.php';
+require '../../include/PHPMailer/src/PHPMailer.php';
+
+$mail = new PHPMailer;
+
+$mail->isSMTP();                                      // Set mailer to use SMTP
+$mail->Host = 'smtp.gmail.com';  // Specify main and backup SMTP servers
+$mail->SMTPAuth = true;                               // Enable SMTP authentication
+$mail->Username = 'noreply.iicshd@gmail.com';                 // SMTP username
+$mail->Password = '1ng0dw3trust';                           // SMTP password
+$mail->SMTPSecure = 'tls';                            // Enable TLS encryption, `ssl` also accepted
+$mail->Port = 587;
 
 if (isset($_SESSION['user_name']) && $_SESSION['role'] == "faculty") {
     header("location:/iicshd/user/faculty/home.php");
@@ -43,7 +58,7 @@ if (isset($_POST['toggleClose'])) {
         header("location: queue.php");
         exit;
     } else {
-        echo "Queue toggle failed.";
+//        echo "Queue toggle failed.";
     }
 }
 
@@ -69,7 +84,7 @@ if (isset($_POST['toggleOpen'])) {
         header("location: queue.php");
         exit;
     } else {
-        echo "Queue toggle failed.";
+//        echo "Queue toggle failed.";
     }
 }
 
@@ -95,7 +110,7 @@ if (isset($_POST['adminIn'])) {
         header("location: queue.php");
         exit;
     } else {
-        echo "Queue toggle failed.";
+//        echo "Queue toggle failed.";
     }
 }
 
@@ -121,12 +136,15 @@ if (isset($_POST['adminOut'])) {
         header("location: queue.php");
         exit;
     } else {
-        echo "Queue toggle failed.";
+//        echo "Queue toggle failed.";
     }
 }
 
 if (isset($_POST['qStart'])) {
+
     $qqno = $_POST['startQno'];
+    $getquser = $_POST['getQUser'];
+    $getqusermail = $_POST['getQUserMail'];
     $qstatus = "Now";
 
     $startQuery = $conn->prepare("UPDATE queue SET qstatus=? WHERE qno=?");
@@ -134,14 +152,63 @@ if (isset($_POST['qStart'])) {
     $startQuery->execute();
     $startQuery->close();
 
+    $notiftitle = "Queue Status";
+    $notifdesc = "Now Serving Queue Ticket No. " . $qqno . "";
+    $notifaudience = $getquser;
+
+    $notif = $conn->prepare("INSERT INTO notif VALUES ('',?,?,?,?,NOW(),0)");
+    $notif->bind_param("isss", $_SESSION['userno'], $notiftitle, $notifdesc, $notifaudience);
+    $notif->execute();
+    $notif->close();
+
+    try {
+        //Recipients
+        $mail->setFrom('noreply.iicshd@gmail.com', 'IICS Help Desk');
+        $mail->addAddress($getqusermail);
+//                                $mail->addAddress('rlphvicente@gmail.com');
+        $mail->addReplyTo('noreply.iicshd@gmail.com', 'IICS Help Desk'); // Add a recipient
+
+        $mail->isHTML(true);                                  // Set email format to HTML
+        $mail->Subject = 'IICS Help Desk | Now Serving Your Queue Ticket';
+        $mail->Body = '<html><head></head><body><div align="center"><img src="https://i.imgur.com/TpIc9n9.png" alt="IICS Help Desk"/></center>'
+                . '<p>Your Queue Ticket is in the Now Serving List.</p>'
+                . '<p>You may now proceed to the IICS office.</p>'
+                . '<p>Failure to do so will result in a "No-Show", making way for other students in the Queue.</p>'
+                . '<hr>'
+                . '<p align="left"><b>Queue Ticket No: </b>' . $qqno . '</p>'
+                . '<hr></body></html>';
+        $mail->send();
+    } catch (Exception $ex) {
+        echo 'Message could not be sent. Mailer Error: ', $mail->ErrorInfo;
+    }
+
+
     if ($startQuery == TRUE) {
 
         header("location: queue.php");
         exit;
     } else {
-        echo "Start queue failed.";
+//        echo "Start queue failed.";
     }
 }
+
+//if (isset($_POST['qStart'])) {
+//    $qqno = $_POST['startQno'];
+//    $qstatus = "Now";
+//
+//    $startQuery = $conn->prepare("UPDATE queue SET qstatus=? WHERE qno=?");
+//    $startQuery->bind_param("si", $qstatus, $qqno);
+//    $startQuery->execute();
+//    $startQuery->close();
+//
+//    if ($startQuery == TRUE) {
+//
+//        header("location: queue.php");
+//        exit;
+//    } else {
+////        echo "Start queue failed.";
+//    }
+//}
 
 if (isset($_POST['qNext'])) {
     $qqdone = $_POST['userQDone'];
@@ -167,7 +234,7 @@ if (isset($_POST['qNext'])) {
 
     $submitDoc = $conn->prepare("INSERT INTO documents VALUES ('', NOW(), ?, ?, ?, ?, '0', ?)");
     $submitDoc->bind_param("isssi", $qnumdone, $qtitle, $qdesc, $docstatus, $hidden);
-    
+
     $submitSql2 = $conn->prepare("INSERT INTO doclogs VALUES ('', NOW(), ?, ?, ?, ?, '0', ?)");
     $submitSql2->bind_param("isssi", $qnumdone, $qtitle, $qdesc, $docstatus, $hidden);
 
@@ -184,7 +251,7 @@ if (isset($_POST['qNext'])) {
             $getNext->execute();
             $getNext->close();
         } else {
-            echo 'Waiting List Empty.';
+//            echo 'Waiting List Empty.';
         }
 
         $userQ->execute();
@@ -213,27 +280,11 @@ if (isset($_POST['qNext'])) {
         header("location: queue.php");
         exit;
     } else {
-        echo "Start queue failed.";
+//        echo "Start queue failed.";
     }
 }
 
-if (isset($_POST['qStart'])) {
-    $qqno = $_POST['startQno'];
-    $qstatus = "Now";
 
-    $startQuery = $conn->prepare("UPDATE queue SET qstatus=? WHERE qno=?");
-    $startQuery->bind_param("si", $qstatus, $qqno);
-    $startQuery->execute();
-    $startQuery->close();
-
-    if ($startQuery == TRUE) {
-
-        header("location: queue.php");
-        exit;
-    } else {
-        echo "Start queue failed.";
-    }
-}
 
 if (isset($_POST['qNoShow'])) {
     $qqdone = $_POST['userQNS'];
@@ -269,7 +320,7 @@ if (isset($_POST['qNoShow'])) {
             $getNext->execute();
             $getNext->close();
         } else {
-            echo 'Waiting List Empty.';
+//            echo 'Waiting List Empty.';
         }
 
         $userQ->execute();
@@ -289,7 +340,7 @@ if (isset($_POST['qNoShow'])) {
         header("location: queue.php");
         exit;
     } else {
-        echo "Start queue failed.";
+//        echo "Start queue failed.";
     }
 }
 ?>
@@ -412,70 +463,77 @@ if (isset($_POST['qNoShow'])) {
                 </ul>
 
                 <ul class="navbar-nav px-1">
-                    <li class="nav-item text-nowrap">
-                    <li class="nav-item dropdown">
-                        <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span class="fas fa-envelope"></span>
-                            Notifications
-                        </button>
-                        <div class="dropdown-menu" style="white-space: normal;">
-                            <?php
-                            $notifquery = "SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, users.userno 
-                                                    FROM notif 
-                                                INNER JOIN users 
-                                                ON users.userno = notif.notifaudience 
-                                                WHERE notif.notifaudience = '".$_SESSION['userno']."' 
-                                                UNION ALL 
-                                            SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, notif.notifno as userno 
-                                                    FROM notif 
-                                                WHERE notif.notifaudience = 'all' 
-                                                UNION ALL
-                                            SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, notif.notifno as userno 
-                                                    FROM notif 
-                                                    WHERE notif.notifaudience = 'admin' 
-                                            ORDER BY notifno DESC LIMIT 4";
-                            $notifresult = $conn->query($notifquery);
-
-                            if ($notifresult->num_rows > 0) {
-                                while ($row = $notifresult->fetch_assoc()) {
-                                    $notiftitle = $row['notiftitle'];
-                                    $notifdesc = $row['notifdesc'];
-                                    $notifdate = $row['notifdate'];
-
-                                    echo '
-                                            <a class="dropdown-item" ';
-
-                                    if ($notiftitle == "New Announcement Posted") {
-                                        echo 'href="home.php"';
-                                    }
-                                    if ($notiftitle == "New Queue Ticket") {
-                                        echo 'href="queue.php"';
-                                    }
-                                    if ($notiftitle == "Schedule Updated") {
-                                        echo 'href="fschedule.php"';
-                                    }
-                                    echo 'style="width: 300px; white-space: normal;">
-                                                <span style="font-size: 13px;"><strong> ' . $notiftitle . ' </strong></span><br>
-                                                ' . $notifdesc . ' <br>
-                                                <span style="font-size: 10px;"> ' . $notifdate . ' </span><br>
-                                            </a>
-                                            <div class="dropdown-divider"></div>';
-                                }
-                            } else {
-                                echo '
-                                            <a class="dropdown-item" href="#" style="width: 300px; white-space: normal;">
-                                                No new notifications.
-                                            </a>';
-                            }
-                            ?>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="notifications.php" style="color: blue; width: 300px; white-space: normal;">
-                                <center>View All Notifications</center>
-                            </a>
-                        </div>
-                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="btn btn-primary btn-sm dropdown-toggle notif-toggle" data-toggle="dropdown"><span class="badge badge-danger count" style="border-radius:10px;"></span> <span class="fas fa-bell" style="font-size:18px;"></span> Notifications</a>
+                        <ul class="shownotif dropdown-menu" style="white-space:normal;"></ul>
                     </li>
                 </ul>
+                <!--
+                                <ul class="navbar-nav px-1">
+                                    <li class="nav-item text-nowrap">
+                                    <li class="nav-item dropdown">
+                                        <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <span class="fas fa-envelope"></span>
+                                            Notifications
+                                        </button>
+                                        <div class="dropdown-menu" style="white-space: normal;">
+                <?php
+//                            $notifquery = "SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, users.userno 
+//                                                    FROM notif 
+//                                                INNER JOIN users 
+//                                                ON users.userno = notif.notifaudience 
+//                                                WHERE notif.notifaudience = '".$_SESSION['userno']."' 
+//                                                UNION ALL 
+//                                            SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, notif.notifno as userno 
+//                                                    FROM notif 
+//                                                WHERE notif.notifaudience = 'all' 
+//                                                UNION ALL
+//                                            SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, notif.notifno as userno 
+//                                                    FROM notif 
+//                                                    WHERE notif.notifaudience = 'admin' 
+//                                            ORDER BY notifno DESC LIMIT 4";
+//                            $notifresult = $conn->query($notifquery);
+//
+//                            if ($notifresult->num_rows > 0) {
+//                                while ($row = $notifresult->fetch_assoc()) {
+//                                    $notiftitle = $row['notiftitle'];
+//                                    $notifdesc = $row['notifdesc'];
+//                                    $notifdate = $row['notifdate'];
+//
+//                                    echo '
+//                                            <a class="dropdown-item" ';
+//
+//                                    if ($notiftitle == "New Announcement Posted") {
+//                                        echo 'href="home.php"';
+//                                    }
+//                                    if ($notiftitle == "New Queue Ticket") {
+//                                        echo 'href="queue.php"';
+//                                    }
+//                                    if ($notiftitle == "Schedule Updated") {
+//                                        echo 'href="fschedule.php"';
+//                                    }
+//                                    echo 'style="width: 300px; white-space: normal;">
+//                                                <span style="font-size: 13px;"><strong> ' . $notiftitle . ' </strong></span><br>
+//                                                ' . $notifdesc . ' <br>
+//                                                <span style="font-size: 10px;"> ' . $notifdate . ' </span><br>
+//                                            </a>
+//                                            <div class="dropdown-divider"></div>';
+//                                }
+//                            } else {
+//                                echo '
+//                                            <a class="dropdown-item" href="#" style="width: 300px; white-space: normal;">
+//                                                No new notifications.
+//                                            </a>';
+//                            }
+                ?>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item" href="notifications.php" style="color: blue; width: 300px; white-space: normal;">
+                                                <center>View All Notifications</center>
+                                            </a>
+                                        </div>
+                                    </li>
+                                    </li>
+                                </ul>-->
 
                 <ul class="navbar-nav px-3">
                     <li class="nav-item text-nowrap">
@@ -651,12 +709,14 @@ if (isset($_POST['qNoShow'])) {
                                 echo '<center><h3>Empty</h3></center>'
                                 . '<hr> ';
 
-                                $qNextWait = mysqli_query($conn, "SELECT qno, LPAD(qno,4,0) FROM queue WHERE qstatus = 'Waiting' ORDER BY qno ASC LIMIT 1");
+                                $qNextWait = mysqli_query($conn, "SELECT users.userno, users.email, queue.qno, LPAD(queue.qno,4,0), queue.qstatus FROM queue INNER JOIN users ON queue.userno = users.userno WHERE queue.qstatus = 'Waiting' ORDER BY queue.qno ASC LIMIT 1");
 
                                 if ($qNextWait->num_rows > 0) {
                                     while ($row = $qNextWait->fetch_assoc()) {
-                                        $qno = $row['LPAD(qno,4,0)'];
+                                        $qno = $row['LPAD(queue.qno,4,0)'];
                                         $qqno = $row['qno'];
+                                        $getquser = $row['userno'];
+                                        $getqusermail = $row['email'];
 
                                         echo
                                         '<div class="col-sm-12">
@@ -666,6 +726,8 @@ if (isset($_POST['qNoShow'])) {
                                                                 <center><span class="fas fa-3x fa-arrow-alt-circle-right"></span></center>
                                                             </div>
                                                             <input type="hidden" name="startQno" value ="' . $qqno . '">
+                                                            <input type="hidden" name="getQUser" value ="' . $getquser . '">
+                                                            <input type="hidden" name="getQUserMail" value ="' . $getqusermail . '">
                                                             <div class="card-title btn btn-block">
                                                                 <button type="submit" name ="qStart" class="btn btn-success">Call Next</button>
                                                             </div>
@@ -832,9 +894,47 @@ if (isset($_POST['qNoShow'])) {
 
     <script>
         function play() {
-            var audio = document.getElementById("audio");
+
+            var audio = document.getElementById("audio")
             audio.play();
         }
+    </script>
+
+    <script>
+        $(document).ready(function () {
+
+            function load_unseen_notification(view = '')
+            {
+                $.ajax({
+                    url: "../../include/fetch1.php",
+                    method: "POST",
+                    data: {view: view},
+                    dataType: "json",
+                    success: function (data)
+                    {
+                        $('.shownotif').html(data.notification);
+                        if (data.unseen_notification > 0)
+                        {
+                            $('.count').html(data.unseen_notification);
+                        }
+                    }
+                });
+            }
+
+            load_unseen_notification();
+
+            $(document).on('click', '.notif-toggle', function () {
+                $('.count').html('');
+                load_unseen_notification('yes');
+            });
+
+            setInterval(function () {
+                load_unseen_notification();
+                ;
+            }, 1000);
+
+        }
+        );
     </script>
 
 </body>
