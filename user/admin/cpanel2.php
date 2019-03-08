@@ -559,7 +559,7 @@ echo "Error deleting record: " . $conn->error;
                                     </div>
 
                                     <div class="tab-pane container fade" id="faculty">
-                                        <table id="facultymembers" class="table table-striped table-responsive">
+                                        <table id="facultymembers" class="table table-striped table-lg">
                                             <thead>
                                                 <tr>
                                                     <th>Faculty #</th>
@@ -676,7 +676,7 @@ echo "Error deleting record: " . $conn->error;
                                     </div>
 
                                     <div class="tab-pane container fade" id="admin">
-                                        <table id="adminmembers" class="table table-striped table-responsive">
+                                        <table id="adminmembers" class="table table-striped table-lg">
                                             <thead>
                                                 <tr>
                                                     <th>Username</th>

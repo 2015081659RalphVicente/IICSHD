@@ -131,7 +131,7 @@ if (isset($_POST['getQueueNum'])) {
             $notifdesc = "A New Queue Ticket has been added to the Waiting list.";
             $notifaudience = "admin";
 
-            $notif = $conn->prepare("INSERT INTO notif VALUES ('',?,?,?,?,NOW())");
+            $notif = $conn->prepare("INSERT INTO notif VALUES ('',?,?,?,?,NOW(),0)");
             $notif->bind_param("isss", $_SESSION['userno'], $notiftitle, $notifdesc, $notifaudience);
             $notif->execute();
             $notif->close();
@@ -531,17 +531,17 @@ if (isset($_POST['getQueueNum'])) {
                                         <div class="col-lg-6">
                                             <div class="card flex-fill">
                                                 <div class="card-header bg-info text-light rounded"><h5>Now Serving</h5></div>
-                                                    <div class="card-body">';
+                                                    <div class="card-body nowList">';
 
-                            $qWaiting = mysqli_query($conn, "SELECT LPAD(qno,4,0) FROM queue WHERE qstatus = 'Now' LIMIT 1");
-                            if ($qWaiting->num_rows > 0) {
-                                while ($row = $qWaiting->fetch_assoc()) {
-                                    $qno = $row['LPAD(qno,4,0)'];
-                                    echo '<center><h2>' . $qno . '</h2></center>';
-                                }
-                            } else {
-                                echo '<center><h4>Empty</h4></center>';
-                            }
+//                            $qWaiting = mysqli_query($conn, "SELECT LPAD(qno,4,0) FROM queue WHERE qstatus = 'Now' LIMIT 1");
+//                            if ($qWaiting->num_rows > 0) {
+//                                while ($row = $qWaiting->fetch_assoc()) {
+//                                    $qno = $row['LPAD(qno,4,0)'];
+//                                    echo '<center><h2>' . $qno . '</h2></center>';
+//                                }
+//                            } else {
+//                                echo '<center><h4>Empty</h4></center>';
+//                            }
 
                             echo '                  </div>
                                                 </div>
@@ -552,17 +552,17 @@ if (isset($_POST['getQueueNum'])) {
                             echo '    <div class="col-lg-2">
                                         <div class="card flex-fill">
                                             <div class="card-header bg-orange text-light rounded"><h5>Waiting</h5></div>
-                                                <div class="card-body">';
+                                                <div class="card-body waitingList">';
 
-                            $qWaiting = mysqli_query($conn, "SELECT LPAD(qno,4,0) FROM queue WHERE qstatus = 'Waiting' LIMIT 5");
-                            if ($qWaiting->num_rows > 0) {
-                                while ($row = $qWaiting->fetch_assoc()) {
-                                    $qno = $row['LPAD(qno,4,0)'];
-                                    echo '<center><h4>' . $qno . '</h4></center><hr>';
-                                }
-                            } else {
-                                echo '<center><h4>Empty</h4></center>';
-                            }
+//                            $qWaiting = mysqli_query($conn, "SELECT LPAD(qno,4,0) FROM queue WHERE qstatus = 'Waiting' LIMIT 5");
+//                            if ($qWaiting->num_rows > 0) {
+//                                while ($row = $qWaiting->fetch_assoc()) {
+//                                    $qno = $row['LPAD(qno,4,0)'];
+//                                    echo '<center><h4>' . $qno . '</h4></center><hr>';
+//                                }
+//                            } else {
+//                                echo '<center><h4>Empty</h4></center>';
+//                            }
 
                             echo '              </div>
                                             </div>
@@ -573,17 +573,17 @@ if (isset($_POST['getQueueNum'])) {
                             echo '    <div class="col-lg-2">
                                         <div class="card flex-fill">
                                             <div class="card-header bg-dark text-light rounded"><h5>No-Show</h5></div>
-                                                <div class="card-body">';
+                                                <div class="card-body nsList">';
 
-                            $qWaiting = mysqli_query($conn, "SELECT LPAD(qno,4,0) FROM queue WHERE qstatus = 'No-Show' ORDER BY qno DESC LIMIT 5");
-                            if ($qWaiting->num_rows > 0) {
-                                while ($row = $qWaiting->fetch_assoc()) {
-                                    $qno = $row['LPAD(qno,4,0)'];
-                                    echo '<center><h4>' . $qno . '</h4></center><hr>';
-                                }
-                            } else {
-                                echo '<center><h4>Empty</h4></center>';
-                            }
+//                            $qWaiting = mysqli_query($conn, "SELECT LPAD(qno,4,0) FROM queue WHERE qstatus = 'No-Show' ORDER BY qno DESC LIMIT 5");
+//                            if ($qWaiting->num_rows > 0) {
+//                                while ($row = $qWaiting->fetch_assoc()) {
+//                                    $qno = $row['LPAD(qno,4,0)'];
+//                                    echo '<center><h4>' . $qno . '</h4></center><hr>';
+//                                }
+//                            } else {
+//                                echo '<center><h4>Empty</h4></center>';
+//                            }
 
                             echo '              </div>
                                             </div>
@@ -594,17 +594,17 @@ if (isset($_POST['getQueueNum'])) {
                             echo '    <div class="col-lg-2">
                                         <div class="card flex-fill">
                                             <div class="card-header bg-success text-light rounded"><h5>Done</h5></div>
-                                                <div class="card-body">';
+                                                <div class="card-body doneList">';
 
-                            $qWaiting = mysqli_query($conn, "SELECT LPAD(qno,4,0) FROM queue WHERE qstatus = 'Done' ORDER BY qno DESC LIMIT 5");
-                            if ($qWaiting->num_rows > 0) {
-                                while ($row = $qWaiting->fetch_assoc()) {
-                                    $qno = $row['LPAD(qno,4,0)'];
-                                    echo '<center><h4>' . $qno . '</h4></center><hr>';
-                                }
-                            } else {
-                                echo '<center><h4>Empty</h4></center>';
-                            }
+//                            $qWaiting = mysqli_query($conn, "SELECT LPAD(qno,4,0) FROM queue WHERE qstatus = 'Done' ORDER BY qno DESC LIMIT 5");
+//                            if ($qWaiting->num_rows > 0) {
+//                                while ($row = $qWaiting->fetch_assoc()) {
+//                                    $qno = $row['LPAD(qno,4,0)'];
+//                                    echo '<center><h4>' . $qno . '</h4></center><hr>';
+//                                }
+//                            } else {
+//                                echo '<center><h4>Empty</h4></center>';
+//                            }
 
                             echo '              </div>
                                             </div>
@@ -697,6 +697,114 @@ if (isset($_POST['getQueueNum'])) {
 
                     setInterval(function () {
                         load_unseen_notification();
+                        ;
+                    }, 1000);
+
+                });
+            </script>
+
+            <script>
+                $(document).ready(function () {
+
+                    function load_wait_list(waitingList = '')
+                    {
+                        $.ajax({
+                            url: "../../include/fetch2.php",
+                            method: "POST",
+                            data: {waitingList: waitingList},
+                            dataType: "json",
+                            success: function (waitData)
+                            {
+                                $('.waitingList').html(waitData.waitingList);
+                            }
+                        });
+                    }
+
+                    load_wait_list('yes');
+
+                    setInterval(function () {
+                        load_wait_list();
+                        ;
+                    }, 1000);
+
+                });
+            </script>
+
+            <script>
+                $(document).ready(function () {
+
+                    function load_now_list(nowList = '')
+                    {
+                        $.ajax({
+                            url: "../../include/fetch2.php",
+                            method: "POST",
+                            data: {nowList: nowList},
+                            dataType: "json",
+                            success: function (nowData)
+                            {
+                                $('.nowList').html(nowData.nowList);
+                            }
+                        });
+                    }
+
+                    load_now_list('yes');
+
+                    setInterval(function () {
+                        load_now_list();
+                        ;
+                    }, 1000);
+
+                });
+            </script>
+
+            <script>
+                $(document).ready(function () {
+
+                    function load_ns_list(nsList = '')
+                    {
+                        $.ajax({
+                            url: "../../include/fetch2.php",
+                            method: "POST",
+                            data: {nsList: nsList},
+                            dataType: "json",
+                            success: function (nsData)
+                            {
+                                $('.nsList').html(nsData.nsList);
+                            }
+                        });
+                    }
+
+                    load_ns_list('yes');
+
+                    setInterval(function () {
+                        load_ns_list();
+                        ;
+                    }, 1000);
+
+                });
+            </script>
+
+            <script>
+                $(document).ready(function () {
+
+                    function load_done_list(doneList = '')
+                    {
+                        $.ajax({
+                            url: "../../include/fetch2.php",
+                            method: "POST",
+                            data: {doneList: doneList},
+                            dataType: "json",
+                            success: function (doneData)
+                            {
+                                $('.doneList').html(doneData.doneList);
+                            }
+                        });
+                    }
+
+                    load_done_list('yes');
+
+                    setInterval(function () {
+                        load_done_list();
                         ;
                     }, 1000);
 

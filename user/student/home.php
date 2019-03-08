@@ -325,7 +325,7 @@ if (isset($_POST['unpinPost'])) {
                                         </div>
                                         <div class="card-body">
                                             <h5 class="card-title">' . $anntitle . '</h5>
-                                            <p class="card-text" style="font-size: 12px;">Posted on ' . $anndate . ' by ' . $usercreated . '</p>
+                                            <p class="card-text" style="font-size: 12px;">Posted on ' . date("m/d/Y h:iA", strtotime($anndate)) . ' by ' . $usercreated . '</p>
                                             <p class="card-text" style="font-size: 15px;">' . $anndesc . '</p>
                                         </div>
                                   </div><br>';
@@ -351,7 +351,7 @@ if (isset($_POST['unpinPost'])) {
                                                                                         </div>
                                                                                         <div class="card-body bg-light">
                                                                                             <h5 class="card-title">' . $anntitle . '</h5>
-                                                                                            <p class="card-text" style="font-size: 12px;">Posted on ' . $anndate . ' by ' . $usercreated . '</p>
+                                                                                            <p class="card-text" style="font-size: 12px;">Posted on ' . date("m/d/Y h:iA", strtotime($anndate)) . ' by ' . $usercreated . '</p>
                                                                                             <p class="card-text" style="font-size: 15px;">' . $anndesc . '</p>
                                                                                         </div>
                                                                                   </div>
@@ -399,7 +399,7 @@ if (isset($_POST['unpinPost'])) {
                                         </div>
                                         <div class="card-body">
                                             <h5 class="card-title">' . $anntitle . '</h5>
-                                            <p class="card-text" style="font-size: 12px;">Posted on ' . $anndate . ' by ' . $usercreated . '</p>
+                                            <p class="card-text" style="font-size: 12px;">Posted on ' . date("m/d/Y h:iA", strtotime($anndate)) . ' by ' . $usercreated . '</p>
                                             <p class="card-text" style="font-size: 15px;">' . $anndesc . '</p>
                                         </div>
                                   </div><br>';
@@ -425,7 +425,7 @@ if (isset($_POST['unpinPost'])) {
                                                                                         </div>
                                                                                         <div class="card-body bg-light">
                                                                                             <h5 class="card-title">' . $anntitle . '</h5>
-                                                                                            <p class="card-text" style="font-size: 12px;">Posted on ' . $anndate . ' by ' . $usercreated . '</p>
+                                                                                            <p class="card-text" style="font-size: 12px;">Posted on ' . date("m/d/Y h:iA", strtotime($anndate)) . ' by ' . $usercreated . '</p>
                                                                                             <p class="card-text" style="font-size: 15px;">' . $anndesc . '</p>
                                                                                         </div>
                                                                                   </div>

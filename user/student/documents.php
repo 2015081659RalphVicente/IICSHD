@@ -53,6 +53,7 @@ if (!isset($_SESSION['user_name'])) {
 
 if (isset($_POST['receiveRel'])) {
     $recDoc = $_POST['recDoc'];
+    $docTitle = $_POST['docTitle'];
     $docstatus = "Received by Student";
 
     $editquery = $conn->prepare("UPDATE documents SET docstatus=?, docdatechange=NOW() WHERE docno=?");
@@ -68,6 +69,15 @@ if (isset($_POST['receiveRel'])) {
     if ($editquery == TRUE) {
 
         if ($editquery2 == TRUE) {
+
+            $notiftitle = "Document Status Updated";
+            $notifdesc = "Document Title: " . $docTitle . " / Status: " . $docstatus . "";
+            $notifaudience = "admin";
+
+            $notif = $conn->prepare("INSERT INTO notif VALUES ('',?,?,?,?,NOW(),0)");
+            $notif->bind_param("isss", $_SESSION['userno'], $notiftitle, $notifdesc, $notifaudience);
+            $notif->execute();
+            $notif->close();
 
             header("location: documents.php");
             exit;
@@ -340,7 +350,7 @@ if (isset($_POST['receiveRel'])) {
 
                                                     echo '<tr>'
                                                     . '<td>' . $docid . '</td>'
-                                                    . '<td>' . $docdatesubmit . '</td>'
+                                                    . '<td>' . date("m/d/Y h:iA", strtotime($docdatesubmit)) . '</td>'
                                                     . '<td>' . $doctitle . '</td>'
                                                     . '<td>' . $docdesc . '</td>'
                                                     . '<td>' . $docstatus . '</td>';
@@ -368,56 +378,70 @@ if (isset($_POST['receiveRel'])) {
 
                     </div>
 
+
+                    <div class="card">
+                        <div class="card-header" id="headingThree">
+                            <h5 class="mb-0">
+                                <button class="btn bg-dark text-white" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                    <span class="fas fa-plus-circle"></span> Downloadable Templates
+                                </button>
+                            </h5>
+                        </div>
+
+                        <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
+                            <div class="card-body">
+
+                                <div class="table-responsive">
+
+                                    <table id="downloadable" class="table table-striped table-responsive-lg">
+
+                                        <thead>
+                                            <tr>
+                                                <th>Filename</th>
+                                                <th>Date Uploaded</th>
+                                                <th>Download</th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+
+                                            <?php
+                                            $getfiles = mysqli_query($conn, "SELECT * FROM files WHERE HIDDEN = '0'");
+
+                                            if ($getfiles->num_rows > 0) {
+                                                while ($row = $getfiles->fetch_assoc()) {
+                                                    $fileno = $row['fileno'];
+                                                    $filetitle = $row['filetitle'];
+                                                    $filename = $row['filename'];
+                                                    $filedate = $row['filedate'];
+
+                                                    echo '<tr><td>' . $filetitle . '</td>'
+                                                    . '<td>' . date("m/d/Y h:iA", strtotime($filedate)) . '</td>'
+                                                    . '<td>'
+                                                    . '<a href = "../../uploads/' . $filename . '" target=”_blank”>'
+                                                    . '<button type = "button" class="btn btn-success btn-sm" name ="downloadFile" title="Download File"><span class="fas fa-arrow-circle-down"></span> Download</button>'
+                                                    . '</a></td></tr>';
+                                                }
+                                            }
+                                            ?>
+
+                                        </tbody>
+
+
+                                    </table>
+
+
+
+                                </div>
+
+                            </div>
+                        </div>
+
+
+
+                    </div>
+
                 </div>
-
-                <br>
-                <h5>Downloadable Templates</h5>
-                <hr>
-
-                <div class="table-responsive">
-
-                    <table id="downloadable" class="table table-striped table-responsive-lg">
-
-                        <thead>
-                            <tr>
-                                <th>Filename</th>
-                                <th>Date Uploaded</th>
-                                <th>Download</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-
-                            <?php
-                            $getfiles = mysqli_query($conn, "SELECT * FROM files WHERE HIDDEN = '0'");
-
-                            if ($getfiles->num_rows > 0) {
-                                while ($row = $getfiles->fetch_assoc()) {
-                                    $fileno = $row['fileno'];
-                                    $filetitle = $row['filetitle'];
-                                    $filename = $row['filename'];
-                                    $filedate = $row['filedate'];
-
-                                    echo '<tr><td>' . $filetitle . '</td>'
-                                    . '<td>' . $filedate . '</td>'
-                                    . '<td>'
-                                    . '<a href = "../../uploads/' . $filename . '" target=”_blank”>'
-                                    . '<button type = "button" class="btn btn-success btn-sm" name ="downloadFile" title="Download File"><span class="fas fa-arrow-circle-down"></span> Download</button>'
-                                    . '</a></td></tr>';
-                                }
-                            }
-                            ?>
-
-                        </tbody>
-
-
-                    </table>
-
-
-
-                </div>
-
-
 
                 <br>
                 <br>
@@ -458,7 +482,7 @@ if (isset($_POST['receiveRel'])) {
 
                                     echo '<tr>'
                                     . '<td>' . $docid . '</td>'
-                                    . '<td>' . $docdatesubmit . '</td>'
+                                    . '<td>' . date("m/d/Y h:iA", strtotime($docdatesubmit)) . '</td>'
                                     . '<td>' . $userid . '</td>'
                                     . '<td>' . $doctitle . '</td>'
                                     . '<td>' . $docdesc . '</td>'
@@ -467,6 +491,7 @@ if (isset($_POST['receiveRel'])) {
                                         echo '<td>'
                                         . '<form method="post">'
                                         . '<input type = "hidden" name="recDoc" value="' . $docid . '">'
+                                        . '<input type = "hidden" name="docTitle" value="' . $doctitle . '">'
                                         . '<button type = "submit" class="btn btn-success btn-sm" name ="receiveRel"><span class="fas fa-check"></span></button>'
                                         . '</td></tr>';
                                     } else {

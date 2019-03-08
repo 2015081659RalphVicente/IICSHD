@@ -421,15 +421,15 @@ if (isset($_POST['deletesec'])) {
                     </li>
                 </ul>
 
-<!--                <ul class="navbar-nav px-1">
-                    <li class="nav-item text-nowrap">
-                    <li class="nav-item dropdown">
-                        <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span class="fas fa-envelope"></span>
-                            Notifications
-                        </button>
-                        <div class="dropdown-menu" style="white-space: normal;">
-                            <?php
+                <!--                <ul class="navbar-nav px-1">
+                                    <li class="nav-item text-nowrap">
+                                    <li class="nav-item dropdown">
+                                        <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <span class="fas fa-envelope"></span>
+                                            Notifications
+                                        </button>
+                                        <div class="dropdown-menu" style="white-space: normal;">
+                <?php
 //                            $notifquery = "SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, users.userno 
 //                                                    FROM notif 
 //                                                INNER JOIN users 
@@ -477,15 +477,15 @@ if (isset($_POST['deletesec'])) {
 //                                                No new notifications.
 //                                            </a>';
 //                            }
-                            ?>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="notifications.php" style="color: blue; width: 300px; white-space: normal;">
-                                <center>View All Notifications</center>
-                            </a>
-                        </div>
-                    </li>
-                    </li>
-                </ul>-->
+                ?>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item" href="notifications.php" style="color: blue; width: 300px; white-space: normal;">
+                                                <center>View All Notifications</center>
+                                            </a>
+                                        </div>
+                                    </li>
+                                    </li>
+                                </ul>-->
 
 
                 <ul class="navbar-nav px-3">
@@ -837,9 +837,9 @@ if (isset($_POST['deletesec'])) {
                                     <table id="schedule" class="table table-striped table-responsive">
                                         <thead>
                                             <tr>
+                                                <th>Action</th>
                                                 <th>Schedule Name</th>
                                                 <th>Schedule Link</th>
-                                                <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -853,10 +853,9 @@ if (isset($_POST['deletesec'])) {
                                                     $getschedlink = $row['schedlink'];
 
                                                     echo "<tr>"
-                                                    . "<td>" . $getschedname . "</td>"
+                                                    . "<td>" . "<a href='#edit" . $getschedno . "'data-toggle='modal'><button type='button' class='btn btn-dark btn-sm' title='Edit'><span class='fas fa-edit' aria-hidden='true'></span></button></a>" . "</td>";
+                                                    echo "<td>" . $getschedname . "</td>"
                                                     . "<td>" . $getschedlink . "</td>";
-                                                    echo "<td>" . "<a href='#edit" . $getschedno . "'data-toggle='modal'><button type='button' class='btn btn-dark btn-sm' title='Edit'><span class='fas fa-edit' aria-hidden='true'></span></button></a>" . "</td>";
-
                                                     echo '<div id="edit';
                                                     echo $getschedno;
                                                     echo'" class="modal fade" role="dialog">
@@ -897,9 +896,9 @@ if (isset($_POST['deletesec'])) {
                                         </tbody>
                                         <tfoot>
                                             <tr>
+                                                <th>Action</th>
                                                 <th>Schedule Name</th>
                                                 <th>Schedule Link</th>
-                                                <th>Action</th>
                                             </tr>
                                         </tfoot>
                                     </table>

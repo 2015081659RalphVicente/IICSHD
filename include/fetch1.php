@@ -50,12 +50,20 @@ if (isset($_POST['view'])) {
                 $href = 'href="fschedule.php"';
             }
 
+            if ($notiftitle == "New Document Submission") {
+                $href = 'href="documents.php"';
+            }
+
+            if ($notiftitle == "Document Status Updated") {
+                $href = 'href="documents.php"';
+            }
+
             $output .= '
    <li style="width: 300px; white-space: normal;">
    <a ' . $href . ' class="dropdown-item style="width: 300px; white-space: normal;">
                                                 <span style="font-size: 13px;"><strong> ' . $notiftitle . ' </strong></span><br>
                                                 <span style="width: 300px; white-space: normal;">' . $notifdesc . '</span><br>
-                                                <span style="font-size: 10px;" > ' . $notifdate . ' </span><br>
+                                                <span style="font-size: 10px;" > ' . date("m/d/Y h:iA", strtotime($notifdate)) . ' </span><br>
                                             </a></li>
    <div class="dropdown-divider"></div>
    ';
@@ -97,6 +105,72 @@ if (isset($_POST['view'])) {
     );
 
     echo json_encode($data);
+}
+
+if (isset($_POST['waitingList'])) {
+
+    $qWaiting = mysqli_query($conn, "SELECT LPAD(qno,4,0) FROM queue WHERE qstatus = 'Waiting' LIMIT 5");
+    $waitOutput = '';
+
+    if ($qWaiting->num_rows > 0) {
+        while ($row = $qWaiting->fetch_assoc()) {
+            $qno = $row['LPAD(qno,4,0)'];
+
+            $waitOutput .= '<center><h2>' . $qno . '</h2></center><hr>';
+        }
+    } else {
+        $waitOutput .= '<center><h4>Empty</h4></center>';
+    }
+
+    $waitData = array(
+        'waitingList' => $waitOutput
+    );
+
+    echo json_encode($waitData);
+}
+
+if (isset($_POST['nsList'])) {
+
+    $qnos = mysqli_query($conn, "SELECT LPAD(qno,4,0) FROM queue WHERE qstatus = 'No-Show' ORDER BY qno DESC LIMIT 5");
+
+    $nsOutput = '';
+
+    if ($qnos->num_rows > 0) {
+        while ($row = $qnos->fetch_assoc()) {
+            $qno = $row['LPAD(qno,4,0)'];
+            $nsOutput .= '<center><h2>' . $qno . '</h2></center><hr>';
+        }
+    } else {
+        $nsOutput .= '<center><h4>Empty</h4></center>';
+    }
+
+    $nsData = array(
+        'nsList' => $nsOutput
+    );
+
+    echo json_encode($nsData);
+}
+
+if (isset($_POST['doneList'])) {
+
+    $qdone = mysqli_query($conn, "SELECT LPAD(qno,4,0) FROM queue WHERE qstatus = 'Done' ORDER BY qno DESC LIMIT 5");
+
+    $doneOutput = '';
+
+    if ($qdone->num_rows > 0) {
+        while ($row = $qdone->fetch_assoc()) {
+            $qno = $row['LPAD(qno,4,0)'];
+            $doneOutput .= '<center><h2>' . $qno . '</h2></center><hr>';
+        }
+    } else {
+        $doneOutput .= '<center><h4>Empty</h4></center>';
+    }
+
+    $doneData = array(
+        'doneList' => $doneOutput
+    );
+
+    echo json_encode($doneData);
 }
 ?>    
 

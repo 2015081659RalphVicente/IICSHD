@@ -335,7 +335,7 @@ if (isset($_POST['deleteFile'])) {
                                                     $filedate = $row['filedate'];
 
                                                     echo '<tr><td>' . $filetitle . '</td>'
-                                                    . '<td>' . $filedate . '</td>'
+                                                    . '<td>' . date("m/d/Y h:iA", strtotime($filedate)) . '</td>'
                                                     . '<td>'
                                                     . '<a href = "../../uploads/' . $filename . '" target=”_blank”>'
                                                     . '<button type = "button" class="btn btn-primary btn-sm" name ="viewFile" title="View"><span class="fas fa-eye"></span></button>'

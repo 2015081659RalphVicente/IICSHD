@@ -296,7 +296,7 @@ if (!isset($_SESSION['user_name'])) {
                                                 $anndate = $row['anndate'];
 
                                                 echo "<tr>"
-                                                . "<td>" . $anndate . "</td>"
+                                                . "<td>" . date("m/d/Y h:iA", strtotime($anndate)) . "</td>"
                                                 . "<td>" . $anntitle . "</td>"
                                                 . "<td>" . $anndesc . "</td>";
                                             }

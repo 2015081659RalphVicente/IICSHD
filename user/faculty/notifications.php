@@ -321,7 +321,7 @@ if (isset($_SESSION['user_name']) && $_SESSION['role'] == "student") {
                                                         ' . $notifdesc . ' <br>
                                                     </div>
                                                 <div class="card-footer">
-                                                    <span style="font-size: 12px; font-style:italic;">Date: ' . $notifdate . ' </span><br>
+                                                    <span style="font-size: 12px; font-style:italic;">Date: ' . date("m/d/Y h:iA", strtotime($notifdate)) . ' </span><br>
                                                 </div>
                                             </div>
                                             <br>';

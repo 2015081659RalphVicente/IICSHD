@@ -388,7 +388,7 @@ if (isset($_POST['submitCon'])) {
 
                                     echo '<tr>'
                                     . '<td>' . $docid . '</td>'
-                                    . '<td>' . $docdatesubmit . '</td>'
+                                    . '<td>' . date("m/d/Y h:iA", strtotime($docdatesubmit)) . '</td>'
                                     . '<td>' . $userid . '</td>'
                                     . '<td>' . $doctitle . '</td>'
                                     . '<td>' . $docdesc . '</td>'

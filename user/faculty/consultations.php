@@ -359,7 +359,7 @@ if (isset($_POST['updatedoc3'])) {
                                         echo
                                         "<td>" . "<a href='#edit" . $docid . "'data-toggle='modal'><button type='button' class='btn btn-dark btn-sm' title='Edit'><span class='fas fa-edit' aria-hidden='true'></span></button></a>" . "</td>";
                                     } echo '<td>' . $docid . '</td>'
-                                    . '<td>' . $docdatesubmit . '</td>'
+                                    . '<td>' . date("m/d/Y h:iA", strtotime($docdatesubmit)) . '</td>'
                                     . '<td>' . $userid . '</td>'
                                     . '<td>' . $doctitle . '</td>'
                                     . '<td>' . $docdesc . '</td>'

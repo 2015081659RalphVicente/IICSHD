@@ -529,7 +529,7 @@ if (isset($_POST['deletepost'])) {
                                                                 </div>
                                                                 <div class="card-body">
                                                                     <h5 class="card-title">' . $anntitle . '</h5>
-                                                                    <p class="card-text" style="font-size: 12px;">' . $anndate . ' by ' . $usercreated . '</p>
+                                                                    <p class="card-text" style="font-size: 12px;">' . date("m/d/Y h:iA", strtotime($anndate)) . ' by ' . $usercreated . '</p>
                                                                     <p class="card-text" style="font-size: 15px;">' . $anndesc . '</p>
                                                                 </div>
                                                             </div>
@@ -608,7 +608,7 @@ if (isset($_POST['deletepost'])) {
                                         </div>
                                         <div class="card-body">
                                             <h5 class="card-title">' . $anntitle . '</h5>
-                                            <p class="card-text" style="font-size: 12px;">' . $anndate . ' by ' . $usercreated . '</p>
+                                            <p class="card-text" style="font-size: 12px;">' . date("m/d/Y h:iA", strtotime($anndate)) . ' by ' . $usercreated . '</p>
                                             <p class="card-text" style="font-size: 15px;">' . $anndesc . '</p>
                                         </div>
                                   </div><br>';

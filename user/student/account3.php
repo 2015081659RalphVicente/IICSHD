@@ -373,7 +373,7 @@ if (isset($_POST['updatePass'])) {
                                                 $ulognew = $row['ULOGNEW'];
 
                                                 echo "<tr>"
-                                                . "<td>" . $ulogtime . "</td>"
+                                                . "<td>" . date("m/d/Y h:iA", strtotime($ulogtime)) . "</td>"
                                                 . "<td>" . $uloguser . "</td>"
                                                 . "<td>" . $ulogact . "</td>"
                                                 . "<td>" . $ulognew . "</td>"

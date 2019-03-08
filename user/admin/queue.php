@@ -268,6 +268,15 @@ if (isset($_POST['qNext'])) {
         $logpass->execute();
         $logpass->close();
 
+        $notiftitle = "New Document Submission";
+        $notifdesc = "Title: " . $qtitle . " / Moved to New Submissions";
+        $notifaudience = "admin";
+
+        $notif = $conn->prepare("INSERT INTO notif VALUES ('',?,?,?,?,NOW(),0)");
+        $notif->bind_param("isss", $_SESSION['userno'], $notiftitle, $notifdesc, $notifaudience);
+        $notif->execute();
+        $notif->close();
+
         if ($qtitle != "") {
             $submitDoc->execute();
             $submitDoc->close();
@@ -606,13 +615,13 @@ if (isset($_POST['qNoShow'])) {
                             . '<div class="alert alert-warning"><b>NOTE: </b>You may clear the queue list by going to the Queue settings in the '
                             . '<a href="cpanel3.php"><b>Admin Control Panel.</b></a></div>';
 
-                            echo '<div class="row">';
+                            echo '<div class="row text-center">';
 
                             $qQuery = mysqli_query($conn, "SELECT users.userno, queue.qtitle, queue.qdesc, LPAD(queue.qno,4,0), queue.qtype, queue.qdate, queue.qstatus, users.userid, users.fname, users.mname, users.lname FROM queue INNER JOIN users ON queue.userno = users.userno AND queue.qstatus = 'Now' LIMIT 1");
 
 
 
-                            echo '<div class = "col-6 col-lg-6">
+                            echo '<div class = "col-lg-6">
                                 <div class = "card">
                                 <div class = "card-header bg-info text-white">
                                 <center><h5>Now Serving</h5></center>
@@ -634,16 +643,19 @@ if (isset($_POST['qNoShow'])) {
                                             
                                 <center><h1>' . $qno . '</h1></center>
                                 <hr>
-                                <p><b>Student Number:</b> ' . $userid . '</p>
-                                <p><b>Student Name:</b> ' . $username . '</p>
-                                <p><b>Transaction Type:</b> ' . $qtype . '</p>';
+                                <p align="left"><b>Student Number:</b> ' . $userid . '</p>
+                                <p align="left"><b>Student Name:</b> ' . $username . '</p>
+                                <p align="left"><b>Transaction Type:</b> ' . $qtype . '</p>';
                                     if ($qtype == 'Other') {
-                                        echo '<p><b>Description:</b> ' . $qdesc . '</p>'
+                                        echo '<p align="left"><b>Description:</b> ' . $qdesc . '</p>'
                                         . '</div><hr>';
                                     } elseif ($qtype == 'Document Submission') {
-                                        echo '<p><b>Document Title:</b> ' . $qtitle . '</p>';
-                                        echo '<p><b>Description:</b> ' . $qdesc . '</p>'
+                                        echo '<p align="left"><b>Document Title:</b> ' . $qtitle . '</p>';
+                                        echo '<p align="left"><b>Description:</b> ' . $qdesc . '</p>'
                                         . '</div><hr>';
+                                        echo '<div class="alert alert-warning">'
+                                        . 'By clicking <b>Done</b>, this document will be sent to the <b><i>"New Submissions"</i></b> section of the '
+                                        . '<b><a href ="documents.php">Documents</a></b> page for receiving.</div><hr>';
                                     } else {
                                         echo '</div>'
                                         . '<hr>';
@@ -743,66 +755,66 @@ if (isset($_POST['qNoShow'])) {
 
 
                             echo '        
-        <div class="col-2 col-sm-2">
+        <div class="col-lg-2">
             <div class="card">
                 <div class="card-header  bg-orange text-white">
                     <center><h5>Waiting</h5></center>
                 </div>
-                <div class="card-body">';
+                <div class="card-body waitingList">';
 
-                            $qWaiting = mysqli_query($conn, "SELECT LPAD(qno,4,0) FROM queue WHERE qstatus = 'Waiting' LIMIT 5");
-                            if ($qWaiting->num_rows > 0) {
-                                while ($row = $qWaiting->fetch_assoc()) {
-                                    $qno = $row['LPAD(qno,4,0)'];
-                                    echo '<center><h2>' . $qno . '</h2></center><hr>';
-                                }
-                            } else {
-                                echo '<center><h4>Empty</h4></center>';
-                            }
+//                            $qWaiting = mysqli_query($conn, "SELECT LPAD(qno,4,0) FROM queue WHERE qstatus = 'Waiting' LIMIT 5");
+//                            if ($qWaiting->num_rows > 0) {
+//                                while ($row = $qWaiting->fetch_assoc()) {
+//                                    $qno = $row['LPAD(qno,4,0)'];
+//                                    echo '<center><h2>' . $qno . '</h2></center><hr>';
+//                                }
+//                            } else {
+//                                echo '<center><h4>Empty</h4></center>';
+//                            }
 
                             echo'  </div>
             </div>
         </div>';
 
 
-                            echo '<div class="col-2 col-sm-2">
+                            echo '<div class="col-lg-2">
             <div class="card">
                 <div class="card-header  bg-dark text-white">
                     <center><h5>No-Show</h5></center>
                 </div>
-                <div class="card-body">';
+                <div class="card-body nsList">';
 
-                            $qNoShow = mysqli_query($conn, "SELECT LPAD(qno,4,0) FROM queue WHERE qstatus = 'No-Show' ORDER BY qno DESC LIMIT 5");
-                            if ($qNoShow->num_rows > 0) {
-                                while ($row = $qNoShow->fetch_assoc()) {
-                                    $qno = $row['LPAD(qno,4,0)'];
-                                    echo '<center><h2>' . $qno . '</h2></center><hr>';
-                                }
-                            } else {
-                                echo '<center><h4>Empty</h4></center>';
-                            }
+//                            $qNoShow = mysqli_query($conn, "SELECT LPAD(qno,4,0) FROM queue WHERE qstatus = 'No-Show' ORDER BY qno DESC LIMIT 5");
+//                            if ($qNoShow->num_rows > 0) {
+//                                while ($row = $qNoShow->fetch_assoc()) {
+//                                    $qno = $row['LPAD(qno,4,0)'];
+//                                    echo '<center><h2>' . $qno . '</h2></center><hr>';
+//                                }
+//                            } else {
+//                                echo '<center><h4>Empty</h4></center>';
+//                            }
 
                             echo'  </div>
             </div>
         </div>';
 
 
-                            echo '<div class="col-2 col-sm-2">
+                            echo '<div class="col-lg-2">
             <div class="card">
                 <div class="card-header  bg-success text-white">
                     <center><h5>Done</h5></center>
                 </div>
-                <div class="card-body">';
+                <div class="card-body doneList">';
 
-                            $qDone = mysqli_query($conn, "SELECT LPAD(qno,4,0) FROM queue WHERE qstatus = 'Done' ORDER BY qno DESC LIMIT 5");
-                            if ($qDone->num_rows > 0) {
-                                while ($row = $qDone->fetch_assoc()) {
-                                    $qno = $row['LPAD(qno,4,0)'];
-                                    echo '<center><h2>' . $qno . '</h2></center><hr>';
-                                }
-                            } else {
-                                echo '<center><h4>Empty</h4></center>';
-                            }
+//                            $qDone = mysqli_query($conn, "SELECT LPAD(qno,4,0) FROM queue WHERE qstatus = 'Done' ORDER BY qno DESC LIMIT 5");
+//                            if ($qDone->num_rows > 0) {
+//                                while ($row = $qDone->fetch_assoc()) {
+//                                    $qno = $row['LPAD(qno,4,0)'];
+//                                    echo '<center><h2>' . $qno . '</h2></center><hr>';
+//                                }
+//                            } else {
+//                                echo '<center><h4>Empty</h4></center>';
+//                            }
 
                             echo'  </div>
             </div>
@@ -935,6 +947,88 @@ if (isset($_POST['qNoShow'])) {
 
         }
         );
+
+    </script>
+
+    <script>
+        $(document).ready(function () {
+
+            function load_wait_list(waitingList = '')
+            {
+                $.ajax({
+                    url: "../../include/fetch1.php",
+                    method: "POST",
+                    data: {waitingList: waitingList},
+                    dataType: "json",
+                    success: function (waitData)
+                    {
+                        $('.waitingList').html(waitData.waitingList);
+                    }
+                });
+            }
+
+            load_wait_list('yes');
+
+            setInterval(function () {
+                load_wait_list();
+                ;
+            }, 1000);
+
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+
+            function load_ns_list(nsList = '')
+            {
+                $.ajax({
+                    url: "../../include/fetch1.php",
+                    method: "POST",
+                    data: {nsList: nsList},
+                    dataType: "json",
+                    success: function (nsData)
+                    {
+                        $('.nsList').html(nsData.nsList);
+                    }
+                });
+            }
+
+            load_ns_list('yes');
+
+            setInterval(function () {
+                load_ns_list();
+                ;
+            }, 1000);
+
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+
+            function load_done_list(doneList = '')
+            {
+                $.ajax({
+                    url: "../../include/fetch1.php",
+                    method: "POST",
+                    data: {doneList: doneList},
+                    dataType: "json",
+                    success: function (doneData)
+                    {
+                        $('.doneList').html(doneData.doneList);
+                    }
+                });
+            }
+
+            load_done_list('yes');
+
+            setInterval(function () {
+                load_done_list();
+                ;
+            }, 1000);
+
+        });
     </script>
 
 </body>

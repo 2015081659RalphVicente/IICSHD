@@ -289,7 +289,7 @@ if (!isset($_SESSION['user_name'])) {
 
                                                 echo "<tr>"
                                                 . "<td>" . $docid . "</td>"
-                                                . "<td>" . $docdatesubmit . "</td>"
+                                                . "<td>" . date("m/d/Y h:iA", strtotime($docdatesubmit)) . "</td>"
                                                 . "<td>" . $userid . "</td>"
                                                 . "<td>" . $doctitle . "</td>"
                                                 . "<td>" . $docstatus . "</td>";
@@ -359,7 +359,7 @@ if (!isset($_SESSION['user_name'])) {
 
                                                 echo "<tr>"
                                                 . "<td>" . $qno . "</td>"
-                                                . "<td>" . $qdate . "</td>"
+                                                . "<td>" . date("m/d/Y h:iA", strtotime($qdate)) . "</td>"
                                                 . "<td>" . $userid . "</td>"
                                                 . "<td>" . $qtype . "</td>";
                                                 if ($qtitle == "") {
