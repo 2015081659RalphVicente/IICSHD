@@ -268,16 +268,18 @@ if (isset($_POST['qNext'])) {
         $logpass->execute();
         $logpass->close();
 
-        $notiftitle = "New Document Submission";
-        $notifdesc = "Title: " . $qtitle . " / Moved to New Submissions";
-        $notifaudience = "admin";
-
-        $notif = $conn->prepare("INSERT INTO notif VALUES ('',?,?,?,?,NOW(),0)");
-        $notif->bind_param("isss", $_SESSION['userno'], $notiftitle, $notifdesc, $notifaudience);
-        $notif->execute();
-        $notif->close();
-
         if ($qtitle != "") {
+
+
+            $notiftitle = "New Document Submission";
+            $notifdesc = "Title: " . $qtitle . " / Moved to New Submissions";
+            $notifaudience = "admin";
+
+            $notif = $conn->prepare("INSERT INTO notif VALUES ('',?,?,?,?,NOW(),0)");
+            $notif->bind_param("isss", $_SESSION['userno'], $notiftitle, $notifdesc, $notifaudience);
+            $notif->execute();
+            $notif->close();
+
             $submitDoc->execute();
             $submitDoc->close();
             $submitSql2->execute();
@@ -486,7 +488,7 @@ if (isset($_POST['qNoShow'])) {
                                             Notifications
                                         </button>
                                         <div class="dropdown-menu" style="white-space: normal;">
-                <?php
+<?php
 //                            $notifquery = "SELECT notif.notifno, notif.notiftitle, notif.notifdesc, notif.notifaudience, notif.notifdate, users.userno 
 //                                                    FROM notif 
 //                                                INNER JOIN users 
@@ -534,7 +536,7 @@ if (isset($_POST['qNoShow'])) {
 //                                                No new notifications.
 //                                            </a>';
 //                            }
-                ?>
+?>
                                             <div class="dropdown-divider"></div>
                                             <a class="dropdown-item" href="notifications.php" style="color: blue; width: 300px; white-space: normal;">
                                                 <center>View All Notifications</center>
@@ -549,9 +551,9 @@ if (isset($_POST['qNoShow'])) {
                     <li class="nav-item dropdown">
                         <button type="button" class="btn btn-dark btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <span data-feather="user"></span>
-                            <?php
-                            echo $_SESSION['user_name'];
-                            ?>
+<?php
+echo $_SESSION['user_name'];
+?>
                         </button>
                         <div class="dropdown-menu">
                             <a class="dropdown-item" href="cpanel.php">
@@ -580,88 +582,88 @@ if (isset($_POST['qNoShow'])) {
                     <h1 class="h2">Queue</h1>
                 </div>
 
-                <?php
-                $qCheck = mysqli_query($conn, "SELECT * FROM qtoggle WHERE qtogno = '1'");
+<?php
+$qCheck = mysqli_query($conn, "SELECT * FROM qtoggle WHERE qtogno = '1'");
 
-                if ($qCheck->num_rows > 0) {
-                    while ($row = $qCheck->fetch_assoc()) {
-                        $qtoggle = $row['qtoggle'];
-                        $qadmin = $row['qadmin'];
+if ($qCheck->num_rows > 0) {
+    while ($row = $qCheck->fetch_assoc()) {
+        $qtoggle = $row['qtoggle'];
+        $qadmin = $row['qadmin'];
 
-                        if ($qtoggle == '1') {
-                            echo
+        if ($qtoggle == '1') {
+            echo
 
-                            '<div class="card">'
-                            . '<div class="card-header bg-success text-white">'
-                            . '<h5>Status: Open '
-                            . '<div style="float: right;" class="btn-group" role="group">'
-                            . '<form method="post" action="">'
-                            . '<input type="hidden" name="closeQueue" value="0">'
-                            . '<button class="btn btn-danger" type = "submit" name="toggleClose"><span class="fas fa-lock"></span> Close Queue</button> '
-                            . '</form>';
-                            if ($qadmin == '1') {
-                                echo '<form method="post" action="">';
-                                echo '&nbsp; <button class="btn btn-primary" type = "submit" name="adminIn"><span class="fas fa-user-tie"></span> Admin is Available</button> ';
-                                echo '</form></div>';
-                            } else {
-                                echo '<form method="post" action="">';
-                                echo '&nbsp; <button class="btn btn-dark" type = "submit" name="adminOut"><span class="fas fa-user-tie"></span> Admin is Unavailable</button> ';
-                                echo '</form></div>';
-                            }
-                            echo '</h5> '
-                            . '</div> '
-                            . '</div>'
-                            . '<br>'
-                            . '<div class="alert alert-warning"><b>NOTE: </b>You may clear the queue list by going to the Queue settings in the '
-                            . '<a href="cpanel3.php"><b>Admin Control Panel.</b></a></div>';
+            '<div class="card">'
+            . '<div class="card-header bg-success text-white">'
+            . '<h5>Status: Open '
+            . '<div style="float: right;" class="btn-group" role="group">'
+            . '<form method="post" action="">'
+            . '<input type="hidden" name="closeQueue" value="0">'
+            . '<button class="btn btn-danger" type = "submit" name="toggleClose"><span class="fas fa-lock"></span> Close Queue</button> '
+            . '</form>';
+            if ($qadmin == '1') {
+                echo '<form method="post" action="">';
+                echo '&nbsp; <button class="btn btn-primary" type = "submit" name="adminIn"><span class="fas fa-user-tie"></span> Admin is Available</button> ';
+                echo '</form></div>';
+            } else {
+                echo '<form method="post" action="">';
+                echo '&nbsp; <button class="btn btn-dark" type = "submit" name="adminOut"><span class="fas fa-user-tie"></span> Admin is Unavailable</button> ';
+                echo '</form></div>';
+            }
+            echo '</h5> '
+            . '</div> '
+            . '</div>'
+            . '<br>'
+            . '<div class="alert alert-warning"><b>NOTE: </b>You may clear the queue list by going to the Queue settings in the '
+            . '<a href="cpanel3.php"><b>Admin Control Panel.</b></a></div>';
 
-                            echo '<div class="row text-center">';
+            echo '<div class="row text-center">';
 
-                            $qQuery = mysqli_query($conn, "SELECT users.userno, queue.qtitle, queue.qdesc, LPAD(queue.qno,4,0), queue.qtype, queue.qdate, queue.qstatus, users.userid, users.fname, users.mname, users.lname FROM queue INNER JOIN users ON queue.userno = users.userno AND queue.qstatus = 'Now' LIMIT 1");
+            $qQuery = mysqli_query($conn, "SELECT users.userno, queue.qtitle, queue.qdesc, LPAD(queue.qno,4,0), queue.qtype, queue.qdate, queue.qstatus, users.userid, users.fname, users.mname, users.lname FROM queue INNER JOIN users ON queue.userno = users.userno AND queue.qstatus = 'Now' LIMIT 1");
 
 
 
-                            echo '<div class = "col-lg-6">
+            echo '<div class = "col-lg-6">
                                 <div class = "card">
                                 <div class = "card-header bg-info text-white">
                                 <center><h5>Now Serving</h5></center>
                                 </div>
                                 <div class = "card-body">';
-                            if ($qQuery->num_rows > 0) {
-                                while ($row = $qQuery->fetch_assoc()) {
-                                    $qno = $row['LPAD(queue.qno,4,0)'];
-                                    $userno = $row['userno'];
-                                    $qdate = $row['qdate'];
-                                    $userid = $row['userid'];
-                                    $username = ($row['fname'] . ' ' . $row['mname'] . ' ' . $row['lname']);
-                                    $qtype = $row['qtype'];
-                                    $qstatus = $row['qstatus'];
-                                    $qdesc = $row['qdesc'];
-                                    $qtitle = $row['qtitle'];
+            if ($qQuery->num_rows > 0) {
+                while ($row = $qQuery->fetch_assoc()) {
+                    $qno = $row['LPAD(queue.qno,4,0)'];
+                    $userno = $row['userno'];
+                    $qdate = $row['qdate'];
+                    $userid = $row['userid'];
+                    $username = ($row['fname'] . ' ' . $row['mname'] . ' ' . $row['lname']);
+                    $qtype = $row['qtype'];
+                    $qstatus = $row['qstatus'];
+                    $qdesc = $row['qdesc'];
+                    $qtitle = $row['qtitle'];
 
-                                    echo' <div style = "align: center;">
+                    echo' <div style = "align: center;">
                                             
                                 <center><h1>' . $qno . '</h1></center>
                                 <hr>
                                 <p align="left"><b>Student Number:</b> ' . $userid . '</p>
                                 <p align="left"><b>Student Name:</b> ' . $username . '</p>
                                 <p align="left"><b>Transaction Type:</b> ' . $qtype . '</p>';
-                                    if ($qtype == 'Other') {
-                                        echo '<p align="left"><b>Description:</b> ' . $qdesc . '</p>'
-                                        . '</div><hr>';
-                                    } elseif ($qtype == 'Document Submission') {
-                                        echo '<p align="left"><b>Document Title:</b> ' . $qtitle . '</p>';
-                                        echo '<p align="left"><b>Description:</b> ' . $qdesc . '</p>'
-                                        . '</div><hr>';
-                                        echo '<div class="alert alert-warning">'
-                                        . 'By clicking <b>Done</b>, this document will be sent to the <b><i>"New Submissions"</i></b> section of the '
-                                        . '<b><a href ="documents.php">Documents</a></b> page for receiving.</div><hr>';
-                                    } else {
-                                        echo '</div>'
-                                        . '<hr>';
-                                    }
+                    if ($qtype == 'Other') {
+                        echo '<p align="left"><b>Description:</b> ' . $qdesc . '</p>'
+                        . '</div><hr>';
+                    } elseif ($qtype == 'Document Submission') {
+                        echo '<p align="left"><b>Document Title:</b> ' . $qtitle . '</p>';
+                        echo '<p align="left"><b>Description:</b> ' . $qdesc . '</p>'
+                        . '</div><hr>';
+                        echo '<div class="alert alert-warning">'
+                        . 'By clicking <b>Done</b>, this document will be sent to the <b><i>"New Submissions"</i></b> section of the '
+                        . '<b><a href ="documents.php">Documents</a></b> page for receiving.</div><hr>';
+                    } else {
+                        echo '</div>'
+                        . '<hr>';
+                    }
 
-                                    echo'<div class="row">
+                    echo'<div class="row">
 
                             <div class="col-sm-4">
                                 <form action="" method="post">
@@ -716,22 +718,22 @@ if (isset($_POST['qNoShow'])) {
             </div>
             <br>
         </div>';
-                                }
-                            } else {
-                                echo '<center><h3>Empty</h3></center>'
-                                . '<hr> ';
+                }
+            } else {
+                echo '<center><h3>Empty</h3></center>'
+                . '<hr> ';
 
-                                $qNextWait = mysqli_query($conn, "SELECT users.userno, users.email, queue.qno, LPAD(queue.qno,4,0), queue.qstatus FROM queue INNER JOIN users ON queue.userno = users.userno WHERE queue.qstatus = 'Waiting' ORDER BY queue.qno ASC LIMIT 1");
+                $qNextWait = mysqli_query($conn, "SELECT users.userno, users.email, queue.qno, LPAD(queue.qno,4,0), queue.qstatus FROM queue INNER JOIN users ON queue.userno = users.userno WHERE queue.qstatus = 'Waiting' ORDER BY queue.qno ASC LIMIT 1");
 
-                                if ($qNextWait->num_rows > 0) {
-                                    while ($row = $qNextWait->fetch_assoc()) {
-                                        $qno = $row['LPAD(queue.qno,4,0)'];
-                                        $qqno = $row['qno'];
-                                        $getquser = $row['userno'];
-                                        $getqusermail = $row['email'];
+                if ($qNextWait->num_rows > 0) {
+                    while ($row = $qNextWait->fetch_assoc()) {
+                        $qno = $row['LPAD(queue.qno,4,0)'];
+                        $qqno = $row['qno'];
+                        $getquser = $row['userno'];
+                        $getqusermail = $row['email'];
 
-                                        echo
-                                        '<div class="col-sm-12">
+                        echo
+                        '<div class="col-sm-12">
                                                     <form action="" method="post">
                                                         <div class="card">
                                                             <div class="card-header">
@@ -747,14 +749,14 @@ if (isset($_POST['qNoShow'])) {
                                                     </form>
                                                 </div>
                                                 </div></div></div>';
-                                    }
-                                } else {
-                                    echo '</div></div></div>';
-                                }
-                            }
+                    }
+                } else {
+                    echo '</div></div></div>';
+                }
+            }
 
 
-                            echo '        
+            echo '        
         <div class="col-lg-2">
             <div class="card">
                 <div class="card-header  bg-orange text-white">
@@ -772,12 +774,12 @@ if (isset($_POST['qNoShow'])) {
 //                                echo '<center><h4>Empty</h4></center>';
 //                            }
 
-                            echo'  </div>
+            echo'  </div>
             </div>
         </div>';
 
 
-                            echo '<div class="col-lg-2">
+            echo '<div class="col-lg-2">
             <div class="card">
                 <div class="card-header  bg-dark text-white">
                     <center><h5>No-Show</h5></center>
@@ -794,12 +796,12 @@ if (isset($_POST['qNoShow'])) {
 //                                echo '<center><h4>Empty</h4></center>';
 //                            }
 
-                            echo'  </div>
+            echo'  </div>
             </div>
         </div>';
 
 
-                            echo '<div class="col-lg-2">
+            echo '<div class="col-lg-2">
             <div class="card">
                 <div class="card-header  bg-success text-white">
                     <center><h5>Done</h5></center>
@@ -816,28 +818,28 @@ if (isset($_POST['qNoShow'])) {
 //                                echo '<center><h4>Empty</h4></center>';
 //                            }
 
-                            echo'  </div>
+            echo'  </div>
             </div>
             <br>
         </div>';
-                        } else {
-                            echo
-                            '<div class="card">'
-                            . '<div class="card-header bg-dark text-white">'
-                            . '<h5>Status: Closed '
-                            . '<div style="float: right;" class="btn-group" role="group">'
-                            . '<form method="post" action="">'
-                            . '<input type="hidden" name="openQueue" value="1">'
-                            . '<button class="btn btn-success" type = "submit" name="toggleOpen"><span class="fas fa-unlock"></span> Open Queue</button>'
-                            . '</form>'
-                            . '</div>'
-                            . '</h5> '
-                            . '</div> '
-                            . '</div>';
-                        }
-                    }
-                }
-                ?>
+        } else {
+            echo
+            '<div class="card">'
+            . '<div class="card-header bg-dark text-white">'
+            . '<h5>Status: Closed '
+            . '<div style="float: right;" class="btn-group" role="group">'
+            . '<form method="post" action="">'
+            . '<input type="hidden" name="openQueue" value="1">'
+            . '<button class="btn btn-success" type = "submit" name="toggleOpen"><span class="fas fa-unlock"></span> Open Queue</button>'
+            . '</form>'
+            . '</div>'
+            . '</h5> '
+            . '</div> '
+            . '</div>';
+        }
+    }
+}
+?>
 
                 <br>
                 </div>
