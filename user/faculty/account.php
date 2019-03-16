@@ -279,8 +279,9 @@ if (isset($_POST['insertsched'])) {
                                                     echo '<input class="form-control" type="text" size="30" name="email" placeholder="' . $consulhours . '" disabled>';
                                                 }
                                             } else {
-                                                echo '<div class="alert alert-warning">Please set consultation hours.</div><td>'
+                                                echo ''
                                                 . '<div class="card">
+                                                    <div class="alert alert-warning">Please set consultation hours.</div>
                                                     <div class="card-header"><h7>Select Day: </h7></div>
                                                     <div class="card-body"><select name="consulday" class="form-control" required>
                                                       <option value="" selected disabled>Choose one: </option>
@@ -303,7 +304,7 @@ if (isset($_POST['insertsched'])) {
                                                 . '     <div class="card-footer">
                                                             <button type="submit" name = "insertsched" class="btn btn-success">Update</button><br>
                                                         </div>'
-                                                . '</div></td>';
+                                                . '</div>';
                                             }
                                             ?>
                                         </td>

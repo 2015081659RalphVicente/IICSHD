@@ -7,7 +7,7 @@ $output = '';
 
 if (isset($_POST["profno"])) {
     if ($_POST["profno"] != '') {
-        $sql = "SELECT * FROM consulthours WHERE userno = '" . $_POST["profno"] . "'";
+        $sql = "SELECT * FROM consulthours WHERE userno = '" . $_POST["profno"] . "' AND isactive = 1";
     } else {
         $output .= "<h5>Please select a professor.</h5>";
     }
