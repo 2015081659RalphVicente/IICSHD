@@ -307,7 +307,7 @@ if (isset($_POST['updatedoc3'])) {
 
                 <div class="table-responsive">
 
-                    <table id="consultation" class="table table-striped table-responsive-lg">
+                    <table id="consultation" class="table table-striped table-responsive">
 
                         <thead>
                             <tr>

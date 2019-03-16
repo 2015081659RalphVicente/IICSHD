@@ -4,141 +4,167 @@ include '../../include/controller.php';
 include '../../include/upload.php';
 
 if (isset($_SESSION['user_name']) && $_SESSION['role'] == "faculty") {
-header("location:/iicshd/user/faculty/home.php");
+    header("location:/iicshd/user/faculty/home.php");
 }
 if (isset($_SESSION['user_name']) && $_SESSION['role'] == "student") {
-header("location:/iicshd/user/student/home.php");
+    header("location:/iicshd/user/student/home.php");
 }
 if (isset($_SESSION['user_name'])) {
 
-if ((time() - $_SESSION['last_time']) > 2000) {
-header("Location:../../logout.php");
-} else {
-$_SESSION['last_time'] = time();
-}
+    if ((time() - $_SESSION['last_time']) > 2000) {
+        header("Location:../../logout.php");
+    } else {
+        $_SESSION['last_time'] = time();
+    }
 }
 
 if (!isset($_SESSION['user_name'])) {
-header("location:/iicshd/index.php");
+    header("location:/iicshd/index.php");
 }
 
 if (isset($_GET['activate'])) {
-$activate = $_GET['activate'];
+    $activate = $_GET['activate'];
 } else {
-$activate = '';
+    $activate = '';
 }
 
 if (isset($_GET['deactivate'])) {
-$deactivate = $_GET['deactivate'];
+    $deactivate = $_GET['deactivate'];
 } else {
-$deactivate = '';
+    $deactivate = '';
 }
 
 if (isset($_GET['activate2'])) {
-$activate2 = $_GET['activate2'];
+    $activate2 = $_GET['activate2'];
 } else {
-$activate2 = '';
+    $activate2 = '';
 }
 
 if (isset($_GET['deactivate2'])) {
-$deactivate2 = $_GET['deactivate2'];
+    $deactivate2 = $_GET['deactivate2'];
 } else {
-$deactivate2 = '';
+    $deactivate2 = '';
+}
+
+if (isset($_GET['updatesec'])) {
+    $updatesec = $_GET['updatesec'];
+} else {
+    $updatesec = '';
 }
 
 
 if (isset($_POST['deactivate'])) {
 // sql to deactivate a record
-$deactivate_id = $_POST['deactivate_id'];
-$deacname = $_POST['deacname'];
+    $deactivate_id = $_POST['deactivate_id'];
+    $deacname = $_POST['deacname'];
 
-$bool = TRUE;
+    $bool = TRUE;
 
-if ($bool == TRUE) {
-$sql = "UPDATE users SET hidden = 1 where userno='$deactivate_id'";
-if ($conn->query($sql) === TRUE) {
-$sql = "UPDATE users SET hidden = 1 where userno='$deactivate_id'";
-if ($conn->query($sql) === TRUE) {
+    if ($bool == TRUE) {
+        $sql = "UPDATE users SET hidden = 1 where userno='$deactivate_id'";
+        if ($conn->query($sql) === TRUE) {
+            $sql = "UPDATE users SET hidden = 1 where userno='$deactivate_id'";
+            if ($conn->query($sql) === TRUE) {
 
-$_GET['deactivate'] = 'success';
-header("location: cpanel2.php?deactivate=success");
-} else {
-echo "Error deleting record: " . $conn->error;
-}
-} else {
-echo "Error deleting record: " . $conn->error;
-}
-} else {
-$_GET['deactivate'] = 'failed';
-header("location: cpanel2.php?deactivate=failed");
-}
+                $_GET['deactivate'] = 'success';
+                header("location: cpanel2.php?deactivate=success");
+            } else {
+                echo "Error deleting record: " . $conn->error;
+            }
+        } else {
+            echo "Error deleting record: " . $conn->error;
+        }
+    } else {
+        $_GET['deactivate'] = 'failed';
+        header("location: cpanel2.php?deactivate=failed");
+    }
 }
 
 if (isset($_POST['deactivate2'])) {
 // sql to deactivate a record
-$deactivate_id = $_POST['deactivate_id2'];
-$deacname = $_POST['deacname2'];
+    $deactivate_id = $_POST['deactivate_id2'];
+    $deacname = $_POST['deacname2'];
 
-$bool = TRUE;
+    $bool = TRUE;
 
-if ($bool == TRUE) {
-$sql = "UPDATE users SET hidden = 1 where userno='$deactivate_id'";
-if ($conn->query($sql) === TRUE) {
-$sql = "UPDATE users SET hidden = 1 where userno='$deactivate_id'";
-if ($conn->query($sql) === TRUE) {
+    if ($bool == TRUE) {
+        $sql = "UPDATE users SET hidden = 1 where userno='$deactivate_id'";
+        if ($conn->query($sql) === TRUE) {
+            $sql = "UPDATE users SET hidden = 1 where userno='$deactivate_id'";
+            if ($conn->query($sql) === TRUE) {
 
-$_GET['deactivate2'] = 'success';
-header("location: cpanel2.php?deactivate2=success");
-} else {
-echo "Error deleting record: " . $conn->error;
-}
-} else {
-echo "Error deleting record: " . $conn->error;
-}
-} else {
-$_GET['deactivate2'] = 'failed';
-header("location: cpanel2.php?deactivate2=failed");
-}
+                $_GET['deactivate2'] = 'success';
+                header("location: cpanel2.php?deactivate2=success");
+            } else {
+                echo "Error deleting record: " . $conn->error;
+            }
+        } else {
+            echo "Error deleting record: " . $conn->error;
+        }
+    } else {
+        $_GET['deactivate2'] = 'failed';
+        header("location: cpanel2.php?deactivate2=failed");
+    }
 }
 
 if (isset($_POST['activate'])) {
 // sql to activate a record
-$activate_id = $_POST['activate_id'];
-$acname = $_POST['acname'];
+    $activate_id = $_POST['activate_id'];
+    $acname = $_POST['acname'];
 
-$sql = "UPDATE users SET hidden = 0 where userno='$activate_id'";
-if ($conn->query($sql) === TRUE) {
-$sql = "UPDATE users SET hidden = 0 where userno='$activate_id'";
+    $sql = "UPDATE users SET hidden = 0 where userno='$activate_id'";
+    if ($conn->query($sql) === TRUE) {
+        $sql = "UPDATE users SET hidden = 0 where userno='$activate_id'";
 
-if ($conn->query($sql) === TRUE) {
-$_GET['activate'] = 'success';
-header("location: cpanel2.php?activate=success");
-} else {
-echo "Error deleting record: " . $conn->error;
-}
-} else {
-echo "Error deleting record: " . $conn->error;
-}
+        if ($conn->query($sql) === TRUE) {
+            $_GET['activate'] = 'success';
+            header("location: cpanel2.php?activate=success");
+        } else {
+            echo "Error deleting record: " . $conn->error;
+        }
+    } else {
+        echo "Error deleting record: " . $conn->error;
+    }
 }
 
 if (isset($_POST['activate2'])) {
 // sql to activate a record
-$activate_id = $_POST['activate_id2'];
-$acname = $_POST['acname2'];
+    $activate_id = $_POST['activate_id2'];
+    $acname = $_POST['acname2'];
 
-$sql = "UPDATE users SET hidden = 0 where userno='$activate_id'";
-if ($conn->query($sql) === TRUE) {
-$sql = "UPDATE users SET hidden = 0 where userno='$activate_id'";
+    $sql = "UPDATE users SET hidden = 0 where userno='$activate_id'";
+    if ($conn->query($sql) === TRUE) {
+        $sql = "UPDATE users SET hidden = 0 where userno='$activate_id'";
 
-if ($conn->query($sql) === TRUE) {
-$_GET['activate2'] = 'success';
-header("location: cpanel2.php?activate2=success");
-} else {
-echo "Error deleting record: " . $conn->error;
+        if ($conn->query($sql) === TRUE) {
+            $_GET['activate2'] = 'success';
+            header("location: cpanel2.php?activate2=success");
+        } else {
+            echo "Error deleting record: " . $conn->error;
+        }
+    } else {
+        echo "Error deleting record: " . $conn->error;
+    }
 }
-} else {
-echo "Error deleting record: " . $conn->error;
-}
+
+if (isset($_POST['updatefac'])) {
+// sql to activate a record
+    $activate_id = $_POST['activate_id2'];
+    $acname = $_POST['acname2'];
+    $updatestat = $_POST['updatefacsec'];
+
+    $notif = $conn->prepare("UPDATE users SET section = ? where userno=?");
+    $notif->bind_param("si", $updatestat, $activate_id);
+    $notif->execute();
+    $notif->close();
+
+    if ($notif == TRUE) {
+
+        $_GET['updatesec'] = 'success';
+        header("location: cpanel2.php?updatesec=success");
+    } else {
+//        echo "Error deleting record: " . $conn->error;
+    }
 }
 ?>
 
@@ -385,6 +411,12 @@ echo "Error deleting record: " . $conn->error;
                     echo '';
                 }
 
+                if ($updatesec == TRUE) {
+                    echo '<div class="alert alert-success"><span class="fas fa-check"></span> Updated Faculty status successfully!</div>';
+                } else {
+                    echo '';
+                }
+
                 if ($deactivate == TRUE) {
                     echo '<div class="alert alert-success"><span class="fas fa-check"></span> Account deactivated successfully!</div>';
                 } else {
@@ -567,6 +599,7 @@ echo "Error deleting record: " . $conn->error;
                                                     <th>Email</th>
                                                     <th>Status</th>
                                                     <th>Action</th>
+                                                    <th>Edit</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -580,6 +613,7 @@ echo "Error deleting record: " . $conn->error;
                                                         $getuname2 = ($row2['fname'] . ' ' . $row2['mname'] . ' ' . $row2['lname']);
                                                         $getumail2 = $row2['email'];
                                                         $getstatus2 = $row2['hidden'];
+                                                        $getrole = $row2['section'];
 
                                                         echo "<tr>"
                                                         . "<td>" . $getuid2 . "</td>"
@@ -592,6 +626,61 @@ echo "Error deleting record: " . $conn->error;
                                                             echo "<td> Deactivated </td>"
                                                             . "<td>" . "<a href='#activate" . $getuno2 . "'data-toggle='modal'><button type='button' class='btn btn-success btn-sm' title='Activate'><span class='fas fa-lock' aria-hidden='true'></span></button></a>" . "</td>";
                                                         }
+                                                        echo
+                                                        "<td>" . "<a href='#edit" . $getuno2 . "'data-toggle='modal'><button type='button' class='btn btn-dark btn-sm' title='Edit'><span class='fas fa-edit' aria-hidden='true'></span></button></a>" . "</td>";
+
+                                                        echo '<div id="edit';
+                                                        echo $getuno2;
+                                                        echo'" class="modal fade" role="dialog">
+                                                                <div class="modal-dialog modal-lg">
+                                                                    <form method="post">
+                                                                        <div class="modal-content">
+
+                                                                            <div class="modal-header">
+                                                                                <h4 class="modal-title">Edit ' . $getuname2 . '</h4>
+                                                                            </div>
+
+                                                                            <div class="modal-body">
+                                                                                <input type="hidden" name="activate_id2" value="';
+                                                        echo $getuno2;
+                                                        echo '">
+                                                                                <input type="hidden" name="acname2" value="';
+                                                        echo $getuname2;
+                                                        echo '">
+                                                                                <b>Current Status: </b>';
+                                                        if ($getrole == "faculty") {
+                                                            echo "Faculty";
+                                                        } if ($getrole == "itchair") {
+                                                            echo "IT Department Chair";
+                                                        } if ($getrole == "ischair") {
+                                                            echo "IS Department Chair";
+                                                        } if ($getrole == "cschair") {
+                                                            echo "CS Department Chair";
+                                                        } if ($getrole == "swdb") {
+                                                            echo "SWDB Coordinator";
+                                                        }
+                                                        echo'
+                                                                                <div class="form-group">
+                                                                                   <b>Update Status: </b>
+                                                                                     <select name="updatefacsec" class="form-control">
+                                                                                        <option value="itchair">IT Department Chair</option>
+                                                                                        <option value="swdb">SWDB Coordinator</option>
+                                                                                        <option value="ischair">IS Department Chair</option>
+                                                                                        <option value="cschair">CS Department</option>
+                                                                                        <option value="faculty">Faculty</option>
+                                                                                      </select>
+                                                                                </div>
+                                                                                
+                                                                                <div class="modal-footer">
+                                                                                    <button type="submit" name="updatefac" class="btn btn-success"><span class="fas fa-check"></span> Update</button>
+                                                                                    <button type="button" class="btn btn-default" data-dismiss="modal"><span class="fas fa-times"></span> Cancel</button>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </form>
+                                                                </div>
+                                                            </div>';
+
 
                                                         echo '<div id="activate';
                                                         echo $getuno2;
@@ -670,6 +759,7 @@ echo "Error deleting record: " . $conn->error;
                                                     <th>Email</th>
                                                     <th>Status</th>
                                                     <th>Action</th>
+                                                    <th>Edit</th>
                                                 </tr>
                                             </tfoot>
                                         </table>

@@ -461,8 +461,15 @@ if (isset($_POST['getQueueNum'])) {
                                                 </div>
                                                 
                                                <div class="form-group" id="qDesc2">
-                                                    <label for="title"><h5>Document Title: *</h5></label>
-                                                    <input type="text" class="form-control" name="docTitle"></input>
+                                                    <label for="title"><h5>Document Type: *</h5></label>
+                                                    <select name="docTitle" class="form-control">
+                                                      <option value="" selected disabled>Select one: </option>
+                                                      <option value="Petition Form">Petition Form</option>
+                                                      <option value="Endorsement Letter">Endorsement Letter</option>
+                                                      <option value="Cross-Enrollment Form">Cross-Enrollment Form</option>
+                                                      <option value="Add/Drop Form">Add/Drop Form</option>
+                                                      <option value="Others">Others</option>
+                                                    </select>
                                                     <label for="description"><h5>Description: *</h5></label>
                                                     <textarea rows="2" class="form-control" name="qDesc2"></textarea>
                                                 </div>

@@ -226,6 +226,7 @@ if (!isset($_SESSION['user_name'])) {
                             <ul class="list-group list-group-flush">
                                 <a href="account.php"><li class="list-group-item">User Information <span style="float:right;" class="fas fa-caret-right"></span></li></a>
                                 <a href="account2.php"><li class="list-group-item">Security <span style="float:right;" class="fas fa-caret-right"></span></li></a>
+                                <a href="account4.php"><li class="list-group-item">Consultation Hours <span style="float:right;" class="fas fa-caret-right"></span></li></a>
                                 <a href="account3.php"><li class="list-group-item active">Activity Logs <span style="float:right;" class="fas fa-caret-right"></span></li></a>
                             </ul>
                         </div>

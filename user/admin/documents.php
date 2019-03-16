@@ -355,7 +355,8 @@ if (isset($_POST['updatedoc2'])) {
                                             <th>Document #</th>
                                             <th>Date Submitted</th>
                                             <th>Submitted By</th>
-                                            <th>Title</th>
+                                            <th>Type</th>
+                                            <th>Description</th>
                                             <th>Status</th>
                                         </tr>
                                     </thead>
@@ -382,6 +383,7 @@ if (isset($_POST['updatedoc2'])) {
                                                 . "<td>" . date("m/d/Y h:iA", strtotime($docdatesubmit)) . "</td>"
                                                 . "<td>" . $userid . "</td>"
                                                 . "<td>" . $doctitle . "</td>"
+                                                . "<td>" . $docdesc . "</td>"
                                                 . "<td>" . $docstatus . "</td>";
                                                 ?>
                                                 <?php
@@ -443,7 +445,8 @@ if (isset($_POST['updatedoc2'])) {
                                             <th>Document #</th>
                                             <th>Date Submitted</th>
                                             <th>Submitted By</th>
-                                            <th>Title</th>
+                                            <th>Type</th>
+                                            <th>Description</th>
                                             <th>Status</th>
                                         </tr>
                                     </tfoot>
@@ -475,7 +478,8 @@ if (isset($_POST['updatedoc2'])) {
                                             <th>Date Submitted</th>
                                             <th>Date Modified</th>
                                             <th>Submitted By</th>
-                                            <th>Title</th>
+                                            <th>Type</th>
+                                            <th>Description</th>
                                             <th>Status</th>
                                         </tr>
                                     </thead>
@@ -501,6 +505,7 @@ if (isset($_POST['updatedoc2'])) {
                                                 . "<td>" . date("m/d/Y h:iA", strtotime($docdatechange)) . "</td>"
                                                 . "<td>" . $userid . "</td>"
                                                 . "<td>" . $doctitle . "</td>"
+                                                . "<td>" . $docdesc . "</td>"
                                                 . "<td>" . $docstatus . "</td>";
                                             }
                                         }
@@ -514,7 +519,8 @@ if (isset($_POST['updatedoc2'])) {
                                             <th>Date Submitted</th>
                                             <th>Date Modified</th>
                                             <th>Submitted By</th>
-                                            <th>Title</th>
+                                            <th>Type</th>
+                                            <th>Description</th>
                                             <th>Status</th>
                                         </tr>
                                     </tfoot>
@@ -542,7 +548,8 @@ if (isset($_POST['updatedoc2'])) {
                                 <th>Date Submitted</th>
                                 <th>Date Modified</th>
                                 <th>Submitted By</th>
-                                <th>Title</th>
+                                <th>Type</th>
+                                <th>Description</th>
                                 <th>Status</th>
                             </tr>
                         </thead>
@@ -577,6 +584,7 @@ if (isset($_POST['updatedoc2'])) {
                                     . "<td>" . date("m/d/Y h:iA", strtotime($docdatechange)) . "</td>"
                                     . "<td>" . $userid . "</td>"
                                     . "<td>" . $doctitle . "</td>"
+                                    . "<td>" . $docdesc . "</td>"
                                     . "<td>" . $docstatus . "</td>";
                                     ?>
                                     <?php
@@ -648,7 +656,8 @@ if (isset($_POST['updatedoc2'])) {
                                 <th>Date Submitted</th>
                                 <th>Date Modified</th>
                                 <th>Submitted By</th>
-                                <th>Title</th>
+                                <th>Type</th>
+                                <th>Description</th>
                                 <th>Status</th>
                             </tr>
                         </tfoot>

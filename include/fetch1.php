@@ -63,7 +63,7 @@ if (isset($_POST['view'])) {
    <a ' . $href . ' class="dropdown-item style="width: 300px; white-space: normal;">
                                                 <span style="font-size: 13px;"><strong> ' . $notiftitle . ' </strong></span><br>
                                                 <span style="width: 300px; white-space: normal;">' . $notifdesc . '</span><br>
-                                                <span style="font-size: 10px;" > ' . date("m/d/Y h:iA", strtotime($notifdate)) . ' </span><br>
+                                                <span style="font-size: 10px;" > ' . date("m/d/Y h:iA", strtotime("+8 hours", strtotime($notifdate))) . ' </span><br>
                                             </a></li>
    <div class="dropdown-divider"></div>
    ';

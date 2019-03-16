@@ -20,6 +20,44 @@ if (!isset($_SESSION['user_name'])) {
     header("location:/iicshd/login.php");
 }
 
+function fill_prof($conn) {
+    $prof = mysqli_query($conn, "SELECT userno, fname, mname, lname, section FROM users WHERE role = 'faculty'");
+    if ($prof->num_rows > 0) {
+        while ($row = $prof->fetch_assoc()) {
+            $profname = ($row['fname'] . ' ' . $row['mname'] . ' ' . $row['lname']);
+            $profno = $row['userno'];
+            $profrole = $row['section'];
+            if ($profrole == "faculty") {
+                echo "<option value='" . $profno . "'>" . $profname . "</option>";
+            } if ($profrole == "swdb") {
+                echo "<option value='" . $profno . "'>" . $profname . " (SWDB Coordinator)</option>";
+            } if ($profrole == "itchair") {
+                echo "<option value='" . $profno . "'>" . $profname . " (IT Department Chair)</option>";
+            } if ($profrole == "ischair") {
+                echo "<option value='" . $profno . "'>" . $profname . " (IS Department Chair)</option>";
+            } if ($profrole == "cschair") {
+                echo "<option value='" . $profno . "'>" . $profname . " (CS Department Chair)</option>";
+            }
+        }
+    } else {
+        echo"<option value=''></option>";
+    }
+}
+
+function fill_product($conn) {
+    $output = '';
+    $output .= '<div class ="alert alert-warning">Please select a professor.';
+    $output .= '</div>';
+
+    return $output;
+}
+
+if (isset($_GET['addsched'])) {
+    $addsched = $_GET['addsched'];
+} else {
+    $addsched = '';
+}
+
 if (isset($_POST['submitCon'])) {
     $cTitle = clean($_POST["cTitle"]);
     $cDesc = clean($_POST["cDesc"]);
@@ -60,8 +98,9 @@ if (isset($_POST['submitCon'])) {
         $notif->execute();
         $notif->close();
 
+        $_GET['addsched'] = 'success';
 
-        header("Location: consultations.php");
+        header("Location: consultations.php?addsched=success");
         exit;
     } else {
         $postFailed = '<div class="alert alert-danger">
@@ -286,6 +325,14 @@ if (isset($_POST['submitCon'])) {
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                     <h1 class="h2">Consultation</h1>
                 </div>
+                
+                <?php
+                if ($addsched == TRUE) {
+                    echo '<div class="alert alert-success"><span class="fas fa-check"></span> Consultation requested successfully!</div>';
+                } else {
+                    echo '';
+                }
+                ?>
 
                 <div class="accordion" id="accordionExample">
 
@@ -303,32 +350,17 @@ if (isset($_POST['submitCon'])) {
                                 <form action="" method="POST">
 
                                     <div class="form-group">
-                                        <label for="title">Subject of Concern: <span class="require">*</span></label>
-                                        <input type="text" class="form-control" name="cTitle" required />
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="description">Description: </label>
-                                        <textarea rows="2" class="form-control" name="cDesc" required ></textarea>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="description">Professor: </label>
+                                        <label for="description"><b>Professor: </b></label>
                                         <select name="cProf" id="cProf" class="form-control">
                                             <option disabled selected value>Select one: </option>
-                                            <?php
-                                            $prof = mysqli_query($conn, "SELECT userno, fname, mname, lname FROM users WHERE role = 'faculty'");
-                                            if ($prof->num_rows > 0) {
-                                                while ($row = $prof->fetch_assoc()) {
-                                                    $profname = ($row['fname'] . ' ' . $row['mname'] . ' ' . $row['lname']);
-                                                    $profno = $row['userno'];
-                                                    echo "<option value='" . $profno . "'>" . $profname . "</option>";
-                                                }
-                                            } else {
-                                                echo"<option value=''></option>";
-                                            }
-                                            ?> 
+                                            <?php echo fill_prof($conn); ?>
                                         </select>
+                                    </div>
+
+                                    <div id="show_product">
+
+                                        <?php echo fill_product($conn); ?>
+
                                     </div>
 
                                     <div class="form-group">
@@ -337,6 +369,7 @@ if (isset($_POST['submitCon'])) {
                                         </button>
                                         <br>
                                     </div>
+
 
                                 </form>
                             </div>
@@ -547,6 +580,22 @@ $thisDate = date("m/d/Y");
 
             });
         </script>
+
+        <script>
+            $(document).ready(function () {
+                $('#cProf').change(function () {
+                    var profno = $(this).val();
+                    $.ajax({
+                        url: "load_fetch.php",
+                        method: "POST",
+                        data: {profno: profno},
+                        success: function (data) {
+                            $('#show_product').html(data);
+                        }
+                    });
+                });
+            });
+        </script> 
 
     </body>
 </html>

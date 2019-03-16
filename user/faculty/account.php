@@ -19,6 +19,19 @@ if (isset($_SESSION['user_name'])) {
 if (!isset($_SESSION['user_name'])) {
     header("location:/iicshd/login.php");
 }
+
+if (isset($_POST['insertsched'])) {
+    $consulday = $_POST['consulday'];
+    $consulstart = $_POST['consulstart'];
+    $consulend = $_POST['consulend'];
+
+    $c = $consulday . " " . $consulstart . "-" . $consulend;
+
+    $submitSql = $conn->prepare("INSERT INTO consulthours VALUES ('', ?, 1, ?)");
+    $submitSql->bind_param("ss", $_SESSION['userno'], $c);
+    $submitSql->execute();
+    $submitSql->close();
+}
 ?>
 
 <!doctype html>
@@ -36,6 +49,7 @@ if (!isset($_SESSION['user_name'])) {
         <link href="../../css/bootstrap.min.css" rel="stylesheet">
         <link href="../../css/dashboard.css" rel="stylesheet">
         <link href="../../fa-5.5.0/css/fontawesome.css" rel="stylesheet">
+        <link href="../../css/bootstrap-timepicker.min.css" rel="stylesheet"/>
 
         <style>
             .header {
@@ -221,6 +235,7 @@ if (!isset($_SESSION['user_name'])) {
                             <ul class="list-group list-group-flush">
                                 <a href="account.php"><li class="list-group-item active">User Information <span style="float:right;" class="fas fa-caret-right"></span></li></a>
                                 <a href="account2.php"><li class="list-group-item">Security <span style="float:right;" class="fas fa-caret-right"></span></li></a>
+                                <a href="account4.php"><li class="list-group-item">Consultation Hours <span style="float:right;" class="fas fa-caret-right"></span></li></a>
                                 <a href="account3.php"><li class="list-group-item">Activity Logs <span style="float:right;" class="fas fa-caret-right"></span></li></a>
                             </ul>
                         </div>
@@ -235,25 +250,70 @@ if (!isset($_SESSION['user_name'])) {
                                     User Information
                                 </h5>
                             </div>
+                            <form action="" method="post">
+                                <div class="card-body">
+                                    <table>
+                                        <tbody>
+                                            <tr>
+                                                <td><h6><label for="id">User ID: &nbsp;</label></h6></td>
+                                                <td><input class="form-control" type="text" name="userid" disabled placeholder="<?php echo $_SESSION['userid']; ?>"><br></td>
+                                            </tr>
+                                            <tr>
+                                                <td><h6><label for="name">Name: &nbsp;</label></h6></td>
+                                                <td><input class="form-control" type="text" name="name" disabled placeholder="<?php echo $_SESSION['user_name']; ?>"><br></td>
+                                            </tr>
+                                            <tr>
+                                                <td><h6><label for="email">Email: &nbsp;</label></h6></td>
+                                                <td><input class="form-control" type="text" name="email" disabled placeholder="<?php echo $_SESSION['email']; ?>"><br></td>
+                                            </tr>
+                                            <tr>
+                                                <td><h6><label for="consul">Consultation Hours: &nbsp;</label></h6></td>
+                                        <div class="alert alert-warning">Click <a href="account4.php">here</a> to manage consultation hours. </div><td>
+                                            <?php
+                                            $prof = mysqli_query($conn, "SELECT * FROM consulthours WHERE userno = '" . $_SESSION['userno'] . "'");
 
-                            <div class="card-body">
-                                <table>
-                                    <tbody>
-                                        <tr>
-                                            <td><h6><label for="id">User ID: &nbsp;</label></h6></td>
-                                            <td><input class="form-control" type="text" name="userid" disabled placeholder="<?php echo $_SESSION['userid']; ?>"><br></td>
+                                            if ($prof->num_rows > 0) {
+                                                while ($row = $prof->fetch_assoc()) {
+                                                    $consulhours = $row['daytime'];
+
+                                                    echo '<input class="form-control" type="text" size="30" name="email" placeholder="' . $consulhours . '" disabled>';
+                                                }
+                                            } else {
+                                                echo '<div class="alert alert-warning">Please set consultation hours.</div><td>'
+                                                . '<div class="card">
+                                                    <div class="card-header"><h7>Select Day: </h7></div>
+                                                    <div class="card-body"><select name="consulday" class="form-control" required>
+                                                      <option value="" selected disabled>Choose one: </option>
+                                                      <option value="Monday">Monday</option>
+                                                      <option value="Tuesday">Tuesday</option>
+                                                      <option value="Wednesday">Wednesday</option>
+                                                      <option value="Thursday">Thursday</option>
+                                                      <option value="Friday">Friday</option>
+                                                      <option value="Saturday">Saturday</option>
+                                                    </select></div><br>
+                                                    <div class="card-footer card-header"><h7>Select Time (AM/PM): </h7></div>'
+                                                . '<div class="card-body">Start: <div class="input-group bootstrap-timepicker timepicker">
+                                                                                        <input id="timepicker1" type="text" name="consulstart" class="form-control" required>
+                                                                                        <span class="input-group-addon"><i class="fas fa-clock"></i></span>
+                                                                                    </div><br>'
+                                                . 'End: <div class="input-group bootstrap-timepicker timepicker">
+                                                                                        <input id="timepicker2" type="text" name="consulend" class="form-control" required>
+                                                                                        <span class="input-group-addon"><i class="fas fa-clock"></i></span>
+                                                                                    </div>'
+                                                . '     <div class="card-footer">
+                                                            <button type="submit" name = "insertsched" class="btn btn-success">Update</button><br>
+                                                        </div>'
+                                                . '</div></td>';
+                                            }
+                                            ?>
+                                        </td>
                                         </tr>
-                                        <tr>
-                                            <td><h6><label for="name">Name: &nbsp;</label></h6></td>
-                                            <td><input class="form-control" type="text" name="name" disabled placeholder="<?php echo $_SESSION['user_name']; ?>"><br></td>
-                                        </tr>
-                                        <tr>
-                                            <td><h6><label for="email">Email: &nbsp;</label></h6></td>
-                                            <td><input class="form-control" type="text" name="email" disabled placeholder="<?php echo $_SESSION['email']; ?>"><br></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                            </form>
+                            <br>
 
                         </div>
 
@@ -280,11 +340,26 @@ if (!isset($_SESSION['user_name'])) {
         <script>window.jQuery || document.write('<script src="../../js/jquery-3.3.1.js"><\/script>')</script>
         <script src="../../js/popper.js"></script>
         <script src="../../js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="../../js/bootstrap-timepicker.min.js"></script>
 
         <!-- Icons -->
         <script src="../../js/feather.min.js"></script>
         <script>
             feather.replace()
+        </script>
+
+        <script type="text/javascript">
+            $('#timepicker1').timepicker({
+                explicitMode: true,
+                defaultTime: false,
+                showInputs: true
+            });
+
+            $('#timepicker2').timepicker({
+                explicitMode: true,
+                defaultTime: false,
+                showInputs: true
+            });
         </script>
 
         <!-- Graphs -->
