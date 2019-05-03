@@ -266,7 +266,7 @@ if ($studSuccess == TRUE) {
             <br>
             <div class="row">
                 <div class="col-md-5 left">
-                    <div align="center"><img src="img/logo2.png" alt=""/><br/><br/></div>
+                    <div align="center"><img src="img/logo3_3.png" alt=""/><br/><br/></div>
                 </div>
 
                 <div class="col-md-7 right">
@@ -299,7 +299,7 @@ if ($studSuccess == TRUE) {
 
                                                 $mail->isHTML(true);                                  // Set email format to HTML
                                                 $mail->Subject = 'IICS Help Desk | Verify Your Account';
-                                                $mail->Body = '<html><head></head><body><div align="center"><img src="https://i.imgur.com/TpIc9n9.png" alt="IICS Help Desk"/></center>'
+                                                $mail->Body = '<html><head></head><body><div align="center"><img src="https://i.imgur.com/yqJNKhh.png" alt="IICS Help Desk"/></center>'
                                                         . '<p>Thank you for signing up STUDENT!</p>'
                                                         . '<p>Please input the <b>verification code</b> to complete registration.</p>'
                                                         . '<hr>'
@@ -325,7 +325,7 @@ if ($studSuccess == TRUE) {
 
                                                 $mail->isHTML(true);                                  // Set email format to HTML
                                                 $mail->Subject = 'IICS Help Desk | Verify Your Account';
-                                                $mail->Body = '<div align="center"><img src="https://i.imgur.com/TpIc9n9.png" alt="IICS Help Desk"/></center>'
+                                                $mail->Body = '<div align="center"><img src="https://i.imgur.com/yqJNKhh.png" alt="IICS Help Desk"/></center>'
                                                         . '<p>Thank you for signing up FACULTY!</p>'
                                                         . '<p>Please input the <b>verification code</b> to complete registration.</p>'
                                                         . '<hr>'

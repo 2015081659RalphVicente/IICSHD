@@ -12,16 +12,19 @@ if (isset($_POST["profno"])) {
         $output .= "<h5>Please select a professor.</h5>";
     }
     
-    $output.='<b>Consultation Hours: </b>';
-    $output.='<div class="row">';
+    $output.='<b>Preferred Consultation Hour: </b>';
+    $output.='<div class="row"><div class="col-md-3">';
+    $output.='<div class="form-group">';
+    $output.='<select name="conPref" id="conPref" class="form-control">';
     $result = mysqli_query($conn, $sql);
     if ($result->num_rows > 0) {
         while ($row = mysqli_fetch_array($result)) {
             $consulthours = $row['daytime'];
 
 
-            $output .= '<div class="col-md-3"><div style="border:1px solid #ccc; padding:20px; margin-bottom:20px;">' . $consulthours . '</div></div>';
+            $output .= '<option value = "'. $consulthours .'" >' . $consulthours . '</option>';
         }
+    $output.='</select></div></div></div>';
     } else {
         $output = '<div class="row"><div class="col-md-3"><div style="border:1px solid #ccc; padding:20px; margin-bottom:20px;">No consultation hours set.</div></div></div>';
     }

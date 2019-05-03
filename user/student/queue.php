@@ -42,7 +42,7 @@ if (isset($_POST['getQueueNum'])) {
         $submitSql = $conn->prepare("INSERT INTO queue VALUES ('', ?, ?, ?, ?, NOW(), ?)");
         $submitSql->bind_param("issss", $_SESSION['userno'], $qType, $docTitle, $qDesc, $qStatus);
 
-        $submitSql2 = $conn->prepare("INSERT INTO queuelogs VALUES ('', ?, ?, ?, ?, NOW(), ?)");
+        $submitSql2 = $conn->prepare("INSERT INTO queuelogs VALUES ('', ?, ?, ?, ?, '', NOW(), ?)");
         $submitSql2->bind_param("issss", $_SESSION['userno'], $qType, $docTitle, $qDesc, $qStatus);
 
         $userQ = $conn->prepare("UPDATE users SET inqueue=? WHERE userno=?");
@@ -95,7 +95,7 @@ if (isset($_POST['getQueueNum'])) {
         $submitSql = $conn->prepare("INSERT INTO queue VALUES ('', ?, ?, ?, ?, NOW(), ?)");
         $submitSql->bind_param("issss", $_SESSION['userno'], $qType, $docTitle, $qDesc2, $qStatus);
 
-        $submitSql2 = $conn->prepare("INSERT INTO queuelogs VALUES ('', ?, ?, ?, ?, NOW(), ?)");
+        $submitSql2 = $conn->prepare("INSERT INTO queuelogs VALUES ('', ?, ?, ?, ?, '', NOW(), ?)");
         $submitSql2->bind_param("issss", $_SESSION['userno'], $qType, $docTitle, $qDesc2, $qStatus);
 
         $userQ = $conn->prepare("UPDATE users SET inqueue=? WHERE userno=?");

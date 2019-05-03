@@ -56,7 +56,7 @@ if (!isset($_SESSION['user_name'])) {
             <br>
             <div class="row">
                 <div class="col-md-5 left">
-                    <div align="center"><img src="img/logo2.png" alt=""/><br/><br/></div>
+                    <div align="center"><img src="img/logo3_3.png" alt=""/><br/><br/></div>
                 </div>
 
                 <div class="col-md-7 right">

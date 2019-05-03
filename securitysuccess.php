@@ -95,7 +95,7 @@ unset($_SESSION['seq']);
             <div class="row">
 
                 <div class="col-md-5 left">
-                    <div align="center"><img src="img/logo2.png" alt=""/><br/><br/></div>
+                    <div align="center"><img src="img/logo3_3.png" alt=""/><br/><br/></div>
                 </div>
 
                 <div class="col-md-7 right">
@@ -121,7 +121,7 @@ unset($_SESSION['seq']);
 
                                 $mail->isHTML(true);                                  // Set email format to HTML
                                 $mail->Subject = 'IICS Help Desk | Forgot Password';
-                                $mail->Body = '<html><head></head><body><div align="center"><img src="https://i.imgur.com/TpIc9n9.png" alt="IICS Help Desk"/></center>'
+                                $mail->Body = '<html><head></head><body><div align="center"><img src="https://i.imgur.com/yqJNKhh.png" alt="IICS Help Desk"/></center>'
                                         . '<p>You have requested for a password reset.</p>'
                                         . '<p>Please use the given <b>temporary password</b> for logging-in.</p>'
                                         . '<hr>'
